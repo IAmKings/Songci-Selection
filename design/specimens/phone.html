@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     宋词排版样式 · 手机 375×812 · kami 设计语言
+     素材: db/songci.db · poems id 13284 · 贺新郎 · 戴复古
+     查看: 浏览器打开; devtools 设备模拟 375×812 即为全幅
+     ================================================================== -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="Kami">
+<title>贺新郎 · 戴复古 — 手机 375×812 排版样式</title>
+<style>
+/* ========== kami 设计 token(取自 landing-page.html) ========== */
+@font-face {
+  font-family: "TsangerJinKai02";
+  src: url("https://cdn.jsdelivr.net/gh/AlfredoSequeworthy/TsangerJinKai02@main/TsangerJinKai02-W04.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+:root {
+  --parchment:  #f5f4ed;
+  --warm-sand:  #e8e6dc;
+  --brand:      #1B365D;
+  --near-black: #141413;
+  --olive:      #504e49;
+  --stone:      #6b6a64;
+  --line:       #d8d5c8;
+  --serif: "TsangerJinKai02", "Source Han Serif SC", "Source Han Serif CN",
+           "Noto Serif CJK SC", "Noto Serif SC", "Songti SC", "STSong", "SimSun",
+           Georgia, serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: #3d3d3a;                 /* 深暖灰背板,衬托样张 */
+  font-family: var(--serif);
+}
+
+/* 375×812 固定视口样张 */
+.frame {
+  width: 375px; height: 812px;
+  margin: 0 auto;
+  background: var(--parchment);
+  color: var(--near-black);
+  padding: 40px 30px 28px;
+  display: flex; flex-direction: column;
+}
+
+/* 标题区 */
+.kicker { width: 40px; height: 4px; background: var(--brand); margin-bottom: 22px; }
+.title {
+  font-size: 36px; font-weight: 500;
+  color: var(--brand);
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+.author { font-size: 14px; color: var(--olive); margin: 10px 0 0; }
+.rule  { border: none; border-top: 1px solid var(--line); margin: 28px 0 26px; }
+
+/* 词文 */
+.poem  { font-size: 18px; line-height: 2.05; }
+.stanza + .stanza { margin-top: 34px; }   /* 上下阕留白 */
+.poem p { margin: 0; letter-spacing: 0.02em; }
+
+/* 页脚标注 */
+.foot {
+  margin-top: auto;
+  font-size: 11px; letter-spacing: 0.14em;
+  color: var(--stone);
+  border-top: 1px solid var(--warm-sand);
+  padding-top: 14px;
+  font-family: "PingFang SC", system-ui, sans-serif;
+}
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <div class="kicker"></div>
+  <h1 class="title">贺新郎</h1>
+  <p class="author">戴复古</p>
+  <hr class="rule">
+
+  <div class="poem">
+    <div class="stanza">
+      <p>蜗角争多少。</p>
+      <p>是英雄、割据乾坤，到头休了。</p>
+      <p>一片泥涂荒草地，尽是鱼龙故道。</p>
+      <p>新堤上、风涛难保。</p>
+      <p>沧海桑田何时变，怕桑田、未变人先老。</p>
+      <p>休为此，生烦恼。</p>
+    </div>
+    <div class="stanza">
+      <p>讼庭不许频频到。</p>
+      <p>这官坊、翻来覆去，有何分晓。</p>
+      <p>无诤人中为第一，长讼元非吉兆。</p>
+      <p>但有恨、平章不早。</p>
+      <p>尊酒唤回和气在，看从来、兄弟依然好。</p>
+      <p>把前事，付一笑。</p>
+    </div>
+  </div>
+
+  <div class="foot">宋词排版样式 · 375 × 812</div>
+
+</div>
+</body>
+</html>
