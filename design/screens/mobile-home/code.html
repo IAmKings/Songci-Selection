@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>宋词选粹 - 首页</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Noto+Serif:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-background": "#1b1c18",
+                      "on-surface": "#1b1c18",
+                      "on-tertiary-container": "#a19f93",
+                      "inverse-primary": "#aec7f7",
+                      "tertiary-fixed-dim": "#c9c7ba",
+                      "primary": "#002046",
+                      "surface-tint": "#465f88",
+                      "on-surface-variant": "#44474e",
+                      "tertiary-fixed": "#e6e3d5",
+                      "outline": "#74777f",
+                      "on-primary-container": "#87a0cd",
+                      "primary-fixed-dim": "#aec7f7",
+                      "surface-container-low": "#f5f4ed",
+                      "inverse-surface": "#30312c",
+                      "on-secondary-container": "#66645f",
+                      "secondary-container": "#e6e2db",
+                      "on-secondary-fixed": "#1d1c17",
+                      "surface-container": "#efeee7",
+                      "surface-container-high": "#e9e8e1",
+                      "outline-variant": "#c4c6cf",
+                      "background": "#fbf9f2",
+                      "on-tertiary": "#ffffff",
+                      "backdrop": "#3D3D3A",
+                      "surface-container-highest": "#e3e3dc",
+                      "surface-bright": "#fbf9f2",
+                      "on-primary-fixed": "#001b3d",
+                      "surface-variant": "#e3e3dc",
+                      "inverse-on-surface": "#f2f1ea",
+                      "primary-fixed": "#d6e3ff",
+                      "warm-sand": "#E8E6DC",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-fixed-variant": "#48473d",
+                      "tertiary-container": "#37362d",
+                      "on-secondary-fixed-variant": "#484742",
+                      "secondary-fixed-dim": "#cac6bf",
+                      "surface": "#fbf9f2",
+                      "on-error-container": "#93000a",
+                      "error-container": "#ffdad6",
+                      "on-error": "#ffffff",
+                      "secondary-fixed": "#e6e2db",
+                      "stone": "#6B6A64",
+                      "on-tertiary-fixed": "#1c1c14",
+                      "surface-container-lowest": "#ffffff",
+                      "primary-container": "#1b365d",
+                      "secondary": "#605e59",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed-variant": "#2e476f",
+                      "tertiary": "#212119",
+                      "near-black": "#141413",
+                      "on-secondary": "#ffffff",
+                      "surface-dim": "#dbdad3"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter-stanza": "56px",
+                      "section-gap": "34px",
+                      "margin-divider": "44px",
+                      "margin-title": "12px",
+                      "frame-padding-mobile": "40px 30px 28px",
+                      "margin-kicker": "22px",
+                      "frame-padding-desktop": "72px 64px 44px"
+              },
+              "fontFamily": {
+                      "ui-nav": [
+                              "inter"
+                      ],
+                      "poem-body-mobile": [
+                              "notoSerif"
+                      ],
+                      "poem-body": [
+                              "notoSerif"
+                      ],
+                      "author-subheading-mobile": [
+                              "notoSerif"
+                      ],
+                      "label-metadata-mobile": [
+                              "inter"
+                      ],
+                      "author-subheading": [
+                              "notoSerif"
+                      ],
+                      "display-title": [
+                              "notoSerif"
+                      ],
+                      "label-metadata": [
+                              "inter"
+                      ],
+                      "display-title-mobile": [
+                              "notoSerif"
+                      ]
+              },
+              "fontSize": {
+                      "ui-nav": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "poem-body-mobile": [
+                              "18px",
+                              {
+                                      "lineHeight": "2.05",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "poem-body": [
+                              "20px",
+                              {
+                                      "lineHeight": "2.1",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "author-subheading-mobile": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-metadata-mobile": [
+                              "11px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "letterSpacing": "0.14em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "author-subheading": [
+                              "15px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-title": [
+                              "46px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.06em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "label-metadata": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "letterSpacing": "0.14em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-title-mobile": [
+                              "36px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.06em",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: #fbf9f2; /* background */
+            color: #1b1c18; /* on-background */
+        }
+        /* Custom styles for the digital manuscript feel */
+        .kicker {
+            width: 100%;
+            height: 4px;
+            background-color: #002046; /* primary */
+            margin-bottom: 22px;
+        }
+        @media (min-width: 768px) {
+            .kicker {
+                height: 5px;
+            }
+        }
+        .card-border {
+            border: 1px solid #E8E6DC; /* warm-sand */
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col pb-20">
+<!-- TopAppBar -->
+<header class="bg-background dark:bg-background border-b border-warm-sand dark:border-stone flex justify-between items-center px-frame-padding-mobile w-full max-w-screen-xl mx-auto h-16 sticky top-0 z-40">
+<button aria-label="Menu" class="text-primary dark:text-primary-fixed hover:opacity-80 transition-opacity active:scale-95 duration-150 flex items-center justify-center p-2 rounded-full" onclick="document.getElementById('navigationDrawer').classList.toggle('-translate-x-full')">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-display-title-mobile text-display-title-mobile text-primary dark:text-primary-fixed">宋词选粹</h1>
+<button aria-label="Search" class="text-primary dark:text-primary-fixed hover:opacity-80 transition-opacity active:scale-95 duration-150 flex items-center justify-center p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</header>
+<!-- Navigation Drawer -->
+<aside class="bg-surface-container dark:bg-surface-container-high h-full w-80 rounded-r-none fixed inset-y-0 left-0 z-[60] flex flex-col p-6 transition-transform duration-300 ease-in-out -translate-x-full shadow-2xl md:shadow-none" id="navigationDrawer">
+<div class="flex items-center justify-between mb-8">
+<h2 class="font-display-title-mobile text-display-title-mobile text-primary">目录索引</h2>
+<button class="text-primary p-2" onclick="document.getElementById('navigationDrawer').classList.add('-translate-x-full')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="text-on-surface-variant hover:bg-surface-variant hover:bg-warm-sand dark:hover:bg-stone transition-colors duration-200 flex items-center gap-4 px-4 py-3 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span class="font-ui-nav text-ui-nav text-primary dark:text-primary-fixed">朝代</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-variant hover:bg-warm-sand dark:hover:bg-stone transition-colors duration-200 flex items-center gap-4 px-4 py-3 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-ui-nav text-ui-nav text-primary dark:text-primary-fixed">作者</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-variant hover:bg-warm-sand dark:hover:bg-stone transition-colors duration-200 flex items-center gap-4 px-4 py-3 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="format_list_bulleted">format_list_bulleted</span>
+<span class="font-ui-nav text-ui-nav text-primary dark:text-primary-fixed">词牌</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-variant hover:bg-warm-sand dark:hover:bg-stone transition-colors duration-200 flex items-center gap-4 px-4 py-3 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="architecture">architecture</span>
+<span class="font-ui-nav text-ui-nav text-primary dark:text-primary-fixed">格律</span>
+</a>
+</nav>
+</aside>
+<!-- Overlay for Drawer -->
+<div class="fixed inset-0 bg-backdrop opacity-0 pointer-events-none transition-opacity duration-300 z-50" id="drawerOverlay" onclick="document.getElementById('navigationDrawer').classList.add('-translate-x-full')"></div>
+<main class="flex-grow w-full max-w-screen-md mx-auto px-6 py-8">
+<!-- Search Section -->
+<section class="mb-12">
+<div class="relative w-full">
+<input class="w-full bg-transparent border-0 border-b border-stone focus:border-primary focus:ring-0 px-0 py-3 font-ui-nav text-ui-nav text-on-surface placeholder:text-stone transition-colors" placeholder="搜索词牌、作者或诗句..." type="text"/>
+<button class="absolute right-0 top-1/2 -translate-y-1/2 text-stone hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="search">search</span>
+</button>
+</div>
+</section>
+<!-- Kicker -->
+<div class="kicker"></div>
+<!-- Recommendations Section -->
+<section class="space-y-section-gap">
+<h2 class="font-ui-nav text-ui-nav text-secondary mb-margin-title uppercase tracking-widest">推荐词作</h2>
+<!-- Card 1 -->
+<article class="card-border bg-surface-container-low p-6 rounded-sm relative overflow-hidden group">
+<div class="flex flex-col h-full z-10 relative">
+<header class="mb-4 flex items-baseline justify-between border-b border-warm-sand pb-4">
+<h3 class="font-display-title-mobile text-display-title-mobile text-primary">贺新郎</h3>
+<span class="font-author-subheading-mobile text-author-subheading-mobile text-secondary">戴复古</span>
+</header>
+<div class="font-poem-body-mobile text-poem-body-mobile text-on-surface text-center italic opacity-90 my-6">
+                        "把酒祝东风，且共从容。"
+                    </div>
+<footer class="mt-auto flex justify-end">
+<button class="font-ui-nav text-ui-nav text-primary hover:opacity-70 transition-opacity flex items-center gap-1 group-hover:underline">
+                            阅读全文 <span class="material-symbols-outlined text-[16px]">arrow_right_alt</span>
+</button>
+</footer>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="card-border bg-surface-container-low p-6 rounded-sm relative overflow-hidden group">
+<div class="flex flex-col h-full z-10 relative">
+<header class="mb-4 flex items-baseline justify-between border-b border-warm-sand pb-4">
+<h3 class="font-display-title-mobile text-display-title-mobile text-primary">水调歌头</h3>
+<span class="font-author-subheading-mobile text-author-subheading-mobile text-secondary">苏轼</span>
+</header>
+<div class="font-poem-body-mobile text-poem-body-mobile text-on-surface text-center italic opacity-90 my-6">
+                        "但愿人长久，千里共婵娟。"
+                    </div>
+<footer class="mt-auto flex justify-end">
+<button class="font-ui-nav text-ui-nav text-primary hover:opacity-70 transition-opacity flex items-center gap-1 group-hover:underline">
+                            阅读全文 <span class="material-symbols-outlined text-[16px]">arrow_right_alt</span>
+</button>
+</footer>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="card-border bg-surface-container-low p-6 rounded-sm relative overflow-hidden group">
+<div class="flex flex-col h-full z-10 relative">
+<header class="mb-4 flex items-baseline justify-between border-b border-warm-sand pb-4">
+<h3 class="font-display-title-mobile text-display-title-mobile text-primary">青玉案</h3>
+<span class="font-author-subheading-mobile text-author-subheading-mobile text-secondary">辛弃疾</span>
+</header>
+<div class="font-poem-body-mobile text-poem-body-mobile text-on-surface text-center italic opacity-90 my-6">
+                        "众里寻他千百度，蓦然回首，那人却在，灯火阑珊处。"
+                    </div>
+<footer class="mt-auto flex justify-end">
+<button class="font-ui-nav text-ui-nav text-primary hover:opacity-70 transition-opacity flex items-center gap-1 group-hover:underline">
+                            阅读全文 <span class="material-symbols-outlined text-[16px]">arrow_right_alt</span>
+</button>
+</footer>
+</div>
+</article>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-4 bg-background dark:bg-background border-t border-warm-sand dark:border-stone md:hidden">
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold hover:text-primary dark:hover:text-primary-fixed transition-all duration-200 ease-in-out w-16" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+<span class="font-ui-nav text-ui-nav mt-1 text-[10px]">首页</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed hover:text-primary dark:hover:text-primary-fixed transition-all duration-200 ease-in-out w-16" href="#">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+<span class="font-ui-nav text-ui-nav mt-1 text-[10px]">收藏</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed hover:text-primary dark:hover:text-primary-fixed transition-all duration-200 ease-in-out w-16" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-ui-nav text-ui-nav mt-1 text-[10px]">设置</span>
+</a>
+</nav>
+<script>
+        // Drawer toggle logic
+        const drawer = document.getElementById('navigationDrawer');
+        const overlay = document.getElementById('drawerOverlay');
+
+        function toggleDrawer() {
+            drawer.classList.toggle('-translate-x-full');
+            if (drawer.classList.contains('-translate-x-full')) {
+                overlay.classList.remove('opacity-50');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            } else {
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+                overlay.classList.add('opacity-50');
+            }
+        }
+
+        // Add listener to overlay to close drawer
+        overlay.addEventListener('click', () => {
+            drawer.classList.add('-translate-x-full');
+            overlay.classList.remove('opacity-50');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+        });
+
+        // Intercept menu button clicks to use our function
+        document.querySelectorAll('button[aria-label="Menu"]').forEach(btn => {
+            btn.onclick = (e) => {
+                e.preventDefault();
+                toggleDrawer();
+            };
+        });
+    </script>
+</body></html>

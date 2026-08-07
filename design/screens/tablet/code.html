@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>宋词选粹 - 词作展示</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;500;700&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1b1c18",
+                        "on-surface": "#1b1c18",
+                        "on-tertiary-container": "#a19f93",
+                        "inverse-primary": "#aec7f7",
+                        "tertiary-fixed-dim": "#c9c7ba",
+                        "primary": "#002046",
+                        "surface-tint": "#465f88",
+                        "on-surface-variant": "#44474e",
+                        "tertiary-fixed": "#e6e3d5",
+                        "outline": "#74777f",
+                        "on-primary-container": "#87a0cd",
+                        "primary-fixed-dim": "#aec7f7",
+                        "surface-container-low": "#f5f4ed",
+                        "inverse-surface": "#30312c",
+                        "on-secondary-container": "#66645f",
+                        "secondary-container": "#e6e2db",
+                        "on-secondary-fixed": "#1d1c17",
+                        "surface-container": "#efeee7",
+                        "surface-container-high": "#e9e8e1",
+                        "outline-variant": "#c4c6cf",
+                        "background": "#fbf9f2",
+                        "on-tertiary": "#ffffff",
+                        "backdrop": "#3D3D3A",
+                        "surface-container-highest": "#e3e3dc",
+                        "surface-bright": "#fbf9f2",
+                        "on-primary-fixed": "#001b3d",
+                        "surface-variant": "#e3e3dc",
+                        "inverse-on-surface": "#f2f1ea",
+                        "primary-fixed": "#d6e3ff",
+                        "warm-sand": "#E8E6DC",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#48473d",
+                        "tertiary-container": "#37362d",
+                        "on-secondary-fixed-variant": "#484742",
+                        "secondary-fixed-dim": "#cac6bf",
+                        "surface": "#fbf9f2",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#e6e2db",
+                        "stone": "#6B6A64",
+                        "on-tertiary-fixed": "#1c1c14",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#1b365d",
+                        "secondary": "#605e59",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#2e476f",
+                        "tertiary": "#212119",
+                        "near-black": "#141413",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dbdad3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter-stanza": "56px",
+                        "section-gap": "34px",
+                        "margin-divider": "44px",
+                        "margin-title": "12px",
+                        "frame-padding-mobile": "40px 30px 28px",
+                        "margin-kicker": "22px",
+                        "frame-padding-desktop": "72px 64px 44px"
+                    },
+                    "fontFamily": {
+                        "ui-nav": ["Inter"],
+                        "poem-body-mobile": ["Noto Serif"],
+                        "poem-body": ["Noto Serif"],
+                        "author-subheading-mobile": ["Noto Serif"],
+                        "label-metadata-mobile": ["Inter"],
+                        "author-subheading": ["Noto Serif"],
+                        "display-title": ["Noto Serif"],
+                        "label-metadata": ["Inter"],
+                        "display-title-mobile": ["Noto Serif"]
+                    },
+                    "fontSize": {
+                        "ui-nav": ["14px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "poem-body-mobile": ["18px", { "lineHeight": "2.05", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "poem-body": ["20px", { "lineHeight": "2.1", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "author-subheading-mobile": ["14px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "label-metadata-mobile": ["11px", { "lineHeight": "1.4", "letterSpacing": "0.14em", "fontWeight": "400" }],
+                        "author-subheading": ["15px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "display-title": ["46px", { "lineHeight": "1.2", "letterSpacing": "0.06em", "fontWeight": "500" }],
+                        "label-metadata": ["12px", { "lineHeight": "1.4", "letterSpacing": "0.14em", "fontWeight": "400" }],
+                        "display-title-mobile": ["36px", { "lineHeight": "1.2", "letterSpacing": "0.06em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .writing-vertical-rl {
+            writing-mode: vertical-rl;
+        }
+        .text-justify-inter-ideograph {
+            text-align: justify;
+            text-justify: inter-ideograph;
+        }
+        
+        /* Subtle texture for the background to mimic paper slightly */
+        body {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar from JSON -->
+<header class="flex justify-between items-center px-frame-padding-mobile w-full max-w-screen-xl mx-auto border-b border-warm-sand docked full-width top-0 bg-background h-16 shrink-0 z-50">
+<button class="text-primary hover:opacity-80 transition-opacity active:scale-95 duration-150 p-2 -ml-2 rounded-full hover:bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-display-title-mobile text-display-title-mobile text-primary tracking-widest font-bold">宋词选粹</h1>
+<button class="text-primary hover:opacity-80 transition-opacity active:scale-95 duration-150 p-2 -mr-2 rounded-full hover:bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined">search</span>
+</button>
+</header>
+<!-- Main Content Area: Horizontal Layout for Tablet -->
+<main class="flex-grow flex w-full max-w-screen-xl mx-auto overflow-hidden relative">
+<!-- Left Column: Poem Details -->
+<article class="flex-grow p-frame-padding-desktop overflow-y-auto relative border-r border-warm-sand flex flex-col">
+<!-- The Kicker -->
+<div class="h-[5px] bg-primary w-24 mb-margin-kicker"></div>
+<header class="mb-section-gap">
+<h2 class="font-display-title text-display-title text-on-background mb-margin-title">水调歌头·明月几时有</h2>
+<div class="flex items-center gap-4 text-secondary font-author-subheading text-author-subheading">
+<span class="font-medium text-on-surface">苏轼</span>
+<span class="w-1 h-1 rounded-full bg-stone"></span>
+<span>北宋</span>
+<span class="w-1 h-1 rounded-full bg-stone"></span>
+<span class="text-primary hover:underline cursor-pointer">水调歌头</span>
+</div>
+</header>
+<div class="flex-grow flex gap-gutter-stanza">
+<!-- Stanza 1 -->
+<div class="flex-1 font-poem-body text-poem-body text-on-background leading-loose text-justify-inter-ideograph">
+<p class="mb-6">丙辰中秋，欢饮达旦，大醉，作此篇，兼怀子由。</p>
+<p class="mb-4">明月几时有？把酒问青天。</p>
+<p class="mb-4">不知天上宫阙，今夕是何年。</p>
+<p class="mb-4">我欲乘风归去，又恐琼楼玉宇，高处不胜寒。</p>
+<p class="mb-4">起舞弄清影，何似在人间。</p>
+</div>
+<!-- Vertical Divider -->
+<div class="w-px bg-warm-sand my-8"></div>
+<!-- Stanza 2 -->
+<div class="flex-1 font-poem-body text-poem-body text-on-background leading-loose text-justify-inter-ideograph">
+<p class="mb-4">转朱阁，低绮户，照无眠。</p>
+<p class="mb-4">不应有恨，何事长向别时圆？</p>
+<p class="mb-4">人有悲欢离合，月有阴晴圆缺，此事古难全。</p>
+<p class="mb-4">但愿人长久，千里共婵娟。</p>
+</div>
+</div>
+<!-- Context / Notes -->
+<footer class="mt-section-gap pt-margin-divider border-t border-warm-sand">
+<h3 class="font-ui-nav text-ui-nav text-secondary uppercase tracking-widest mb-4">赏析</h3>
+<p class="font-poem-body-mobile text-poem-body-mobile text-on-surface-variant text-justify-inter-ideograph max-w-3xl">
+                    这首词是中秋望月怀人之作，表达了对胞弟苏辙的无限思念。词人运用形象描绘手法，勾勒出一种皓月当空、亲人千里、孤高旷远的境界氛围。全词设景清丽雄阔，以咏月为中心表达了游仙“归去”与直舞“人间”、妥协自然的豪放旷达思想。
+                </p>
+</footer>
+</article>
+<!-- Right Column: Related Works (Sidebar) -->
+<aside class="w-80 shrink-0 bg-surface flex flex-col border-l border-surface-variant overflow-y-auto z-10 transition-transform duration-300 transform translate-x-0">
+<div class="p-6 border-b border-warm-sand flex justify-between items-center sticky top-0 bg-surface z-20">
+<h3 class="font-ui-nav text-ui-nav text-on-surface font-medium tracking-widest">关联作品</h3>
+<button aria-label="关闭侧边栏" class="text-secondary hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-variant" onclick="document.querySelector('aside').classList.toggle('translate-x-full'); document.querySelector('aside').classList.toggle('hidden');">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<div class="p-6 flex flex-col gap-6">
+<!-- Group: Same Author -->
+<section>
+<h4 class="font-label-metadata text-label-metadata text-secondary mb-3 uppercase tracking-widest">同作者 (苏轼)</h4>
+<div class="flex flex-col gap-3">
+<a class="group block p-4 border border-warm-sand rounded hover:border-primary transition-colors bg-surface-container-lowest" href="#">
+<h5 class="font-author-subheading text-author-subheading text-on-background group-hover:text-primary mb-1">念奴娇·赤壁怀古</h5>
+<p class="font-label-metadata text-label-metadata text-on-surface-variant line-clamp-1">大江东去，浪淘尽，千古风流人物...</p>
+</a>
+<a class="group block p-4 border border-warm-sand rounded hover:border-primary transition-colors bg-surface-container-lowest" href="#">
+<h5 class="font-author-subheading text-author-subheading text-on-background group-hover:text-primary mb-1">江城子·乙卯正月二十日夜记梦</h5>
+<p class="font-label-metadata text-label-metadata text-on-surface-variant line-clamp-1">十年生死两茫茫，不思量，自难忘...</p>
+</a>
+<a class="group block p-4 border border-warm-sand rounded hover:border-primary transition-colors bg-surface-container-lowest" href="#">
+<h5 class="font-author-subheading text-author-subheading text-on-background group-hover:text-primary mb-1">定风波·莫听穿林打叶声</h5>
+<p class="font-label-metadata text-label-metadata text-on-surface-variant line-clamp-1">莫听穿林打叶声，何妨吟啸且徐行...</p>
+</a>
+</div>
+</section>
+<!-- Group: Same Melody -->
+<section class="mt-4">
+<h4 class="font-label-metadata text-label-metadata text-secondary mb-3 uppercase tracking-widest">同词牌 (水调歌头)</h4>
+<div class="flex flex-col gap-3">
+<a class="group block p-4 border border-warm-sand rounded hover:border-primary transition-colors bg-surface-container-lowest" href="#">
+<div class="flex justify-between items-baseline mb-1">
+<h5 class="font-author-subheading text-author-subheading text-on-background group-hover:text-primary">水调歌头·隐括杜牧之齐山诗</h5>
+</div>
+<p class="font-label-metadata text-label-metadata text-secondary mb-2">朱熹 · 南宋</p>
+<p class="font-label-metadata text-label-metadata text-on-surface-variant line-clamp-1">江水浸云影，鸿雁欲南飞...</p>
+</a>
+<a class="group block p-4 border border-warm-sand rounded hover:border-primary transition-colors bg-surface-container-lowest" href="#">
+<div class="flex justify-between items-baseline mb-1">
+<h5 class="font-author-subheading text-author-subheading text-on-background group-hover:text-primary">水调歌头·游览</h5>
+</div>
+<p class="font-label-metadata text-label-metadata text-secondary mb-2">黄庭坚 · 北宋</p>
+<p class="font-label-metadata text-label-metadata text-on-surface-variant line-clamp-1">瑶草一何碧，春入武陵溪...</p>
+</a>
+</div>
+</section>
+</div>
+</aside>
+<!-- Overlay for mobile/tablet when sidebar is active (hidden by default) -->
+<div class="hidden absolute inset-0 bg-backdrop/20 backdrop-blur-sm z-0"></div>
+</main>
+<!-- BottomNavBar from JSON (Hidden on md and up as requested by platform rules, but included for completeness) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-4 bg-background border-t border-warm-sand">
+<!-- 首页 (Active based on intent: browsing/reading) -->
+<a class="flex flex-col items-center justify-center text-primary font-bold transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+<span class="font-ui-nav text-ui-nav mt-1">首页</span>
+</a>
+<!-- 收藏 -->
+<a class="flex flex-col items-center justify-center text-secondary hover:text-primary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">bookmark</span>
+<span class="font-ui-nav text-ui-nav mt-1">收藏</span>
+</a>
+<!-- 设置 -->
+<a class="flex flex-col items-center justify-center text-secondary hover:text-primary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-ui-nav text-ui-nav mt-1">设置</span>
+</a>
+</nav>
+<script>
+        // Simple script to handle sidebar toggle on smaller screens if needed
+        // For this desktop/tablet layout, it stays visible on the right.
+    </script>
+</body></html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html><html class="light" lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>我的收藏 - 宋词选粹</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#465f88",
+                    "primary-container": "#1b365d",
+                    "on-secondary-container": "#66645f",
+                    "surface-bright": "#fbf9f2",
+                    "on-secondary-fixed": "#1d1c17",
+                    "on-tertiary-container": "#a19f93",
+                    "secondary-container": "#e6e2db",
+                    "on-secondary-fixed-variant": "#484742",
+                    "primary-fixed-dim": "#aec7f7",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#cac6bf",
+                    "on-error-container": "#93000a",
+                    "inverse-surface": "#30312c",
+                    "on-tertiary-fixed-variant": "#48473d",
+                    "tertiary-fixed-dim": "#c9c7ba",
+                    "surface-container-highest": "#e3e3dc",
+                    "stone": "#6B6A64",
+                    "on-tertiary": "#ffffff",
+                    "backdrop": "#3D3D3A",
+                    "outline-variant": "#c4c6cf",
+                    "on-primary-container": "#87a0cd",
+                    "error-container": "#ffdad6",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#37362d",
+                    "secondary": "#605e59",
+                    "surface": "#fbf9f2",
+                    "primary": "#002046",
+                    "on-primary-fixed": "#001b3d",
+                    "outline": "#74777f",
+                    "on-error": "#ffffff",
+                    "surface-container-low": "#f5f4ed",
+                    "warm-sand": "#E8E6DC",
+                    "on-primary-fixed-variant": "#2e476f",
+                    "on-surface-variant": "#44474e",
+                    "surface-variant": "#e3e3dc",
+                    "near-black": "#141413",
+                    "tertiary-fixed": "#e6e3d5",
+                    "secondary-fixed": "#e6e2db",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f2f1ea",
+                    "on-tertiary-fixed": "#1c1c14",
+                    "inverse-primary": "#aec7f7",
+                    "surface-container": "#efeee7",
+                    "on-background": "#1b1c18",
+                    "surface-dim": "#dbdad3",
+                    "tertiary": "#212119",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface": "#1b1c18",
+                    "background": "#fbf9f2",
+                    "surface-container-high": "#e9e8e1",
+                    "primary-fixed": "#d6e3ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter-stanza": "56px",
+                    "frame-padding-mobile": "40px 30px 28px",
+                    "section-gap": "34px",
+                    "margin-divider": "44px",
+                    "frame-padding-desktop": "72px 64px 44px",
+                    "margin-kicker": "22px",
+                    "margin-title": "12px"
+            },
+            "fontFamily": {
+                    "label-metadata": ["Inter", "sans-serif"],
+                    "display-title": ["Noto Serif SC", "serif"],
+                    "poem-body-mobile": ["Noto Serif SC", "serif"],
+                    "ui-nav": ["Inter", "sans-serif"],
+                    "author-subheading-mobile": ["Noto Serif SC", "serif"],
+                    "display-title-mobile": ["Noto Serif SC", "serif"],
+                    "label-metadata-mobile": ["Inter", "sans-serif"],
+                    "poem-body": ["Noto Serif SC", "serif"],
+                    "author-subheading": ["Noto Serif SC", "serif"]
+            },
+            "fontSize": {
+                    "label-metadata": ["12px", { "lineHeight": "1.4", "letterSpacing": "0.14em", "fontWeight": "400" }],
+                    "display-title": ["46px", { "lineHeight": "1.2", "letterSpacing": "0.06em", "fontWeight": "500" }],
+                    "poem-body-mobile": ["18px", { "lineHeight": "2.05", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                    "ui-nav": ["14px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                    "author-subheading-mobile": ["14px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                    "display-title-mobile": ["36px", { "lineHeight": "1.2", "letterSpacing": "0.06em", "fontWeight": "500" }],
+                    "label-metadata-mobile": ["11px", { "lineHeight": "1.4", "letterSpacing": "0.14em", "fontWeight": "400" }],
+                    "poem-body": ["20px", { "lineHeight": "2.1", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                    "author-subheading": ["15px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { background-color: #fbf9f2; }
+    </style>
+</head>
+<body class="text-on-background min-h-screen pb-24 md:pb-0 pt-20 md:pt-24 flex flex-col items-center bg-surface-container-low">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 border-b border-warm-sand flex justify-between items-center px-6 md:px-frame-padding-desktop h-16 md:h-20 max-w-screen-xl mx-auto left-0 right-0 bg-surface-container-low">
+<button class="text-primary hover:opacity-80 transition-opacity active:scale-95 duration-150 p-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="font-display-title-mobile text-display-title-mobile md:font-display-title md:text-display-title text-primary font-bold">我的收藏</h1>
+<button class="text-primary hover:opacity-80 transition-opacity active:scale-95 duration-150 p-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">search</span>
+</button>
+</header>
+<!-- Main Content Frame -->
+<main class="w-full max-w-3xl px-frame-padding-mobile md:px-frame-padding-desktop flex-grow flex flex-col gap-section-gap">
+<!-- Kicker -->
+<div class="h-1 bg-primary w-12 mb-margin-kicker mx-auto md:mx-0"></div>
+<section class="flex flex-col gap-6">
+<!-- Favorite Item 1 -->
+<article class="group border border-warm-sand p-6 bg-surface-container-lowest transition-all hover:border-stone cursor-pointer relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h2 class="font-display-title-mobile text-display-title-mobile text-primary mb-1">水调歌头·明月几时有</h2>
+<p class="font-author-subheading-mobile text-author-subheading-mobile text-secondary">苏轼 · 北宋</p>
+</div>
+<button class="text-error p-2 active:scale-95 transition-transform z-10 relative">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<p class="font-poem-body-mobile text-poem-body-mobile text-on-surface line-clamp-2">
+                    明月几时有？把酒问青天。不知天上宫阙，今夕是何年。我欲乘风归去，又恐琼楼玉宇，高处不胜寒。起舞弄清影，何似在人间。
+                </p>
+<!-- Subtle Decorative Divider -->
+<div class="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-warm-sand to-transparent"></div>
+</article>
+<!-- Favorite Item 2 -->
+<article class="group border border-warm-sand p-6 bg-surface-container-lowest transition-all hover:border-stone cursor-pointer relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h2 class="font-display-title-mobile text-display-title-mobile text-primary mb-1">声声慢·寻寻觅觅</h2>
+<p class="font-author-subheading-mobile text-author-subheading-mobile text-secondary">李清照 · 两宋之交</p>
+</div>
+<button class="text-error p-2 active:scale-95 transition-transform z-10 relative">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<p class="font-poem-body-mobile text-poem-body-mobile text-on-surface line-clamp-2">
+                    寻寻觅觅，冷冷清清，凄凄惨惨戚戚。乍暖还寒时候，最难将息。三杯两盏淡酒，怎敌他、晚来风急！雁过也，正伤心，却是旧时相识。
+                </p>
+<div class="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-warm-sand to-transparent"></div>
+</article>
+<!-- Favorite Item 3 -->
+<article class="group border border-warm-sand p-6 bg-surface-container-lowest transition-all hover:border-stone cursor-pointer relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h2 class="font-display-title-mobile text-display-title-mobile text-primary mb-1">念奴娇·赤壁怀古</h2>
+<p class="font-author-subheading-mobile text-author-subheading-mobile text-secondary">苏轼 · 北宋</p>
+</div>
+<button class="text-error p-2 active:scale-95 transition-transform z-10 relative">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<p class="font-poem-body-mobile text-poem-body-mobile text-on-surface line-clamp-2">
+                    大江东去，浪淘尽，千古风流人物。故垒西边，人道是，三国周郎赤壁。乱石穿空，惊涛拍岸，卷起千堆雪。江山如画，一时多少豪杰。
+                </p>
+<div class="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-warm-sand to-transparent"></div>
+</article>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-4 border-t border-warm-sand md:hidden bg-surface-container-low">
+<button class="flex flex-col items-center justify-center text-secondary hover:text-primary transition-all duration-200 ease-in-out w-16">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">auto_stories</span>
+<span class="font-ui-nav text-ui-nav">首页</span>
+</button>
+<!-- Active Tab: 收藏 -->
+<button class="flex flex-col items-center justify-center text-primary font-bold transition-all duration-200 ease-in-out w-16">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+<span class="font-ui-nav text-ui-nav">收藏</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary hover:text-primary transition-all duration-200 ease-in-out w-16">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="font-ui-nav text-ui-nav">设置</span>
+</button>
+</nav>
+<!-- Desktop Navigation Cluster (Visible only on md+) -->
+<nav class="hidden md:flex fixed top-0 right-0 h-20 items-center pr-8 gap-8 z-50 text-secondary">
+<button class="hover:text-primary transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">auto_stories</span>
+<span class="font-ui-nav text-ui-nav">首页</span>
+</button>
+<button class="text-primary font-bold flex items-center gap-2 border-b-2 border-primary pb-1 mt-1">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+<span class="font-ui-nav text-ui-nav">收藏</span>
+</button>
+<button class="hover:text-primary transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="font-ui-nav text-ui-nav">设置</span>
+</button>
+</nav>
+
+
+</body></html>

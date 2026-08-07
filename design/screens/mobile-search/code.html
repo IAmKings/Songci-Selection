@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>搜索结果 - 宋词选粹</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1b1c18",
+                        "on-surface": "#1b1c18",
+                        "on-tertiary-container": "#a19f93",
+                        "inverse-primary": "#aec7f7",
+                        "tertiary-fixed-dim": "#c9c7ba",
+                        "primary": "#002046",
+                        "surface-tint": "#465f88",
+                        "on-surface-variant": "#44474e",
+                        "tertiary-fixed": "#e6e3d5",
+                        "outline": "#74777f",
+                        "on-primary-container": "#87a0cd",
+                        "primary-fixed-dim": "#aec7f7",
+                        "surface-container-low": "#f5f4ed",
+                        "inverse-surface": "#30312c",
+                        "on-secondary-container": "#66645f",
+                        "secondary-container": "#e6e2db",
+                        "on-secondary-fixed": "#1d1c17",
+                        "surface-container": "#efeee7",
+                        "surface-container-high": "#e9e8e1",
+                        "outline-variant": "#c4c6cf",
+                        "background": "#fbf9f2",
+                        "on-tertiary": "#ffffff",
+                        "backdrop": "#3D3D3A",
+                        "surface-container-highest": "#e3e3dc",
+                        "surface-bright": "#fbf9f2",
+                        "on-primary-fixed": "#001b3d",
+                        "surface-variant": "#e3e3dc",
+                        "inverse-on-surface": "#f2f1ea",
+                        "primary-fixed": "#d6e3ff",
+                        "warm-sand": "#E8E6DC",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#48473d",
+                        "tertiary-container": "#37362d",
+                        "on-secondary-fixed-variant": "#484742",
+                        "secondary-fixed-dim": "#cac6bf",
+                        "surface": "#fbf9f2",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#e6e2db",
+                        "stone": "#6B6A64",
+                        "on-tertiary-fixed": "#1c1c14",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#1b365d",
+                        "secondary": "#605e59",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#2e476f",
+                        "tertiary": "#212119",
+                        "near-black": "#141413",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dbdad3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter-stanza": "56px",
+                        "section-gap": "34px",
+                        "margin-divider": "44px",
+                        "margin-title": "12px",
+                        "frame-padding-mobile": "40px 30px 28px",
+                        "margin-kicker": "22px",
+                        "frame-padding-desktop": "72px 64px 44px"
+                    },
+                    "fontFamily": {
+                        "ui-nav": ["inter"],
+                        "poem-body-mobile": ["notoSerif"],
+                        "poem-body": ["notoSerif"],
+                        "author-subheading-mobile": ["notoSerif"],
+                        "label-metadata-mobile": ["inter"],
+                        "author-subheading": ["notoSerif"],
+                        "display-title": ["notoSerif"],
+                        "label-metadata": ["inter"],
+                        "display-title-mobile": ["notoSerif"]
+                    },
+                    "fontSize": {
+                        "ui-nav": ["14px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "poem-body-mobile": ["18px", { "lineHeight": "2.05", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "poem-body": ["20px", { "lineHeight": "2.1", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "author-subheading-mobile": ["14px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "label-metadata-mobile": ["11px", { "lineHeight": "1.4", "letterSpacing": "0.14em", "fontWeight": "400" }],
+                        "author-subheading": ["15px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "display-title": ["46px", { "lineHeight": "1.2", "letterSpacing": "0.06em", "fontWeight": "500" }],
+                        "label-metadata": ["12px", { "lineHeight": "1.4", "letterSpacing": "0.14em", "fontWeight": "400" }],
+                        "display-title-mobile": ["36px", { "lineHeight": "1.2", "letterSpacing": "0.06em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Noto+Serif+SC:wght@400;500;700&display=swap');
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .kami-divider {
+            border-bottom: 1px solid theme('colors.warm-sand');
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen font-poem-body-mobile pt-16 pb-20">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-40 bg-background dark:bg-background border-b border-warm-sand dark:border-stone flex justify-between items-center px-frame-padding-mobile max-w-screen-xl mx-auto h-16">
+<button class="text-primary dark:text-primary-fixed hover:opacity-80 transition-opacity active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-display-title-mobile text-display-title-mobile text-primary dark:text-primary-fixed">宋词选粹</h1>
+<button class="text-primary dark:text-primary-fixed hover:opacity-80 transition-opacity active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="px-6 py-6 md:px-frame-padding-desktop">
+<!-- Kicker -->
+<div class="h-[4px] md:h-[5px] w-12 bg-primary mb-margin-kicker"></div>
+<!-- Search Header -->
+<div class="mb-section-gap">
+<h2 class="font-author-subheading-mobile text-author-subheading-mobile text-secondary mb-2">搜索结果</h2>
+<div class="flex items-end justify-between border-b border-stone pb-2 focus-within:border-primary transition-colors">
+<input class="bg-transparent border-none outline-none font-display-title-mobile text-display-title-mobile text-on-background w-full p-0 focus:ring-0" placeholder="搜索作者、词牌、诗句..." type="text" value="戴复古"/>
+<button class="text-secondary hover:text-primary transition-colors mb-2">
+<span class="material-symbols-outlined text-2xl">close</span>
+</button>
+</div>
+<p class="font-label-metadata-mobile text-label-metadata-mobile text-secondary mt-2 tracking-wider">找到 12 首关于“戴复古”的词作</p>
+</div>
+<!-- Filters (Kami Style Tags) -->
+<div class="flex flex-wrap gap-3 mb-8">
+<button class="px-4 py-1.5 border border-primary text-primary font-ui-nav text-ui-nav rounded-full hover:bg-primary hover:text-on-primary transition-colors">
+                全部
+            </button>
+<button class="px-4 py-1.5 border border-stone text-secondary font-ui-nav text-ui-nav rounded-full hover:border-primary hover:text-primary transition-colors">
+                作者：戴复古
+            </button>
+<button class="px-4 py-1.5 border border-stone text-secondary font-ui-nav text-ui-nav rounded-full hover:border-primary hover:text-primary transition-colors flex items-center gap-1">
+                词牌 <span class="material-symbols-outlined text-[14px]">arrow_drop_down</span>
+</button>
+<button class="px-4 py-1.5 border border-stone text-secondary font-ui-nav text-ui-nav rounded-full hover:border-primary hover:text-primary transition-colors flex items-center gap-1">
+                主题 <span class="material-symbols-outlined text-[14px]">arrow_drop_down</span>
+</button>
+</div>
+<!-- Results List -->
+<div class="flex flex-col gap-0">
+<!-- Result Item 1 -->
+<article class="kami-divider py-6 hover:bg-surface-container-low transition-colors px-2 -mx-2">
+<div class="flex justify-between items-start mb-3">
+<h3 class="font-display-title-mobile text-[24px] text-primary leading-tight">贺新郎·寄丰真州</h3>
+<span class="font-label-metadata-mobile text-label-metadata-mobile text-secondary border border-warm-sand px-2 py-0.5 rounded-sm">南宋</span>
+</div>
+<div class="font-author-subheading-mobile text-author-subheading-mobile text-secondary mb-4">
+<span class="text-primary font-medium">戴复古</span> · 贺新郎
+                </div>
+<p class="font-poem-body-mobile text-poem-body-mobile text-on-surface-variant line-clamp-2">
+                    万事机微剖。把长江、分襟一寸，为君开寿。天地苍茫谁作健，且试尊前入手。
+                </p>
+</article>
+<!-- Result Item 2 -->
+<article class="kami-divider py-6 hover:bg-surface-container-low transition-colors px-2 -mx-2">
+<div class="flex justify-between items-start mb-3">
+<h3 class="font-display-title-mobile text-[24px] text-primary leading-tight">柳梢青·芦叶满汀洲</h3>
+<span class="font-label-metadata-mobile text-label-metadata-mobile text-secondary border border-warm-sand px-2 py-0.5 rounded-sm">南宋</span>
+</div>
+<div class="font-author-subheading-mobile text-author-subheading-mobile text-secondary mb-4">
+<span class="text-primary font-medium">戴复古</span> · 柳梢青
+                </div>
+<p class="font-poem-body-mobile text-poem-body-mobile text-on-surface-variant line-clamp-2">
+                    芦叶满汀洲，寒沙带浅流。二十年重过南楼。柳下系船犹未稳，能几日，又中秋。
+                </p>
+</article>
+<!-- Result Item 3 -->
+<article class="kami-divider py-6 hover:bg-surface-container-low transition-colors px-2 -mx-2">
+<div class="flex justify-between items-start mb-3">
+<h3 class="font-display-title-mobile text-[24px] text-primary leading-tight">水调歌头·题李季允侍郎出处图</h3>
+<span class="font-label-metadata-mobile text-label-metadata-mobile text-secondary border border-warm-sand px-2 py-0.5 rounded-sm">南宋</span>
+</div>
+<div class="font-author-subheading-mobile text-author-subheading-mobile text-secondary mb-4">
+<span class="text-primary font-medium">戴复古</span> · 水调歌头
+                </div>
+<p class="font-poem-body-mobile text-poem-body-mobile text-on-surface-variant line-clamp-2">
+                    袖手看时辈，功业在兹时。天风吹下，满城都是好诗词。
+                </p>
+</article>
+</div>
+<!-- Load More -->
+<div class="mt-8 flex justify-center">
+<button class="font-ui-nav text-ui-nav text-secondary hover:text-primary transition-colors flex items-center gap-2">
+                加载更多 <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar (Hidden on desktop since this is a search result page, we suppress global nav to keep user focused on results, but following JSON requirements we include it if needed. However, per "Automatic Suppression" rule: "Task-Focused: Any sub-page featuring a 'Close' or 'Back' action that implies a temporary departure from the main navigation flow." - we should suppress it. But to be safe with the JSON, we will include it but hidden on desktop.) -->
+<!-- Suppressed Nav Shell per Rule: Linear/Transactional/Task-Focused -->
+</body></html>

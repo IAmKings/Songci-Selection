@@ -1,0 +1,211 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>设置 - 宋词选粹</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Google Fonts: Noto Serif SC (Display) & Inter (UI) -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Noto+Serif+SC:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#465f88",
+                    "primary-container": "#1b365d",
+                    "on-secondary-container": "#66645f",
+                    "surface-bright": "#fbf9f2",
+                    "on-secondary-fixed": "#1d1c17",
+                    "on-tertiary-container": "#a19f93",
+                    "secondary-container": "#e6e2db",
+                    "on-secondary-fixed-variant": "#484742",
+                    "primary-fixed-dim": "#aec7f7",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#cac6bf",
+                    "on-error-container": "#93000a",
+                    "inverse-surface": "#30312c",
+                    "on-tertiary-fixed-variant": "#48473d",
+                    "tertiary-fixed-dim": "#c9c7ba",
+                    "surface-container-highest": "#e3e3dc",
+                    "stone": "#6B6A64",
+                    "on-tertiary": "#ffffff",
+                    "backdrop": "#3D3D3A",
+                    "outline-variant": "#c4c6cf",
+                    "on-primary-container": "#87a0cd",
+                    "error-container": "#ffdad6",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#37362d",
+                    "secondary": "#605e59",
+                    "surface": "#fbf9f2",
+                    "primary": "#002046",
+                    "on-primary-fixed": "#001b3d",
+                    "outline": "#74777f",
+                    "on-error": "#ffffff",
+                    "surface-container-low": "#f5f4ed",
+                    "warm-sand": "#E8E6DC",
+                    "on-primary-fixed-variant": "#2e476f",
+                    "on-surface-variant": "#44474e",
+                    "surface-variant": "#e3e3dc",
+                    "near-black": "#141413",
+                    "tertiary-fixed": "#e6e3d5",
+                    "secondary-fixed": "#e6e2db",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f2f1ea",
+                    "on-tertiary-fixed": "#1c1c14",
+                    "inverse-primary": "#aec7f7",
+                    "surface-container": "#efeee7",
+                    "on-background": "#1b1c18",
+                    "surface-dim": "#dbdad3",
+                    "tertiary": "#212119",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface": "#1b1c18",
+                    "background": "#fbf9f2",
+                    "surface-container-high": "#e9e8e1",
+                    "primary-fixed": "#d6e3ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter-stanza": "56px",
+                    "frame-padding-mobile": "40px 30px 28px",
+                    "section-gap": "34px",
+                    "margin-divider": "44px",
+                    "frame-padding-desktop": "72px 64px 44px",
+                    "margin-kicker": "22px",
+                    "margin-title": "12px"
+            },
+            "fontFamily": {
+                    "label-metadata": ["Inter", "sans-serif"],
+                    "display-title": ["Noto Serif SC", "serif"],
+                    "poem-body-mobile": ["Noto Serif SC", "serif"],
+                    "ui-nav": ["Inter", "sans-serif"],
+                    "author-subheading-mobile": ["Noto Serif SC", "serif"],
+                    "display-title-mobile": ["Noto Serif SC", "serif"],
+                    "label-metadata-mobile": ["Inter", "sans-serif"],
+                    "poem-body": ["Noto Serif SC", "serif"],
+                    "author-subheading": ["Noto Serif SC", "serif"]
+            },
+            "fontSize": {
+                    "label-metadata": ["12px", { "lineHeight": "1.4", "letterSpacing": "0.14em", "fontWeight": "400" }],
+                    "display-title": ["46px", { "lineHeight": "1.2", "letterSpacing": "0.06em", "fontWeight": "500" }],
+                    "poem-body-mobile": ["18px", { "lineHeight": "2.05", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                    "ui-nav": ["14px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                    "author-subheading-mobile": ["14px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                    "display-title-mobile": ["36px", { "lineHeight": "1.2", "letterSpacing": "0.06em", "fontWeight": "500" }],
+                    "label-metadata-mobile": ["11px", { "lineHeight": "1.4", "letterSpacing": "0.14em", "fontWeight": "400" }],
+                    "poem-body": ["20px", { "lineHeight": "2.1", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                    "author-subheading": ["15px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        /* Base styles to enforce the traditional aesthetic */
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center bg-surface-container-low">
+<!-- JSON TopAppBar -->
+<header class="w-full max-w-screen-xl mx-auto flex justify-between items-center py-4 px-[30px] md:px-[64px] border-b border-warm-sand dark:border-stone dark:bg-background sticky top-0 z-40 flat no shadows bg-surface-container-low">
+<button aria-label="Menu" class="text-secondary dark:text-secondary-fixed hover:opacity-80 transition-opacity active:scale-95 duration-150 flex items-center justify-center p-2 -ml-2">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-display-title-mobile text-display-title-mobile text-primary dark:text-primary-fixed">
+            宋词选粹
+        </h1>
+<button aria-label="Search" class="text-secondary dark:text-secondary-fixed hover:opacity-80 transition-opacity active:scale-95 duration-150 flex items-center justify-center p-2 -mr-2">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="w-full max-w-2xl mx-auto flex-1 px-[30px] md:px-[64px] py-[40px] md:py-[72px] pb-[100px]">
+<!-- Page Header with Kicker -->
+<div class="mb-section-gap">
+<!-- The Kicker -->
+<div class="h-[4px] md:h-[5px] w-12 bg-primary mb-margin-title"></div>
+<h2 class="font-display-title-mobile text-display-title-mobile text-primary">设置</h2>
+</div>
+<!-- Settings List -->
+<nav aria-label="Settings Menu" class="flex flex-col">
+<!-- Account -->
+<a class="group flex items-center justify-between py-5 border-b border-warm-sand hover:bg-surface-container-low transition-colors duration-200" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-stone group-hover:text-primary transition-colors">person</span>
+<span class="font-poem-body-mobile text-poem-body-mobile text-on-surface">账号设置</span>
+</div>
+<span class="material-symbols-outlined text-secondary-fixed-dim">chevron_right</span>
+</a>
+<!-- Reading Preferences -->
+<a class="group flex items-center justify-between py-5 border-b border-warm-sand hover:bg-surface-container-low transition-colors duration-200" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-stone group-hover:text-primary transition-colors">menu_book</span>
+<span class="font-poem-body-mobile text-poem-body-mobile text-on-surface">阅读设置</span>
+</div>
+<span class="material-symbols-outlined text-secondary-fixed-dim">chevron_right</span>
+</a>
+<!-- Notifications -->
+<a class="group flex items-center justify-between py-5 border-b border-warm-sand hover:bg-surface-container-low transition-colors duration-200" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-stone group-hover:text-primary transition-colors">notifications</span>
+<span class="font-poem-body-mobile text-poem-body-mobile text-on-surface">通知设置</span>
+</div>
+<span class="material-symbols-outlined text-secondary-fixed-dim">chevron_right</span>
+</a>
+<!-- About -->
+<a class="group flex items-center justify-between py-5 border-b border-warm-sand hover:bg-surface-container-low transition-colors duration-200" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-stone group-hover:text-primary transition-colors">info</span>
+<span class="font-poem-body-mobile text-poem-body-mobile text-on-surface">关于宋词选粹</span>
+</div>
+<span class="material-symbols-outlined text-secondary-fixed-dim">chevron_right</span>
+</a>
+</nav>
+<!-- Minimalist Logout Button -->
+<div class="mt-margin-divider flex justify-center">
+<button class="font-ui-nav text-ui-nav text-error px-6 py-3 border border-error/20 rounded-DEFAULT hover:bg-error-container transition-colors duration-200">
+                退出登录
+            </button>
+</div>
+</main>
+<!-- JSON BottomNavBar (Mobile Only based on guidelines) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-4 dark:bg-background border-t border-warm-sand dark:border-stone flat no shadows pb-safe bg-surface-container-low">
+<!-- Inactive Tab 1 -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed hover:text-primary dark:hover:text-primary-fixed transition-all duration-200 ease-in-out flex-1 py-2" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="auto_stories">auto_stories</span>
+<span class="font-ui-nav text-ui-nav">首页</span>
+</a>
+<!-- Inactive Tab 2 -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed hover:text-primary dark:hover:text-primary-fixed transition-all duration-200 ease-in-out flex-1 py-2" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="bookmark">bookmark</span>
+<span class="font-ui-nav text-ui-nav">收藏</span>
+</a>
+<!-- Active Tab 3 (Settings) -->
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold hover:text-primary dark:hover:text-primary-fixed transition-all duration-200 ease-in-out flex-1 py-2 relative" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="settings" data-weight="fill" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-ui-nav text-ui-nav">设置</span>
+<!-- Active indicator dot (optional elegance) -->
+<span class="absolute top-1 right-1/4 w-1.5 h-1.5 bg-primary rounded-full"></span>
+</a>
+</nav>
+
+
+</body></html>

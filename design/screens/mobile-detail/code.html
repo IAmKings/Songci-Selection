@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>词作详情 - 宋词选粹</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1b1c18",
+                        "on-surface": "#1b1c18",
+                        "on-tertiary-container": "#a19f93",
+                        "inverse-primary": "#aec7f7",
+                        "tertiary-fixed-dim": "#c9c7ba",
+                        "primary": "#002046",
+                        "surface-tint": "#465f88",
+                        "on-surface-variant": "#44474e",
+                        "tertiary-fixed": "#e6e3d5",
+                        "outline": "#74777f",
+                        "on-primary-container": "#87a0cd",
+                        "primary-fixed-dim": "#aec7f7",
+                        "surface-container-low": "#f5f4ed",
+                        "inverse-surface": "#30312c",
+                        "on-secondary-container": "#66645f",
+                        "secondary-container": "#e6e2db",
+                        "on-secondary-fixed": "#1d1c17",
+                        "surface-container": "#efeee7",
+                        "surface-container-high": "#e9e8e1",
+                        "outline-variant": "#c4c6cf",
+                        "background": "#fbf9f2",
+                        "on-tertiary": "#ffffff",
+                        "backdrop": "#3D3D3A",
+                        "surface-container-highest": "#e3e3dc",
+                        "surface-bright": "#fbf9f2",
+                        "on-primary-fixed": "#001b3d",
+                        "surface-variant": "#e3e3dc",
+                        "inverse-on-surface": "#f2f1ea",
+                        "primary-fixed": "#d6e3ff",
+                        "warm-sand": "#E8E6DC",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#48473d",
+                        "tertiary-container": "#37362d",
+                        "on-secondary-fixed-variant": "#484742",
+                        "secondary-fixed-dim": "#cac6bf",
+                        "surface": "#fbf9f2",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#e6e2db",
+                        "stone": "#6B6A64",
+                        "on-tertiary-fixed": "#1c1c14",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#1b365d",
+                        "secondary": "#605e59",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#2e476f",
+                        "tertiary": "#212119",
+                        "near-black": "#141413",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dbdad3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter-stanza": "56px",
+                        "section-gap": "34px",
+                        "margin-divider": "44px",
+                        "margin-title": "12px",
+                        "frame-padding-mobile": "40px 30px 28px",
+                        "margin-kicker": "22px",
+                        "frame-padding-desktop": "72px 64px 44px"
+                    },
+                    "fontFamily": {
+                        "ui-nav": [
+                            "inter"
+                        ],
+                        "poem-body-mobile": [
+                            "notoSerif", "serif"
+                        ],
+                        "poem-body": [
+                            "notoSerif", "serif"
+                        ],
+                        "author-subheading-mobile": [
+                            "notoSerif", "serif"
+                        ],
+                        "label-metadata-mobile": [
+                            "inter", "sans-serif"
+                        ],
+                        "author-subheading": [
+                            "notoSerif", "serif"
+                        ],
+                        "display-title": [
+                            "notoSerif", "serif"
+                        ],
+                        "label-metadata": [
+                            "inter", "sans-serif"
+                        ],
+                        "display-title-mobile": [
+                            "notoSerif", "serif"
+                        ]
+                    },
+                    "fontSize": {
+                        "ui-nav": [
+                            "14px",
+                            {
+                                "lineHeight": "1.0",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "500"
+                            }
+                        ],
+                        "poem-body-mobile": [
+                            "18px",
+                            {
+                                "lineHeight": "2.05",
+                                "letterSpacing": "0.02em",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "poem-body": [
+                            "20px",
+                            {
+                                "lineHeight": "2.1",
+                                "letterSpacing": "0.02em",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "author-subheading-mobile": [
+                            "14px",
+                            {
+                                "lineHeight": "1.5",
+                                "letterSpacing": "0.02em",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "label-metadata-mobile": [
+                            "11px",
+                            {
+                                "lineHeight": "1.4",
+                                "letterSpacing": "0.14em",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "author-subheading": [
+                            "15px",
+                            {
+                                "lineHeight": "1.5",
+                                "letterSpacing": "0.02em",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "display-title": [
+                            "46px",
+                            {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.06em",
+                                "fontWeight": "500"
+                            }
+                        ],
+                        "label-metadata": [
+                            "12px",
+                            {
+                                "lineHeight": "1.4",
+                                "letterSpacing": "0.14em",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "display-title-mobile": [
+                            "36px",
+                            {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.06em",
+                                "fontWeight": "500"
+                            }
+                        ]
+                    }
+                },
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Noto Serif SC', serif;
+        }
+        .writing-vertical-rl {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-24 md:pb-0 font-poem-body-mobile">
+<!-- TopAppBar -->
+<header class="bg-background text-primary font-display-title-mobile text-display-title-mobile docked full-width top-0 border-b border-warm-sand flat no shadows flex justify-between items-center px-frame-padding-mobile w-full max-w-screen-xl mx-auto h-16 sticky z-40">
+<button class="p-2 -ml-2 text-primary hover:opacity-80 transition-opacity active:scale-95 duration-150">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<span class="font-bold tracking-widest">宋词选粹</span>
+<button class="p-2 -mr-2 text-primary hover:opacity-80 transition-opacity active:scale-95 duration-150 group">
+<span class="material-symbols-outlined group-hover:text-error transition-colors" data-icon="favorite_border">favorite_border</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="max-w-3xl mx-auto px-6 py-12">
+<!-- The Kicker -->
+<div class="h-[4px] w-12 bg-primary mb-margin-kicker"></div>
+<!-- Header -->
+<div class="mb-12">
+<h1 class="font-display-title-mobile text-display-title-mobile text-primary mb-margin-title">
+                水调歌头·明月几时有
+            </h1>
+<div class="flex items-center gap-4 font-author-subheading-mobile text-author-subheading-mobile text-secondary">
+<a class="hover:text-primary transition-colors underline decoration-1 underline-offset-4" href="#">苏轼</a>
+<span class="text-warm-sand">|</span>
+<a class="hover:text-primary transition-colors underline decoration-1 underline-offset-4" href="#">水调歌头</a>
+<span class="text-warm-sand">|</span>
+<span>北宋</span>
+</div>
+</div>
+<!-- Divider -->
+<hr class="border-t border-warm-sand mb-8"/>
+<!-- Poem Body -->
+<div class="font-poem-body-mobile text-poem-body-mobile text-on-background space-y-6 leading-loose text-justify">
+<p class="indent-8">
+                丙辰中秋，欢饮达旦，大醉，作此篇，兼怀子由。
+            </p>
+<p class="indent-8">
+                明月几时有？把酒问青天。不知天上宫阙，今夕是何年。我欲乘风归去，又恐琼楼玉宇，高处不胜寒。起舞弄清影，何似在人间。
+            </p>
+<p class="indent-8">
+                转朱阁，低绮户，照无眠。不应有恨，何事长向别时圆？人有悲欢离合，月有阴晴圆缺，此事古难全。但愿人长久，千里共婵娟。
+            </p>
+</div>
+<!-- Annotation / Footer -->
+<div class="mt-16 pt-8 border-t border-warm-sand font-label-metadata-mobile text-label-metadata-mobile text-stone text-center tracking-widest uppercase">
+<p>Kami Digital Manuscript © 2024</p>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-4 bg-background border-t border-warm-sand flat no shadows transition-all duration-200 ease-in-out">
+<a class="flex flex-col items-center justify-center text-primary font-bold font-ui-nav text-ui-nav hover:opacity-80" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+<span>首页</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary font-ui-nav text-ui-nav hover:text-primary" href="#">
+<span class="material-symbols-outlined mb-1">bookmark</span>
+<span>收藏</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary font-ui-nav text-ui-nav hover:text-primary" href="#">
+<span class="material-symbols-outlined mb-1">settings</span>
+<span>设置</span>
+</a>
+</nav>
+<script>
+        // Simple toggle for the favorite button
+        document.querySelector('[data-icon="favorite_border"]').parentElement.addEventListener('click', function() {
+            const iconSpan = this.querySelector('.material-symbols-outlined');
+            if (iconSpan.textContent === 'favorite_border') {
+                iconSpan.textContent = 'favorite';
+                iconSpan.style.fontVariationSettings = "'FILL' 1";
+                iconSpan.classList.add('text-error');
+            } else {
+                iconSpan.textContent = 'favorite_border';
+                iconSpan.style.fontVariationSettings = "'FILL' 0";
+                iconSpan.classList.remove('text-error');
+            }
+        });
+    </script>
+</body></html>
