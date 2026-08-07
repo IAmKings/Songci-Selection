@@ -1,0 +1,5 @@
+# macOS
+.DS_Store
+
+# 生成的数据库文件（运行 db/build.py 即可从 data/ 重新生成）
+db/songci.db
