@@ -281,3 +281,24 @@ rhythmic_bodies.json 全部体数据(1202 词牌,0 非法体);Rhythmic.bodiesOf/
 ### Status
 
 [OK] **Completed**
+
+
+## Session 14: alias 策展消解(律体校验双条件)
+
+**Date**: 2026-08-08
+**Task**: alias 策展消解(律体校验双条件)
+**Branch**: `master`
+
+### Summary
+
+25 条 alias-mismatch 全部闭环:律体校验(词作字数 vs 目标调 bodies)作策展门槛——5 条消解(水调歌→水调歌头 4/5、木兰花→玉楼春 3/3(防误配修正目标)、雨中花→雨中花慢 1/1,共 16 首),20 条确认独立调重归类 missing-in-source(status=reviewed-independent,含人娇 67/68 vs 殢人娇 0 命中、簇水近句长 9 行 vs 簇水 15 句等证据)。alias-mismatch 清零,映射率 83.9%→84.2%,未映射 226 全为数据源缺失。提交 c45a4cb。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `c45a4cb` | (see git log) |
+
+### Status
+
+[OK] **Completed**
