@@ -89,3 +89,25 @@
 ### Status
 
 [OK] **Completed**
+
+
+## Session 5: 三端应用图标接入 + GitNexus 索引
+
+**Date**: 2026-08-08
+**Task**: 三端应用图标接入 + GitNexus 索引
+**Branch**: `main`
+
+### Summary
+
+三端图标接入完成:单一源 design/app-icon/screen.png + gen_app_icons.py 生成全部产物(幂等可重跑)。Android adaptive icon(66% 安全区)+ legacy 全密度 + manifest 引用;iOS AppIcon 单尺寸 1024;桌面 CMP 1.11 按平台 iconFile DSL(icns/ico/png)。macOS/iOS 图标按 Apple 网格烘焙圆角卡面(1024/824/185 + 透明边距),人工验收通过。修复 packageVersion 0.1.0→1.0.0(jpackage 要求首数字非零)。trellis-check 全 PASS,修正脚本位置到 app/data/tools/。另按用户要求初始化 GitNexus 索引(611 nodes),约束文件(CLAUDE.md/AGENTS.md/skills)入库。提交 e9c0692 + aaae66d。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `e9c0692` | (see git log) |
+| `aaae66d` | (see git log) |
+
+### Status
+
+[OK] **Completed**
