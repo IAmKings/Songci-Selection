@@ -132,3 +132,24 @@
 ### Status
 
 [OK] **Completed**
+
+
+## Session 7: 桌面端词库全空白修复(java.sql 模块 + 资源缓存 + 图标缓存)
+
+**Date**: 2026-08-08
+**Task**: 桌面端词库全空白修复(java.sql 模块 + 资源缓存 + 图标缓存)
+**Branch**: `main`
+
+### Summary
+
+打包版桌面应用词库全空白,双重根因:①jlink 精简运行时缺 java.sql 模块,SQLDelight JDBC 查询全抛 NoClassDefFoundError(主因,自首个 DMG 起存在,开发模式验证未覆盖打包运行时)——nativeDistributions 加 modules("java.sql") 修复(CMP 1.11 DSL,位于块内);②gradle 增量缓存损坏致 desktopJar 缺 composeResources(--rerun-tasks 强制重打修复)。图标显示异常定位为 macOS LaunchServices/Dock 缓存(lsregister -f + killall Dock),非打包问题。验证:jimage 确认 runtime 含 java.sql、bundle jar 含 songci.db、icns MD5 一致、二进制启动无异常。Android/iOS 驱动(AndroidSqliteDriver/NativeSqliteDriver)不依赖 java.sql,无此风险,APK 资源完整。trellis-check 全 PASS,ponytail-review 无冗余。提交 e711970。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `e711970` | (see git log) |
+
+### Status
+
+[OK] **Completed**
