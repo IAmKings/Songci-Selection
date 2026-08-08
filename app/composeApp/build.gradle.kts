@@ -105,6 +105,8 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "SongciSelection"
             packageVersion = "1.0.0"
+            // SQLDelight JDBC 依赖 java.sql;jlink 精简运行时默认不含该模块,缺则查询全抛 NoClassDefFoundError
+            modules("java.sql")
             macOS { iconFile.set(project.file("src/desktopMain/resources/icons/icon.icns")) }
             windows { iconFile.set(project.file("src/desktopMain/resources/icons/icon.ico")) }
             linux { iconFile.set(project.file("src/desktopMain/resources/icons/icon.png")) }
