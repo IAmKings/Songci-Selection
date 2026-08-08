@@ -72,6 +72,11 @@ open iosApp/iosApp.xcodeproj         # Xcode 构建运行
 - **自适应**:宽度 ≥768dp 详情双栏(上下阕并置),<768dp 单栏 + 底部导航
 - **图标**:三端已接入 `design/app-icon/screen.png`(卷轴+毛笔),唯一源 + `data/tools/gen_app_icons.py` 生成全部产物。iOS 用全出血 RGB(App Store 拒 alpha,圆角由系统蒙版);macOS/Windows 用预烘焙圆角卡面。注意 CMP 1.11 桌面 DSL 用按平台 `macOS/windows/linux { iconFile }` 块,旧版 `icon(vararg)` 已移除
 
+## 数据治理决策记录(2026-08-08)
+
+- **⿰ 内容层还原 = 最低优先级**:3,035 处缺失(850 首/4.0%)经评估——chinese-poetry/snowtraces 两大开源数据源同源缺失(均用 □ 占位),搜韵等权威校对网抽查 5 首同样缺字。自动化不可行,人工对照 ROI 极低。**维持现状**:缺失字符以 ⿰ 显示(忠实传递),清单 `data/restore_manifest.json` + `app/data/tools/restore.py` 管道保留,未来若有高质量权威数字源可重评。
+- 词牌名层 ⿰ 已清零(6 个贺铸遗缺词牌归并显示,源数据保留原貌)。
+
 ## 未来选项(已评估,当前不做)
 
 - **核心库/用户库分离(零复制)**:首启直接只读打开 asset/bundle 中的核心库,favorites 独立小库。评估:收益 = Android 首启省 100–300ms(一次性)+ 磁盘 17MB;成本 = 跨库 JOIN 消失(收藏查询二次查 + 内存合并)+ 三端只读 SQLDelight 驱动适配 + 双库版本管理。当前 favorites 单表极简,ROI 差;**待核心库升级/多应用表出现时再拆** —— 届时「只读核心 + 独立用户库」是正确形态。
