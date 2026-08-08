@@ -77,10 +77,12 @@ def android_icon():
         '</adaptive-icon>\n')
 
 
-def ios_icon(img):
+def ios_icon():
+    # iOS: full-bleed opaque RGB (App Store rejects alpha); the OS squircle mask
+    # supplies the rounded shape, so no baked rounded card here (unlike macOS).
     dest = ROOT / "app" / "iosApp" / "iosApp" / "Preview Content" / "Assets.xcassets" \
         / "AppIcon.appiconset" / "AppIcon.png"
-    img.save(dest)
+    Image.open(SRC).convert("RGB").save(dest)
 
 
 def desktop_icons(img):
@@ -105,7 +107,6 @@ if __name__ == "__main__":
     if not SRC.exists():
         raise SystemExit(f"source icon not found: {SRC}")
     android_icon()
-    rounded = rounded_icon()
-    ios_icon(rounded)
-    desktop_icons(rounded)
+    ios_icon()
+    desktop_icons(rounded_icon())
     print("ok: android + ios + desktop icons regenerated")

@@ -66,7 +66,7 @@ open iosApp/iosApp.xcodeproj         # Xcode 构建运行
 - **朝代推导**:`dynasty.py` 关键词 + 年号 + 生卒年回退,覆盖率约 15%(数据本身缺失朝代信息);未覆盖作者归「未知」
 - **格律目录**:数据无独立格律字段,按词牌聚合
 - **自适应**:宽度 ≥768dp 详情双栏(上下阕并置),<768dp 单栏 + 底部导航
-- **图标**:三端已接入 `design/app-icon/screen.png`(卷轴+毛笔),唯一源 + `data/tools/gen_app_icons.py` 生成全部产物。注意 CMP 1.11 桌面 DSL 用按平台 `macOS/windows/linux { iconFile }` 块,旧版 `icon(vararg)` 已移除
+- **图标**:三端已接入 `design/app-icon/screen.png`(卷轴+毛笔),唯一源 + `data/tools/gen_app_icons.py` 生成全部产物。iOS 用全出血 RGB(App Store 拒 alpha,圆角由系统蒙版);macOS/Windows 用预烘焙圆角卡面。注意 CMP 1.11 桌面 DSL 用按平台 `macOS/windows/linux { iconFile }` 块,旧版 `icon(vararg)` 已移除
 
 ## 未来选项(已评估,当前不做)
 
