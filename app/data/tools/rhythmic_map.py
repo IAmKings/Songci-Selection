@@ -152,7 +152,7 @@ def main():
         tune_seq = "".join(x["tune"] for x in f["tunes"])
         rhythm = "".join(RHYTHM_CODE.get(x.get("rhythm", ""), "-") for x in f["tunes"])
         segs = "/".join(str(i) for i in segment_ends(f["tunes"]))
-        return f"{f['sketch']}|{len(f['tunes'])}|{tune_seq}|{rhythm}|{segs}"
+        return f"{f['sketch']}|{len(f['tunes'])}|{tune_seq}|{rhythm}|{segs}|{f.get('author', '')}"
 
     map_data = {}
     bodies = {}

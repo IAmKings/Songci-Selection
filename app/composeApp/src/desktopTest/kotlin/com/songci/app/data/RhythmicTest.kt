@@ -27,11 +27,12 @@ class RhythmicTest {
 
     @Test fun bodiesAndMatchBody() {
         val raw = """{"水调歌头":"s1|95|11|中平|--|0/1|元会曲/凯歌|水调歌头"}"""
-        val bodies = """{"水调歌头":"双调九十四字|94|中平|--|0/1;双调九十五字|95|中仄|JY|0/1;双调九十六字|96|中平仄|--Y|0/2"}"""
+        val bodies = """{"水调歌头":"双调九十四字|94|中平|--|0/1|周紫芝;双调九十五字|95|中仄|JY|0/1|毛滂;双调九十六字|96|中平仄|--Y|0/2|苏轼"}"""
         val r = Rhythmic(Rhythmic.parseMap(raw), Rhythmic.parseMap(bodies))
         val list = r.bodiesOf("水调歌头")
         assertEquals(3, list.size)
         assertEquals(94, list[0].chars)
+        assertEquals("周紫芝", list[0].author)   // 体作者
         // 多体匹配: 96 字词 → 第三体; 95 字 → 首体(优先)
         assertEquals(96, r.matchBody("水调歌头", 96)?.chars)
         assertEquals(95, r.matchBody("水调歌头", 95)?.chars)

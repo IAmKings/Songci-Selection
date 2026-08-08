@@ -233,8 +233,9 @@ private fun RhythmicCard(spec: RhythmicSpec, bodies: List<RhythmicSpec>) {
         if (bodies.size > 1) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 bodies.indices.forEach { i ->
+                    val label = bodies[i].author.ifBlank { null }?.let { "${it}体" } ?: "体${i + 1}"
                     Text(
-                        "体${i + 1}",
+                        label,
                         style = MaterialTheme.typography.labelMedium,
                         color = if (i == selected) SongciColors.primary else SongciColors.outline,
                         textDecoration = if (i == selected) TextDecoration.Underline else TextDecoration.None,

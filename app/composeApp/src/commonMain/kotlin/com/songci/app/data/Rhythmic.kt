@@ -63,21 +63,22 @@ class Rhythmic internal constructor(
                 tune, rhythm, segEnds, aliases.split("/").filter { it.isNotBlank() }, spec)
         }
 
-        /** 多体条目:"sketch|chars|tune|rhythm|segs"(无 forms/aliases/spec)。 */
+        /** 多体条目:"sketch|chars|tune|rhythm|segs|author"(无 forms/aliases/spec)。 */
         internal fun parseBody(value: String): RhythmicSpec? {
             val parts = value.split("|")
-            if (parts.size != 5) return null
-            val (sketch, chars, tune, rhythm, segs) = parts
+            if (parts.size != 6) return null
+            val sketch = parts[0]; val chars = parts[1]; val tune = parts[2]
+            val rhythm = parts[3]; val segs = parts[4]; val author = parts[5]
             if (tune.length != rhythm.length) return null
             val segEnds = segs.split("/").mapNotNull { it.toIntOrNull() }
             if (segEnds.isEmpty() || segEnds.last() != tune.length - 1) return null
             return RhythmicSpec(sketch, chars.toIntOrNull() ?: 0, 0, tune, rhythm, segEnds,
-                emptyList(), "")
+                emptyList(), "", author)
         }
     }
 }
 
-/** 首体格律:句式摘要/字数/体数/平仄谱(逐字) + 标记(句/韵位置) + 段末字索引 + 异名列表 + 主词牌名。 */
+/** 首体格律:句式摘要/字数/体数/平仄谱(逐字) + 标记(句/韵位置) + 段末字索引 + 异名列表 + 主词牌名 + 体作者。 */
 data class RhythmicSpec(
     val sketch: String,
     val chars: Int,
@@ -87,6 +88,7 @@ data class RhythmicSpec(
     val segEnds: List<Int>,   // 段末字索引,如 [20, 41](浣溪沙前段 21 字/后段 21 字)
     val aliases: List<String>,   // 异名(出塞/大江东去…),无则空
     val spec: String,   // 主词牌名(钦定词谱调名)
+    val author: String = "",   // 体作者(毛滂体/苏轼体),多体条目有
 ) {
     /** 平仄谱按句切行(句末 J/韵 Y 换行),段边界(segEnds)处标记段尾。 */
     fun tuneLines(): List<TuneLine> {
