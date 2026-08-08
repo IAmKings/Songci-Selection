@@ -29,7 +29,9 @@ app/
 │   ├── src/commonMain/composeResources/
 │   │   ├── files/songci.db        # 预建库副本(user_version=1,生成物,不入 git)
 │   │   ├── files/dynasty_map.json # 朝代映射(生成物)
-│   │   ├── files/rhythmic_map.json # 词牌格律映射(84% 词牌/95% 词作,生成物)
+│   │   ├── files/rhythmic_map.json    # 词牌格律首体映射(84.2% 词牌/95.4% 词作,8 字段,生成物)
+│   │   ├── files/rhythmic_bodies.json # 格律全部体(多体切换/分段匹配,生成物)
+│   │   ├── files/unmapped_rhythmics.json # 未映射清单活档案(226 条数据源缺失)
 │   │   └── font/                  # Noto Serif SC + Inter(Google Fonts,OFL 许可)
 │   └── src/desktopTest/   # 数据层基准测试(对照 db/songci.db SQL 基准)
 ├── iosApp/                # Xcode 壳(构建时经 embedAndSignAppleFrameworkForXcode 调 gradle)
@@ -37,7 +39,11 @@ app/
 │   ├── prepare_db.py      # db/songci.db → 应用资源副本(user_version=1)
 │   ├── dynasty.py         # authors.long_desc → dynasty_map.json
 │   ├── gen_app_icons.py   # design/app-icon/screen.png → 三端图标产物(可复现,改图标重跑)
-│   └── rhythmic_map.py    # 词牌名清洗 + 钦定词谱格律映射 → rhythmic_map.json + 未映射清单
+│   ├── rhythmic_map.py    # 词牌清洗+格律映射(含策展表) → map/bodies/未映射清单
+│   ├── restore_manifest.py # ⿰ 缺失清单生成(按作者聚合)
+│   ├── restore.py         # ⿰ 还原回填(CSV 校验/备份/幂等)
+│   ├── jinyuan_audit.py   # 金元词人缺失审计(97 人分类)
+│   └── jinyuan_merge.py   # 金元词作补全(名录内作者,别名解析)
 └── gradle/
 ```
 
@@ -68,7 +74,8 @@ open iosApp/iosApp.xcodeproj         # Xcode 构建运行
 - **搜索用 LIKE 而非 FTS5**:21k 行全表扫描实测 <20ms;FTS5 unicode61 对中文是整段分词,`MATCH '明月'` 仅命中 1 行,索引基本失效(详见任务 prd)
 - **预建库 + user_version=1**:SQLDelight 驱动版本匹配时跳过建表,避免 DROP 重建
 - **朝代推导**:`dynasty.py` 关键词 + 年号 + 生卒年回退,覆盖率约 15%(数据本身缺失朝代信息);未覆盖作者归「未知」
-- **格律**:词牌/格律合并为单一入口,词牌详情页内置格律卡片(句式摘要 + 逐字平仄谱按句分行、阕间空行、韵脚下划线;段边界由钦定词谱 shift 推断,单调/双调/三叠/四叠适配);词作内容分段(切上下阕)待数据治理后实施
+- **格律体系**:词牌/格律合并单一入口,详情页内置格律卡片——句式摘要 + 逐字平仄谱(平蓝/仄红/中灰,按句分行、阕间空行、韵脚下划线)、**多体切换**(钦定词谱 2,306 体,体1..N 点选)、**异名显示与搜索展开**(出塞→谒金门同调全部词,单键组别名亦命中);段边界由 shift 推断(单调/双调/三叠/四叠)
+- **词作分段**:`Segmenter` 按格律段边界切上下阕——词作字数匹配任一体 → 该体段边界精确切分(74.9%,已映射内 87.9%),变体/未映射兜底行数对半;宽屏双栏/窄屏段间分隔按真实阕界
 - **自适应**:宽度 ≥768dp 详情双栏(上下阕并置),<768dp 单栏 + 底部导航
 - **图标**:三端已接入 `design/app-icon/screen.png`(卷轴+毛笔),唯一源 + `data/tools/gen_app_icons.py` 生成全部产物。iOS 用全出血 RGB(App Store 拒 alpha,圆角由系统蒙版);macOS/Windows 用预烘焙圆角卡面。注意 CMP 1.11 桌面 DSL 用按平台 `macOS/windows/linux { iconFile }` 块,旧版 `icon(vararg)` 已移除
 
@@ -78,14 +85,21 @@ open iosApp/iosApp.xcodeproj         # Xcode 构建运行
 
 - **⿰ 内容层还原 = 最低优先级**:3,035 处缺失(850 首/4.0%)经评估——chinese-poetry/snowtraces 两大开源数据源同源缺失(均用 □ 占位),搜韵等权威校对网抽查 5 首同样缺字。自动化不可行,人工对照 ROI 极低。**维持现状**:缺失字符以 ⿰ 显示(忠实传递),清单 `data/restore_manifest.json` + `app/data/tools/restore.py` 管道保留,未来若有高质量权威数字源可重评。
 - 词牌名层 ⿰ 已清零(6 个贺铸遗缺词牌归并显示,源数据保留原貌)。
+- **金元词人补全(+290 首/15 人)**:snowtraces/poetry-source(MIT)金 919 + 元 5,004 首中筛名录内无词作作者(蔡松年 64/元好问 57/李俊民 49/段克己 32 等),title 词牌解析(·取主+最长前缀+别名),内容级去重,词库 21,050→21,340;名录无词作 97→82。
+- **alias 策展(律体校验双条件)**:25 条形近候选——5 条消解(水调歌→水调歌头/木兰花→玉楼春/雨中花→雨中花慢,字数命中证据),20 条确认独立调重归类;策展门槛 = 名字相似 + 律体吻合,防误配优先于覆盖率。未映射 226 条全为数据源缺失。
 
 ## 未来选项(已评估,当前不做)
 
 - **核心库/用户库分离(零复制)**:首启直接只读打开 asset/bundle 中的核心库,favorites 独立小库。评估:收益 = Android 首启省 100–300ms(一次性)+ 磁盘 17MB;成本 = 跨库 JOIN 消失(收藏查询二次查 + 内存合并)+ 三端只读 SQLDelight 驱动适配 + 双库版本管理。当前 favorites 单表极简,ROI 差;**待核心库升级/多应用表出现时再拆** —— 届时「只读核心 + 独立用户库」是正确形态。
 - **字号持久化用 DataStore**:当前用各平台原生键值存储(SharedPreferences/NSUserDefaults/Properties,~40 行零依赖);设置项增多(亮度/通知)时可换 DataStore(需引入 okio 依赖)。
-- **格律多体切换**:格律卡片仅展示首体(正格);钦定词谱 826 调共 2,306 体,数据源 Ci_Tunes.json 的 formats 数组已含全部体(生成脚本只提取首体)。待 UI 需要时扩展 rhythmic_map.py 输出多体 + 卡片切换。
-- **词作内容分段(切上下阕)**:按用户决策排在数据治理(⿰ 还原/金元补全)后进行;段边界数据(segEnds)已在 rhythmic_map.json 就绪,复用同一份边界切词作文本;需处理变体字数差异(多体匹配)与无格律兜底(行数对半+单段回退)。
+- **数据源扩充**:未映射 226 词牌(数据源 Ci_Tunes.json 818 调缺)——可引入更全词谱数据源(如钦定词谱全 826 调数字化)重评估,届时映射率/分段精确率可再提升。
+- **驱动缓存版本标记**:当前按资源大小对比判新(对数据更新有效);更稳做法为预建库内嵌版本号比对(PRAGMA user_version),schema 版本与数据版本分离时再引入。
 
 ## 测试
 
-`./gradlew :composeApp:desktopTest` —— 数据层基准测试:搜索(对照 LIKE 基准 648 行)、词牌过滤(743 行)、收藏往返、朝代抽样、随机取词。
+`./gradlew :composeApp:desktopTest` —— 数据层基准测试(对照 db/songci.db SQL 基准):
+- 搜索 LIKE 基准(明月 100 行)、异名搜索回归(青衫湿→人月圆)、词牌过滤、收藏往返、朝代抽样、随机取词
+- 格律解析器:parseMap/parseSpec 8 字段、expand 异名展开、bodies 多体匹配
+- 分段器:精确双调/单调单段/变体兜底/无格律兜底/去标点
+
+全部测试为纯函数/数据层基准,UI 层不测(目视验收)。
