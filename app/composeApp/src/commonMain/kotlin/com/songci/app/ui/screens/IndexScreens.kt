@@ -191,7 +191,18 @@ fun AuthorPoemsScreen(vm: AppViewModel, authorId: Long, onBack: () -> Unit, onPo
             contentPadding = PaddingValues(20.dp),
         ) {
             author?.longDesc?.takeIf { it.isNotBlank() }?.let { desc ->
-                item(key = "author-desc") { AuthorDescCard(desc) }
+                item {
+                    Text(
+                        desc,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = SongciColors.tertiary,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(SongciColors.surfaceContainerLow)
+                            .border(1.dp, SongciColors.line)
+                            .padding(16.dp),
+                    )
+                }
             }
             when {
                 list == null -> item { EmptyState("加载中…") }
@@ -200,21 +211,6 @@ fun AuthorPoemsScreen(vm: AppViewModel, authorId: Long, onBack: () -> Unit, onPo
             }
         }
     }
-}
-
-/** 作者简介卡(生卒/字号/籍贯,db long_desc,无则不显示)。 */
-@Composable
-private fun AuthorDescCard(desc: String) {
-    Text(
-        desc,
-        style = MaterialTheme.typography.bodyMedium,
-        color = SongciColors.tertiary,
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(SongciColors.surfaceContainerLow)
-            .border(1.dp, SongciColors.line)
-            .padding(16.dp),
-    )
 }
 
 /** 某词牌下的全部词作(格律卡片为首 item,整页统一滚动;未映射词牌无卡片)。 */
