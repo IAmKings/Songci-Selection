@@ -4,9 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,9 +25,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.songci.app.data.Author
 import com.songci.app.data.Poem
+import com.songci.app.data.RhythmicSpec
+import com.songci.app.ui.components.PoemCard
 import com.songci.app.theme.SongciColors
 import com.songci.app.ui.AppViewModel
 import com.songci.app.ui.components.EmptyState
@@ -37,6 +44,7 @@ private fun TextRowList(
     back: (() -> Unit)?,
     rows: List<Pair<String, String>>,   // (label, value)
     onClick: (String) -> Unit,
+    trailing: ((String) -> String?)? = null,   // 行尾小字标签(如词牌字数),默认无
 ) {
     SimpleListScreen(title = title, back = back) {
         LazyColumn(
@@ -45,23 +53,28 @@ private fun TextRowList(
             contentPadding = androidx.compose.foundation.layout.PaddingValues(20.dp),
         ) {
             items(rows) { (label, value) ->
-                Text(
-                    label,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = SongciColors.primary,
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(SongciColors.surfaceContainerLow)
                         .border(1.dp, SongciColors.line)
                         .clickable { onClick(value) }
                         .padding(18.dp),
-                )
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(label, style = MaterialTheme.typography.bodyLarge, color = SongciColors.primary)
+                    val tag = trailing?.invoke(label)
+                    if (tag != null) {
+                        Text(tag, style = MaterialTheme.typography.labelMedium,
+                             color = SongciColors.outline)
+                    }
+                }
             }
         }
     }
 }
 
-/** 目录索引入口:朝代 / 作者 / 词牌 / 格律(格律无独立数据,按词牌聚合)。 */
+/** 目录索引入口:朝代 / 作者 / 词牌(含格律,详情页内置平仄谱卡片)。 */
 @Composable
 fun IndexScreen(onBack: () -> Unit, onOpen: (String) -> Unit) {
     TextRowList(
@@ -70,8 +83,7 @@ fun IndexScreen(onBack: () -> Unit, onOpen: (String) -> Unit) {
         rows = listOf(
             "朝代 →" to "index/dynasty",
             "作者 →" to "index/authors",
-            "词牌 →" to "index/rhythmics",
-            "格律 →" to "index/rhythmics",   // 数据缺口:格律按词牌聚合
+            "词牌 →" to "index/rhythmics",   // 含格律(平仄谱见词牌详情)
         ),
         onClick = onOpen,
     )
@@ -154,11 +166,12 @@ private fun AuthorList(
     }
 }
 
-/** 词牌列表(词牌与格律共用)。 */
+/** 词牌列表(词牌与格律共用,行尾显示字数)。 */
 @Composable
 fun RhythmicsScreen(vm: AppViewModel, onBack: () -> Unit, onOpen: (String) -> Unit) {
     val rhythmics by vm.rhythmics.collectAsState()
-    TextRowList(title = "词牌", back = onBack, rows = rhythmics.map { it to it }, onClick = onOpen)
+    TextRowList(title = "词牌", back = onBack, rows = rhythmics.map { it to it },
+                onClick = onOpen, trailing = { r -> vm.rhythmicSpec(r)?.let { "${it.chars}字" } })
 }
 
 /** 某作者的全部词作。 */
@@ -176,17 +189,52 @@ fun AuthorPoemsScreen(vm: AppViewModel, authorId: Long, onBack: () -> Unit, onPo
     }
 }
 
-/** 某词牌下的全部词作。 */
+/** 某词牌下的全部词作(格律卡片为首 item,整页统一滚动;未映射词牌无卡片)。 */
 @Composable
 fun RhythmicPoemsScreen(vm: AppViewModel, rhythmic: String, onBack: () -> Unit, onPoem: (Long) -> Unit) {
     var poems by remember { mutableStateOf<List<Poem>?>(null) }
     LaunchedEffect(rhythmic) { poems = vm.poemsByRhythmic(rhythmic) }
     val list = poems
     SimpleListScreen(title = "词牌 · $rhythmic", back = onBack) {
-        when {
-            list == null -> EmptyState("加载中…")
-            list.isEmpty() -> EmptyState("该词牌暂无词作")
-            else -> PoemList(list) { onPoem(it.id) }
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(20.dp),
+        ) {
+            vm.rhythmicSpec(rhythmic)?.let { item(key = "rhythmic") { RhythmicCard(it) } }
+            when {
+                list == null -> item { EmptyState("加载中…") }
+                list.isEmpty() -> item { EmptyState("该词牌暂无词作") }
+                else -> items(list, key = { it.id }) { PoemCard(it) { onPoem(it.id) } }
+            }
+        }
+    }
+}
+
+/** 格律卡片:句式摘要 + 逐字平仄谱按句分行,阕(段)间空行(韵脚下划线)。 */
+@Composable
+private fun RhythmicCard(spec: RhythmicSpec) {
+    val tuneColor = mapOf('平' to SongciColors.primary, '仄' to SongciColors.error, '中' to SongciColors.outline)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(SongciColors.surfaceContainerLow)
+            .border(1.dp, SongciColors.line)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(spec.sketch, style = MaterialTheme.typography.bodyMedium, color = SongciColors.tertiary)
+        Text("${spec.chars}字 · ${spec.forms}体",
+             style = MaterialTheme.typography.labelMedium, color = SongciColors.outline)
+        spec.tuneLines().forEach { line ->
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                line.chars.forEach { (t, m) ->
+                    Text(t.toString(), style = MaterialTheme.typography.bodyMedium,
+                         color = tuneColor[t] ?: SongciColors.tertiary,
+                         textDecoration = if (m == 'Y') TextDecoration.Underline else TextDecoration.None)
+                }
+            }
+            if (line.segmentEnd) Spacer(Modifier.height(12.dp))   // 阕间空行
         }
     }
 }

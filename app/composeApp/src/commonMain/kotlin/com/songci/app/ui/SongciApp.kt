@@ -37,6 +37,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.songci.app.data.Dynasty
+import com.songci.app.data.Rhythmic
 import com.songci.app.data.SongciRepository
 import com.songci.app.data.createDatabaseDriver
 import kotlinx.coroutines.Dispatchers
@@ -96,6 +97,7 @@ fun SongciApp() {
                 SongciRepository(
                     db = com.songci.app.data.db.SongciDb(createDatabaseDriver()),
                     dynasty = Dynasty.load(),
+                    rhythmic = Rhythmic.load(),
                 )
             }
         }

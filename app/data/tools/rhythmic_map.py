@@ -95,21 +95,41 @@ def main():
             unmapped.append({"rhythmic": raw, "cleaned": c, "category": cat,
                              "poems": n, "status": "open"})
 
-    # rhythmic_map.json: 格律数据(首体 + 体数)
+    # rhythmic_map.json: 扁平摘要 "词牌名" -> "sketch|chars|forms|tune|rhythm_codes|segments"
+    # (对齐 dynasty_map.json 极简解析风格;rhythm 标记转单字符 -/J(句)/Y(韵);
+    #  segments = 段末字索引(斜杠分隔,含全词末),由 shift 原始标记按段数推断真实边界。
+    #  注: 早期 dict 字段 spec/source/desc 已弃用——词牌名 key 即映射目标,desc 无消费者)
+    # 叶=叶韵/叠=叠韵/换=换韵,均为押韵标记,与「韵」同显下划线
+    RHYTHM_CODE = {"": "-", "句": "J", "韵": "Y", "叶": "Y", "叠": "Y", "换": "Y"}
+
+    def segment_ends(tunes: list) -> list:
+        """段末字索引。shift 原始标记含段内韵脚(满江红 4 shift 实为 2 段),
+        按 sketch 段数(单调/双调/三叠)选最接近等分点的 shift 作真实边界。"""
+        shifts = [i for i, x in enumerate(tunes) if x.get("shift")]
+        m = re.match(r"(单调|双调|三叠|四叠|双叠|三段|四段|单段)", f0["sketch"])
+        n_seg = {"单调": 1, "双调": 2, "三叠": 3, "双叠": 2, "四叠": 4,
+                 "三段": 3, "四段": 4, "单段": 1}.get(m.group(1) if m else "", 2)
+        if not shifts:
+            return [len(tunes) - 1]
+        if n_seg == 1:
+            return [shifts[-1]]
+        # 贪心: 依序选最接近等分点的 shift 作段间边界, 末段结尾取最后 shift
+        ends = []
+        for k in range(1, n_seg):
+            target = len(tunes) * k / n_seg
+            best = min(shifts, key=lambda s: abs(s - target))
+            ends.append(best)
+        ends.append(shifts[-1])
+        return sorted(set(ends))
+
     map_data = {}
     for raw, (spec_name, src) in mapped.items():
         entry = specs[spec_name]
         f0 = entry["formats"][0]
         tune_seq = "".join(x["tune"] for x in f0["tunes"])
-        map_data[raw] = {
-            "spec": spec_name, "source": src,
-            "desc": (entry["desc"] or "")[:80],
-            "sketch": f0["sketch"],
-            "chars": len(f0["tunes"]),
-            "tune": tune_seq,
-            "rhythm": [x.get("rhythm", "") for x in f0["tunes"]],
-            "forms": len(entry["formats"]),
-        }
+        rhythm = "".join(RHYTHM_CODE.get(x.get("rhythm", ""), "-") for x in f0["tunes"])
+        segs = "/".join(str(i) for i in segment_ends(f0["tunes"]))   # 斜杠分隔:JSON 条目以逗号拆分
+        map_data[raw] = f"{f0['sketch']}|{len(f0['tunes'])}|{len(entry['formats'])}|{tune_seq}|{rhythm}|{segs}"
     OUT_MAP.parent.mkdir(parents=True, exist_ok=True)
     OUT_MAP.write_text(json.dumps(map_data, ensure_ascii=False) + "\n", encoding="utf-8")
     OUT_UNMAPPED.write_text(json.dumps(unmapped, ensure_ascii=False) + "\n", encoding="utf-8")

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.songci.app.data.Author
 import com.songci.app.data.Dynasty
 import com.songci.app.data.Poem
+import com.songci.app.data.RhythmicSpec
 import com.songci.app.data.SongciRepository
 import com.songci.app.data.loadFontScaleName
 import com.songci.app.data.saveFontScaleName
@@ -72,6 +73,8 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
     fun refreshRandom() {
         viewModelScope.launch { _randomPoems.value = repo.randomPoems(20) }
     }
+
+    fun rhythmicSpec(rhythmic: String): RhythmicSpec? = repo.rhythmic.of(rhythmic)
 
     suspend fun poem(id: Long): Poem? = repo.poemById(id)
 

@@ -21,7 +21,10 @@ internal fun testRepo(): SongciRepository {
     val map = File("src/commonMain/composeResources/files/dynasty_map.json").readText()
     val ev = File("src/commonMain/composeResources/files/dynasty_evidence.json").readText()
     val dynasty = Dynasty(Dynasty.parseMap(map), Dynasty.parseMap(ev))
-    return SongciRepository(db, dynasty)
+    val rhythmic = Rhythmic(
+        Rhythmic.parseMap(File("src/commonMain/composeResources/files/rhythmic_map.json").readText())
+    )
+    return SongciRepository(db, dynasty, rhythmic)
 }
 
 class SongciRepositoryTest {

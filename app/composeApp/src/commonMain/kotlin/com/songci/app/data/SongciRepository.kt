@@ -7,6 +7,7 @@ import kotlinx.coroutines.withContext
 class SongciRepository(
     val db: SongciDb,
     val dynasty: Dynasty,
+    val rhythmic: Rhythmic,
 ) {
     private val q = db.songciDbQueries
 
