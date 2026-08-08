@@ -302,3 +302,27 @@ rhythmic_bodies.json 全部体数据(1202 词牌,0 非法体);Rhythmic.bodiesOf/
 ### Status
 
 [OK] **Completed**
+
+
+## Session 15: 技术债清理与质量闭环(多体体名/预索引/版本标记/三端验证)
+
+**Date**: 2026-08-08
+**Task**: 技术债清理与质量闭环(多体体名/预索引/版本标记/三端验证)
+**Branch**: `master`
+
+### Summary
+
+格律体作者标注(bodies 6 字段,卡片显示毛滂体/苏轼体);技术债清理:expand 预索引(specToKeys/aliasToSpec 查表 O(1),新旧逻辑 1701 查询全量等价)+ 驱动缓存版本标记(db_version.txt 内容哈希,三端版本文件比对,根治旧库残留);trellis-check 发现阻断级 putIfAbsent(Kotlin/Native 无此 API, iOS 编译挂——JVM 解析 java.util 默认方法)——getOrPut 修复并固化三端构建验证约定(spec+README, 必修 desktopTest+assembleDebug+iOS compile);README 重构「有意决策(非技术债)」章节(核心库分离/DataStore/数据源扩充,触发条件驱动);数据源扩充检验归档(钦定 CSV 无韵脚/段边界,不值得);alias 策展补 2 条(一翦梅→一剪梅 49 首/水调→水调歌头 15 首,律体校验);根 README 仓库总览。提交 1f9a78f+c7b001f+cdf669d+a4deef0。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `1f9a78f` | (see git log) |
+| `c7b001f` | (see git log) |
+| `cdf669d` | (see git log) |
+| `a4deef0` | (see git log) |
+
+### Status
+
+[OK] **Completed**
