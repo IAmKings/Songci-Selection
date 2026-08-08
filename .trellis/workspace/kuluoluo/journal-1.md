@@ -174,3 +174,24 @@
 ### Status
 
 [OK] **Completed**
+
+
+## Session 9: 格律 UI 接入(词牌详情平仄谱卡片 + 段边界)
+
+**Date**: 2026-08-08
+**Task**: 格律 UI 接入(词牌详情平仄谱卡片 + 段边界)
+**Branch**: `main`
+
+### Summary
+
+格律数据接入 UI:rhythmic_map.json 扩展 6 字段(段边界 segs 由钦定词谱 shift 按段数推断,含三叠/四叠;叶/叠/换韵统一 Y 标记)。Rhythmic.kt 加载 + tuneLines() 纯函数(按句切行/段尾标记,可单测)。词牌详情页格律卡片:句式摘要+逐字平仄谱(平蓝/仄红/中灰,按句分行,阕间空行,韵脚下划线),整页统一滚动(卡片为 LazyColumn 首 item);词牌列表行尾字数标签;目录「格律」入口合并入「词牌」。trellis-check 12 问题全修复(L2:三段四段段边界 13 名调、README 同步;L3:flushLine 重构纯函数、叶叠换韵标记、KDoc)。测试 3 新增全绿,desktopTest/assembleDebug/packageDmg 通过。词作内容分段(切上下阕)按用户决策排在数据治理后实施。提交 82ee4d8。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `82ee4d8` | (see git log) |
+
+### Status
+
+[OK] **Completed**
