@@ -1,0 +1,28 @@
+{
+  "id": "poem-segmentation",
+  "name": "poem-segmentation",
+  "title": "词作内容分段(上下阕,格律段边界)",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "kuluoluo",
+  "assignee": "kuluoluo",
+  "createdAt": "2026-08-08",
+  "completedAt": "2026-08-08",
+  "branch": null,
+  "base_branch": "master",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "notes": "覆盖报告: 精确分段(首体字数一致) 12283/21340 = 57.6%, 兜底(行数对半/单段) 42.4%; 段边界来自 rhythmic_map segEnds(已验证 12 词牌); 多体匹配提升覆盖记入未来选项"
+  }
+}
