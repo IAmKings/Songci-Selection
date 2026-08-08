@@ -9,8 +9,10 @@ actual suspend fun createDatabaseDriver(): SqlDriver {
     val dir = File(System.getProperty("user.home"), ".songci")
     dir.mkdirs()
     val dbFile = File(dir, DB_FILE_NAME)
-    if (!dbFile.exists()) {
-        dbFile.writeBytes(Res.readBytes(DB_RESOURCE_PATH))
+    val bytes = Res.readBytes(DB_RESOURCE_PATH)
+    // 缓存库与资源大小不一致(数据更新后旧库残留,曾致词库缺失) → 重新复制
+    if (!dbFile.exists() || dbFile.length() != bytes.size.toLong()) {
+        dbFile.writeBytes(bytes)
     }
     return JdbcSqliteDriver("jdbc:sqlite:${dbFile.absolutePath}")
 }

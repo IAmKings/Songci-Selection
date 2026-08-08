@@ -44,7 +44,8 @@ SELECT DISTINCT rhythmic FROM poems ORDER BY rhythmic;
 poemsByRhythmic:
 SELECT p.id, p.rhythmic, p.content, a.id AS author_id, a.name AS author_name
 FROM poems p JOIN authors a ON a.id = p.author_id
-WHERE p.rhythmic = ? ORDER BY p.id LIMIT ?;
+WHERE p.rhythmic = ? OR p.rhythmic LIKE '%⿰%·' || ?   -- 含 ⿰ 变体(⿰⿰⿰·七娘子)归入主词牌
+ORDER BY p.id LIMIT ?;
 
 -- 全文搜索:21k 行规模用 LIKE 全扫(实测 <20ms),规避 FTS5 unicode61 对中文整段分词的问题
 search:

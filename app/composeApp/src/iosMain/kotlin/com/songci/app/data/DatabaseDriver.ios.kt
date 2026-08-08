@@ -10,6 +10,8 @@ import songci.composeapp.generated.resources.Res
 import platform.Foundation.NSData
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
+import platform.Foundation.NSFileSize
+import platform.Foundation.NSNumber
 import platform.Foundation.NSSearchPathForDirectoriesInDomains
 import platform.Foundation.NSUserDomainMask
 import platform.Foundation.create
@@ -22,8 +24,11 @@ actual suspend fun createDatabaseDriver(): SqlDriver {
         NSDocumentDirectory, NSUserDomainMask, true
     ).first() as String
     val path = "$documents/$DB_FILE_NAME"
-    if (!fileManager.fileExistsAtPath(path)) {
-        val bytes = Res.readBytes(DB_RESOURCE_PATH)
+    val bytes = Res.readBytes(DB_RESOURCE_PATH)
+    // 缓存库与资源大小不一致(数据更新后旧库残留) → 重新复制
+    val cachedSize = (fileManager.attributesOfItemAtPath(path, null)
+        ?.get(NSFileSize) as? NSNumber)?.longValue
+    if (!fileManager.fileExistsAtPath(path) || cachedSize != bytes.size.toLong()) {
         val data = bytes.usePinned { pinned ->
             NSData.create(bytes = pinned.addressOf(0), length = bytes.size.toULong())
         }

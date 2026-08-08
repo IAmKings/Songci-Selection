@@ -31,13 +31,20 @@ class SongciRepository(
         q.poemsByAuthor(authorId).executeAsList().map { it.toPoem() }
     }
 
+    /** 词牌列表:仅含 ⿰ 的异常词牌归并到主词牌(「⿰⿰⿰·七娘子」→「七娘子」),不单独成条目。 */
     suspend fun rhythmics(): List<String> = withContext(Dispatchers.Default) {
-        q.allRhythmics().executeAsList()
+        q.allRhythmics().executeAsList().map(::cleanRhythmic).distinct()
+    }
+
+    /** 显示归并:仅 ⿰ 词牌「A·B」取主词牌 B;普通词牌名原样(历史原貌保留)。 */
+    fun cleanRhythmic(raw: String): String {
+        if ("⿰" !in raw) return raw
+        return raw.replace("⿰", "").substringAfterLast("·").trim()
     }
 
     suspend fun poemsByRhythmic(rhythmic: String, limit: Int = 100): List<Poem> =
         withContext(Dispatchers.Default) {
-            q.poemsByRhythmic(rhythmic, limit.toLong()).executeAsList().map { it.toPoem() }
+            q.poemsByRhythmic(rhythmic, rhythmic, limit.toLong()).executeAsList().map { it.toPoem() }
         }
 
     suspend fun search(query: String, limit: Int = 100): List<Poem> =

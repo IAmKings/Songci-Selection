@@ -82,6 +82,7 @@ fun DetailScreen(
         }
         if (wide) {
             WideDetail(
+                vm = vm,
                 poem = current,
                 scale = scale,
                 favorite = favorite,
@@ -91,6 +92,7 @@ fun DetailScreen(
             )
         } else {
             NarrowDetail(
+                vm = vm,
                 poem = current,
                 scale = scale,
                 favorite = favorite,
@@ -104,6 +106,7 @@ fun DetailScreen(
 
 @Composable
 private fun NarrowDetail(
+    vm: AppViewModel,
     poem: Poem,
     scale: Float,
     favorite: Boolean,
@@ -125,12 +128,13 @@ private fun NarrowDetail(
         Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
         Box(modifier = Modifier.fillMaxWidth().padding(vertical = 28.dp).height(1.dp).background(SongciColors.line))
         PoemLines(poem.content, scale, gap = 34.dp)
-        DetailActions(favorite, onToggleFavorite, poem, onOpenAuthor, onOpenRhythmic)
+        DetailActions(vm, favorite, onToggleFavorite, poem, onOpenAuthor, onOpenRhythmic)
     }
 }
 
 @Composable
 private fun WideDetail(
+    vm: AppViewModel,
     poem: Poem,
     scale: Float,
     favorite: Boolean,
@@ -155,7 +159,7 @@ private fun WideDetail(
             StanzaColumn(down, scale, Modifier.weight(1f).padding(start = 56.dp))
         }
         Box(modifier = Modifier.fillMaxWidth().padding(top = 36.dp)) {
-            DetailActions(favorite, onToggleFavorite, poem, onOpenAuthor, onOpenRhythmic)
+            DetailActions(vm, favorite, onToggleFavorite, poem, onOpenAuthor, onOpenRhythmic)
         }
     }
 }
@@ -197,6 +201,7 @@ private fun PoemLines(content: String, scale: Float, gap: androidx.compose.ui.un
 
 @Composable
 private fun DetailActions(
+    vm: AppViewModel,
     favorite: Boolean,
     onToggleFavorite: () -> Unit,
     poem: Poem,
@@ -235,10 +240,11 @@ private fun DetailActions(
                 modifier = Modifier.padding(start = 24.dp).clickable { poem.authorId?.let(onOpenAuthor) },
             )
             Text(
-                "词牌 · ${poem.rhythmic} →",
+                "词牌 · ${vm.cleanRhythmic(poem.rhythmic)} →",
                 style = MaterialTheme.typography.labelLarge,
                 color = SongciColors.primary,
-                modifier = Modifier.padding(start = 24.dp).clickable { onOpenRhythmic(poem.rhythmic) },
+                modifier = Modifier.padding(start = 24.dp)
+                    .clickable { onOpenRhythmic(vm.cleanRhythmic(poem.rhythmic)) },
             )
         }
         Text(

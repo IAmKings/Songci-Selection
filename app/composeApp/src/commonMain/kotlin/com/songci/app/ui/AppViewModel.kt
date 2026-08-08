@@ -76,6 +76,9 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
 
     fun rhythmicSpec(rhythmic: String): RhythmicSpec? = repo.rhythmic.of(rhythmic)
 
+    /** 词牌显示归并:含 ⿰ 的异常词牌 → 主词牌(跳转/链接显示用,源数据不动)。 */
+    fun cleanRhythmic(raw: String): String = repo.cleanRhythmic(raw)
+
     suspend fun poem(id: Long): Poem? = repo.poemById(id)
 
     suspend fun poemsByAuthor(authorId: Long): List<Poem> = repo.poemsByAuthor(authorId)
