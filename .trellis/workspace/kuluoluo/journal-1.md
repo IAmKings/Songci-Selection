@@ -239,3 +239,24 @@
 ### Status
 
 [OK] **Completed**
+
+
+## Session 12: 词作内容分段(格律段边界切上下阕)
+
+**Date**: 2026-08-08
+**Task**: 词作内容分段(格律段边界切上下阕)
+**Branch**: `master`
+
+### Summary
+
+Segmenter.kt(data 层纯函数):词作去标点字数与格律首体一致→按 segEnds 段边界逐句切分(57.6% 精确),变体/未映射→行数对半兜底(≥4行),单调/短词单段。详情页宽屏双栏按真实阕界(2段并置/其他段数 Column 分隔),窄屏段间 gap 由段数驱动;移除 splitStanzas 近似对半。测试 5 个全绿(精确双调/单调单段/变体兜底/无格律/去标点),用户验收水调歌头/浣溪沙/如梦令正确。覆盖报告 57.6% 记入任务 notes,多体匹配提升覆盖率记 README 未来选项。提交 5d1696e。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `5d1696e` | (see git log) |
+
+### Status
+
+[OK] **Completed**
