@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>宋词精选 - 4x4 Widget</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Noto+Serif+SC:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-tint": "#465f88",
+                      "error": "#ba1a1a",
+                      "surface-container": "#efeee7",
+                      "on-surface-variant": "#44474e",
+                      "surface-container-lowest": "#ffffff",
+                      "primary": "#002046",
+                      "on-tertiary-fixed-variant": "#48473d",
+                      "near-black": "#141413",
+                      "inverse-on-surface": "#f2f1ea",
+                      "surface-container-low": "#f5f4ed",
+                      "primary-container": "#1b365d",
+                      "on-primary-fixed-variant": "#2e476f",
+                      "secondary": "#605e59",
+                      "surface-dim": "#dbdad3",
+                      "primary-fixed-dim": "#aec7f7",
+                      "tertiary-fixed": "#e6e3d5",
+                      "surface": "#fbf9f2",
+                      "on-primary-container": "#87a0cd",
+                      "inverse-surface": "#30312c",
+                      "tertiary-fixed-dim": "#c9c7ba",
+                      "tertiary": "#212119",
+                      "on-primary-fixed": "#001b3d",
+                      "on-background": "#1b1c18",
+                      "on-secondary-fixed-variant": "#484742",
+                      "on-secondary": "#ffffff",
+                      "secondary-container": "#e6e2db",
+                      "surface-variant": "#e3e3dc",
+                      "tertiary-container": "#37362d",
+                      "surface-bright": "#fbf9f2",
+                      "outline": "#74777f",
+                      "on-tertiary-container": "#a19f93",
+                      "primary-fixed": "#d6e3ff",
+                      "on-tertiary-fixed": "#1c1c14",
+                      "on-primary": "#ffffff",
+                      "backdrop": "#3D3D3A",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed": "#e6e2db",
+                      "warm-sand": "#E8E6DC",
+                      "on-error-container": "#93000a",
+                      "outline-variant": "#c4c6cf",
+                      "on-error": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-container": "#66645f",
+                      "background": "#fbf9f2",
+                      "surface-container-highest": "#e3e3dc",
+                      "on-secondary-fixed": "#1d1c17",
+                      "stone": "#6B6A64",
+                      "on-surface": "#1b1c18",
+                      "inverse-primary": "#aec7f7",
+                      "surface-container-high": "#e9e8e1",
+                      "secondary-fixed-dim": "#cac6bf"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-divider": "44px",
+                      "frame-padding-desktop": "72px 64px 44px",
+                      "margin-title": "12px",
+                      "margin-kicker": "22px",
+                      "gutter-stanza": "56px",
+                      "section-gap": "34px",
+                      "frame-padding-mobile": "40px 30px 28px"
+              },
+              "fontFamily": {
+                      "display-title": ["'Noto Serif SC'", "serif"],
+                      "poem-body": ["'Noto Serif SC'", "serif"],
+                      "label-metadata-mobile": ["'Inter'", "sans-serif"],
+                      "label-metadata": ["'Inter'", "sans-serif"],
+                      "author-subheading": ["'Noto Serif SC'", "serif"],
+                      "display-title-mobile": ["'Noto Serif SC'", "serif"],
+                      "author-subheading-mobile": ["'Noto Serif SC'", "serif"],
+                      "ui-nav": ["'Inter'", "sans-serif"],
+                      "poem-body-mobile": ["'Noto Serif SC'", "serif"]
+              },
+              "fontSize": {
+                      "display-title": ["46px", { "lineHeight": "1.2", "letterSpacing": "0.06em", "fontWeight": "500" }],
+                      "poem-body": ["20px", { "lineHeight": "2.1", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                      "label-metadata-mobile": ["11px", { "lineHeight": "1.4", "letterSpacing": "0.14em", "fontWeight": "400" }],
+                      "label-metadata": ["12px", { "lineHeight": "1.4", "letterSpacing": "0.14em", "fontWeight": "400" }],
+                      "author-subheading": ["15px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                      "display-title-mobile": ["36px", { "lineHeight": "1.2", "letterSpacing": "0.06em", "fontWeight": "500" }],
+                      "author-subheading-mobile": ["14px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                      "ui-nav": ["14px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                      "poem-body-mobile": ["18px", { "lineHeight": "2.05", "letterSpacing": "0.02em", "fontWeight": "400" }]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        /* Writing Mode for traditional vertical text */
+        .vertical-text {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+        }
+        
+        /* Parchment texture overlay */
+        .parchment-texture {
+            background-color: #f5f4ed; /* surface-container-low */
+            position: relative;
+        }
+        .parchment-texture::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: 0.4;
+            mix-blend-mode: multiply;
+            pointer-events: none;
+            /* Subtly textured background simulation using css gradients */
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0,0,0,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(0,0,0,0.03) 0%, transparent 40%),
+                linear-gradient(45deg, rgba(232, 230, 220, 0.3) 25%, transparent 25%, transparent 75%, rgba(232, 230, 220, 0.3) 75%, rgba(232, 230, 220, 0.3)),
+                linear-gradient(45deg, rgba(232, 230, 220, 0.3) 25%, transparent 25%, transparent 75%, rgba(232, 230, 220, 0.3) 75%, rgba(232, 230, 220, 0.3));
+            background-size: 100% 100%, 100% 100%, 20px 20px, 20px 20px;
+            background-position: 0 0, 0 0, 0 0, 10px 10px;
+        }
+    </style>
+</head>
+<body class="bg-surface-container-highest flex items-center justify-center min-h-screen p-4">
+<!-- Android Widget Container (4x4 roughly translates to a square aspect ratio on many grids, e.g., 320x320 or larger) -->
+<!-- We'll use a fixed size container to simulate the widget environment -->
+<div class="relative w-[340px] h-[340px] rounded-[28px] overflow-hidden shadow-sm parchment-texture border border-warm-sand flex flex-col" style="background-color: #f5f4ed;">
+<!-- The Kicker (Brand Signature) -->
+<div class="h-[4px] w-full bg-primary-container absolute top-0 left-0 z-10"></div>
+<!-- Widget Header (Brand Logo) -->
+<div class="pt-5 px-6 pb-2 flex justify-between items-center z-10">
+<span class="font-display-title-mobile text-[24px] font-medium tracking-widest text-[#1B365D]">宋词精选</span>
+<!-- Decorative seal/stamp placeholder -->
+<div class="w-6 h-6 border border-[#ba1a1a] rounded flex items-center justify-center opacity-80">
+<span class="text-[#ba1a1a] text-[10px] font-display-title-mobile leading-none">宋</span>
+</div>
+</div>
+<!-- Main Content Area: Poem & Author -->
+<!-- Using a horizontal scroll or tight layout for vertical text, or a clean horizontal layout for readability in a widget -->
+<!-- We'll use a traditional vertical layout for the immersive feel -->
+<div class="flex-1 flex flex-row-reverse justify-start px-6 pt-2 pb-16 overflow-hidden z-10">
+<!-- Title and Author Column -->
+<div class="flex flex-col items-center mr-0 ml-6 shrink-0 h-full justify-start pt-2">
+<h1 class="vertical-text font-display-title-mobile text-[28px] text-[#1B365D] tracking-widest mb-4">水调歌头</h1>
+<div class="w-[1px] h-8 bg-warm-sand mx-auto my-2"></div>
+<p class="vertical-text font-author-subheading-mobile text-secondary mt-2">苏轼</p>
+</div>
+<!-- Poem Stanza Columns -->
+<div class="flex flex-row-reverse gap-4 overflow-hidden pt-4">
+<p class="vertical-text font-poem-body-mobile text-[#1B365D] leading-relaxed">
+                    明月几时有，把酒问青天。<br/>
+                    不知天上宫阙，今夕是何年。
+                </p>
+<div class="w-[1px] h-[80%] bg-warm-sand self-center mx-1"></div>
+<p class="vertical-text font-poem-body-mobile text-[#1B365D] leading-relaxed">
+                    我欲乘风归去，又恐琼楼玉宇，<br/>
+                    高处不胜寒。
+                </p>
+</div>
+</div>
+<!-- Bottom Action Bar -->
+<div class="absolute bottom-0 w-full h-[52px] bg-surface/80 backdrop-blur-sm border-t border-warm-sand flex justify-between items-center px-4 z-20">
+<!-- Refresh Button -->
+<button aria-label="Refresh Poem" class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-variant transition-colors text-[#1B365D]">
+<span class="material-symbols-outlined" style="font-size: 20px;">refresh</span>
+</button>
+<!-- Favorite Button -->
+<button aria-label="Favorite" class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-variant transition-colors text-[#1B365D]">
+<span class="material-symbols-outlined" style="font-size: 20px;">bookmark_border</span>
+</button>
+<!-- Open App Button -->
+<button aria-label="Open App" class="flex items-center justify-center gap-1 h-8 px-3 rounded-full border border-warm-sand hover:bg-[#1B365D] hover:text-white transition-colors text-[#1B365D]">
+<span class="font-ui-nav text-[12px]">阅读全文</span>
+<span class="material-symbols-outlined" style="font-size: 16px;">open_in_new</span>
+</button>
+</div>
+<!-- Subtle corner decorations -->
+<div class="absolute top-2 left-2 w-4 h-4 border-t border-l border-warm-sand opacity-50 z-0"></div>
+<div class="absolute top-2 right-2 w-4 h-4 border-t border-r border-warm-sand opacity-50 z-0"></div>
+<div class="absolute bottom-16 left-2 w-4 h-4 border-b border-l border-warm-sand opacity-50 z-0"></div>
+<div class="absolute bottom-16 right-2 w-4 h-4 border-b border-r border-warm-sand opacity-50 z-0"></div>
+</div>
+</body></html>

@@ -15,6 +15,7 @@
 | `screens/mobile-favorites/` | 我的收藏 |
 | `screens/tablet/` | 词作展示 · 平板 |
 | `app-icon/screen.png` | 应用图标(1024×1024,卷轴+毛笔,书生蓝+纸张配色) |
+| `widgets/2x2/` `4x1/` `4x2/` `4x4/` | **桌面小组件设计稿**(宋词选粹 Widget:网格布局规格,HTML + 截图) |
 | `specimens/` | 早期排版样张(随机宋词,手机 375×812 / 平板 768×1024) |
 
 ## 屏幕 ↔ PRD 页面映射
@@ -43,4 +44,5 @@
 
 ## 数据来源
 
-导入自 `~/Downloads/stitch_songci_digital_archive`(2026-08-07),`specimens/` 中同名 `phone.html`/`tablet.html` 与仓库内版本一致,未重复导入。
+- 导入自 `~/Downloads/stitch_songci_digital_archive`(2026-08-07),`specimens/` 中同名 `phone.html`/`tablet.html` 与仓库内版本一致,未重复导入。
+- `widgets/` 导入自 `~/Downloads/stitch_songci_digital_archive2`(2026-08-09);同目录 `classical_manuscript/DESIGN.md` 与仓库根完全一致,未重复导入。

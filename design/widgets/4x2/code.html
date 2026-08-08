@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>宋词选粹 - 桌面小组件</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Noto+Serif+SC:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#e6e2db",
+                        "on-surface": "#1b1c18",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#1d1c17",
+                        "on-tertiary-container": "#a19f93",
+                        "outline-variant": "#c4c6cf",
+                        "on-primary-container": "#87a0cd",
+                        "primary": "#002046",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#efeee7",
+                        "tertiary-fixed-dim": "#c9c7ba",
+                        "on-secondary-fixed-variant": "#484742",
+                        "secondary-container": "#e6e2db",
+                        "tertiary-fixed": "#e6e3d5",
+                        "primary-fixed-dim": "#aec7f7",
+                        "surface": "#fbf9f2",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#66645f",
+                        "stone": "#6B6A64",
+                        "surface-dim": "#dbdad3",
+                        "surface-variant": "#e3e3dc",
+                        "near-black": "#141413",
+                        "surface-container-high": "#e9e8e1",
+                        "on-tertiary": "#ffffff",
+                        "primary-container": "#1b365d",
+                        "error": "#ba1a1a",
+                        "on-background": "#1b1c18",
+                        "on-secondary": "#ffffff",
+                        "background": "#fbf9f2",
+                        "inverse-primary": "#aec7f7",
+                        "tertiary-container": "#37362d",
+                        "tertiary": "#212119",
+                        "secondary": "#605e59",
+                        "outline": "#74777f",
+                        "on-tertiary-fixed-variant": "#48473d",
+                        "secondary-fixed-dim": "#cac6bf",
+                        "surface-tint": "#465f88",
+                        "on-primary-fixed": "#001b3d",
+                        "inverse-on-surface": "#f2f1ea",
+                        "on-primary-fixed-variant": "#2e476f",
+                        "warm-sand": "#E8E6DC",
+                        "surface-container-low": "#f5f4ed",
+                        "on-tertiary-fixed": "#1c1c14",
+                        "error-container": "#ffdad6",
+                        "inverse-surface": "#30312c",
+                        "surface-container-highest": "#e3e3dc",
+                        "backdrop": "#3D3D3A",
+                        "on-surface-variant": "#44474e",
+                        "surface-bright": "#fbf9f2",
+                        "primary-fixed": "#d6e3ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-kicker": "22px",
+                        "frame-padding-mobile": "40px 30px 28px",
+                        "frame-padding-desktop": "72px 64px 44px",
+                        "gutter-stanza": "56px",
+                        "section-gap": "34px",
+                        "margin-divider": "44px",
+                        "margin-title": "12px"
+                    },
+                    "fontFamily": {
+                        "author-subheading-mobile": ["'Noto Serif SC', serif"],
+                        "ui-nav": ["'Inter', sans-serif"],
+                        "poem-body": ["'Noto Serif SC', serif"],
+                        "display-title-mobile": ["'Noto Serif SC', serif"],
+                        "label-metadata-mobile": ["'Inter', sans-serif"],
+                        "poem-body-mobile": ["'Noto Serif SC', serif"],
+                        "label-metadata": ["'Inter', sans-serif"],
+                        "author-subheading": ["'Noto Serif SC', serif"],
+                        "display-title": ["'Noto Serif SC', serif"]
+                    },
+                    "fontSize": {
+                        "author-subheading-mobile": ["14px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "ui-nav": ["14px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "poem-body": ["20px", { "lineHeight": "2.1", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "display-title-mobile": ["36px", { "lineHeight": "1.2", "letterSpacing": "0.06em", "fontWeight": "500" }],
+                        "label-metadata-mobile": ["11px", { "lineHeight": "1.4", "letterSpacing": "0.14em", "fontWeight": "400" }],
+                        "poem-body-mobile": ["18px", { "lineHeight": "2.05", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "label-metadata": ["12px", { "lineHeight": "1.4", "letterSpacing": "0.14em", "fontWeight": "400" }],
+                        "author-subheading": ["15px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "display-title": ["46px", { "lineHeight": "1.2", "letterSpacing": "0.06em", "fontWeight": "500" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .widget-container {
+            width: 320px;
+            height: 160px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<!-- Widget Container (Simulating Android 4x2 size) -->
+<div class="widget-container bg-surface-container-low rounded-xl border border-warm-sand overflow-hidden flex flex-col p-4 relative shadow-sm">
+<!-- Background Kicker Element -->
+<div class="absolute top-0 left-0 w-full h-[4px] bg-primary"></div>
+<div class="flex h-full">
+<!-- Left Side: Branding -->
+<div class="flex flex-col items-center justify-center w-1/4 border-r border-warm-sand pr-3 shrink-0">
+<img alt="App Logo" class="w-12 h-12 rounded-lg mb-2 object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtpHyFr8WZsyix9Q83fgi00lt1hlJMTaxJzbozAQmJgkt1odNrg5zistmi_Nes3ryjAoVjKbWCBjRCHazo5p4AmoE_qKiDh25fT-G4Y5V7hnXqqMNYG4HtIB3taPu5yigsiARcfWH2rWvYXWczAbQerhKd4O37xipHRuPl-2v_3QSGFuuQ2T5_shP7TumlpkvzB9c-hXi8444UfnB8W5uNaOcI8mJo5QWCY-NtiSGErHyCylHLCvOAzLMrA"/>
+<span class="font-author-subheading-mobile text-author-subheading-mobile text-primary font-medium whitespace-nowrap">宋词选粹</span>
+</div>
+<!-- Main Area: Poem -->
+<div class="flex flex-col justify-center w-3/4 pl-4 relative">
+<!-- Action Icons (Top Right) -->
+<div class="absolute top-0 right-0 flex gap-2">
+<button aria-label="Refresh" class="text-stone hover:text-primary transition-colors focus:outline-none">
+<span class="material-symbols-outlined text-lg" data-icon="refresh">refresh</span>
+</button>
+<button aria-label="Favorite" class="text-stone hover:text-error transition-colors focus:outline-none">
+<span class="material-symbols-outlined text-lg" data-icon="favorite">favorite</span>
+</button>
+</div>
+<!-- Poem Content -->
+<div class="mt-2">
+<div class="flex items-baseline gap-2 mb-2">
+<h2 class="font-author-subheading-mobile text-author-subheading-mobile text-on-surface font-bold tracking-widest">水调歌头</h2>
+<span class="font-label-metadata-mobile text-label-metadata-mobile text-secondary">苏轼</span>
+</div>
+<div class="font-poem-body-mobile text-poem-body-mobile text-on-surface">
+                        但愿人长久，<br/>千里共婵娟。
+                    </div>
+</div>
+</div>
+</div>
+</div>
+</body></html>
