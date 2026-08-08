@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 9
+- **Total Sessions**: 10
 - **Last Active**: 2026-08-08
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~197 | Active |
+| `journal-1.md` | ~220 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 10 | 2026-08-08 | 数据治理专项:⿰ 还原工具 + 金元词人补全 | `2d6774a`, `5b81651`, `2b86528` | `main` |
 | 9 | 2026-08-08 | 格律 UI 接入(词牌详情平仄谱卡片 + 段边界) | `82ee4d8` | `main` |
 | 8 | 2026-08-08 | 词牌名清洗与格律映射(数据治理第一步) | `a7cb123` | `main` |
 | 7 | 2026-08-08 | 桌面端词库全空白修复(java.sql 模块 + 资源缓存 + 图标缓存) | `e711970` | `main` |
