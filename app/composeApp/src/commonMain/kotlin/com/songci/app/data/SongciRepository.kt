@@ -20,7 +20,11 @@ class SongciRepository(
     }
 
     suspend fun authors(): List<Author> = withContext(Dispatchers.Default) {
-        q.allAuthors().executeAsList().map { Author(it.id, it.name) }
+        q.allAuthors().executeAsList().map { Author(it.id, it.name, it.long_desc ?: "") }
+    }
+
+    suspend fun authorById(id: Long): Author? = withContext(Dispatchers.Default) {
+        q.authorById(id).executeAsOneOrNull()?.let { Author(it.id, it.name, it.long_desc ?: "") }
     }
 
     suspend fun authorsByDynasty(dynastyName: String): List<Author> = withContext(Dispatchers.Default) {

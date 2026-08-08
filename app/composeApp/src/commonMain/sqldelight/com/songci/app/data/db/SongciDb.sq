@@ -32,7 +32,10 @@ FROM poems p JOIN authors a ON a.id = p.author_id
 WHERE p.id = ?;
 
 allAuthors:
-SELECT id, name FROM authors ORDER BY name;
+SELECT id, name, long_desc FROM authors ORDER BY name;
+
+authorById:
+SELECT id, name, long_desc FROM authors WHERE id = ?;
 
 poemsByAuthor:
 SELECT p.id, p.rhythmic, p.content FROM poems p

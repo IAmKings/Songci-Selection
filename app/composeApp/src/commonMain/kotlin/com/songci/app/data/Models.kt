@@ -13,6 +13,7 @@ data class Poem(
 data class Author(
     val id: Long,
     val name: String,
+    val longDesc: String = "",   // 作者简介(生卒/字号/籍贯,db long_desc),无则空
 )
 
 data class Favorite(

@@ -177,16 +177,44 @@ fun RhythmicsScreen(vm: AppViewModel, onBack: () -> Unit, onOpen: (String) -> Un
 /** 某作者的全部词作。 */
 @Composable
 fun AuthorPoemsScreen(vm: AppViewModel, authorId: Long, onBack: () -> Unit, onPoem: (Long) -> Unit) {
+    var author by remember { mutableStateOf<Author?>(null) }
     var poems by remember { mutableStateOf<List<Poem>?>(null) }
-    LaunchedEffect(authorId) { poems = vm.poemsByAuthor(authorId) }
+    LaunchedEffect(authorId) {
+        author = vm.author(authorId)
+        poems = vm.poemsByAuthor(authorId)
+    }
     val list = poems
-    SimpleListScreen(title = "作者词作", back = onBack) {
-        when {
-            list == null -> EmptyState("加载中…")
-            list.isEmpty() -> EmptyState("该作者暂无收录词作")   // 名录含金/元等词人,语料未收录
-            else -> PoemList(list) { onPoem(it.id) }
+    SimpleListScreen(title = author?.name ?: "作者词作", back = onBack) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(20.dp),
+        ) {
+            author?.longDesc?.takeIf { it.isNotBlank() }?.let { desc ->
+                item(key = "author-desc") { AuthorDescCard(desc) }
+            }
+            when {
+                list == null -> item { EmptyState("加载中…") }
+                list.isEmpty() -> item { EmptyState("该作者暂无收录词作") }   // 名录含金/元等词人,语料未收录
+                else -> items(list, key = { it.id }) { PoemCard(it) { onPoem(it.id) } }
+            }
         }
     }
+}
+
+/** 作者简介卡(生卒/字号/籍贯,db long_desc,无则不显示)。 */
+@Composable
+private fun AuthorDescCard(desc: String) {
+    Text(
+        desc,
+        style = MaterialTheme.typography.bodyMedium,
+        color = SongciColors.tertiary,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(SongciColors.surfaceContainerLow)
+            .border(1.dp, SongciColors.line)
+            .padding(16.dp),
+    )
 }
 
 /** 某词牌下的全部词作(格律卡片为首 item,整页统一滚动;未映射词牌无卡片)。 */

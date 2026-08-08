@@ -88,6 +88,8 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
     /** 全部体(卡片切换用)。 */
     fun bodiesOf(rhythmic: String): List<RhythmicSpec> = repo.rhythmic.bodiesOf(rhythmic)
 
+    suspend fun author(authorId: Long): Author? = repo.authorById(authorId)
+
     suspend fun poem(id: Long): Poem? = repo.poemById(id)
 
     suspend fun poemsByAuthor(authorId: Long): List<Poem> = repo.poemsByAuthor(authorId)
