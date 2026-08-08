@@ -218,3 +218,24 @@
 ### Status
 
 [OK] **Completed**
+
+
+## Session 11: Bootstrap Guidelines 填充(项目真实约定入 spec)
+
+**Date**: 2026-08-08
+**Task**: Bootstrap Guidelines 填充(项目真实约定入 spec)
+**Branch**: `master`
+
+### Summary
+
+填充 .trellis/spec 全部占位文件:backend 5 个(目录结构/错误处理/质量/日志——数据管线+防御解析+幂等+零依赖原则),frontend 6 个(目录/组件/hook Compose 对应/状态管理/质量/类型安全——单 ViewModel+复用组件+主题 token+768dp 自适应)。全部为本会话沉淀的真实约定(非通用模板),guides thinking guides 保留已有内容。索引更新为已填充。提交 e67e5b6。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `e67e5b6` | (see git log) |
+
+### Status
+
+[OK] **Completed**
