@@ -1,0 +1,28 @@
+{
+  "id": "rhythmic-mapping",
+  "name": "rhythmic-mapping",
+  "title": "词牌名清洗与格律映射(含未映射标记)",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "kuluoluo",
+  "assignee": "kuluoluo",
+  "createdAt": "2026-08-08",
+  "completedAt": "2026-08-08",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "notes": "覆盖报告: 词牌 1423 → 映射 1195 (84.0%), 词作 20065/21050 (95.3%); 未映射 228: missing-in-source 203 / alias-mismatch 24 / placeholder 1; 数据源 818 调, 别名索引 565; 清洗规则含 A·B 反向回退"
+  }
+}
