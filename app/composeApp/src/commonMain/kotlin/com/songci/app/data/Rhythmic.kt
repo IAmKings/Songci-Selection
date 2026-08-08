@@ -8,6 +8,21 @@ class Rhythmic internal constructor(
     private val map: Map<String, String>,
     private val bodies: Map<String, String> = emptyMap(),
 ) {
+    // 预索引(load 时解析一次): spec → 同调词牌名列表; 别名 → spec
+    private val specToKeys: Map<String, List<String>>
+    private val aliasToSpec: Map<String, String>
+
+    init {
+        val s2k = mutableMapOf<String, MutableList<String>>()
+        val a2s = mutableMapOf<String, String>()
+        map.forEach { (name, value) ->
+            val spec = parseSpec(value) ?: return@forEach
+            s2k.getOrPut(spec.spec) { mutableListOf() }.add(name)
+            spec.aliases.forEach { a2s.putIfAbsent(it, spec.spec) }
+        }
+        specToKeys = s2k.mapValues { it.value.sorted() }
+        aliasToSpec = a2s
+    }
 
     /** 格律摘要:sketch/chars/forms/tune(平仄串)/rhythm(标记串),无则 null。 */
     fun of(rhythmic: String): RhythmicSpec? = map[rhythmic]?.let(::parseSpec)
@@ -20,14 +35,10 @@ class Rhythmic internal constructor(
     fun matchBody(rhythmic: String, charCount: Int): RhythmicSpec? =
         bodiesOf(rhythmic).firstOrNull { it.chars == charCount }
 
-    /** 异名展开:q(词牌名或别名) → 同调全部 db 词牌名(搜索用,如「出塞」→[出塞,出塞·谒金门,谒金门])。 */
+    /** 异名展开:q(词牌名或别名) → 同调全部 db 词牌名(搜索用,预索引查表 O(1))。 */
     fun expand(q: String): List<String> {
-        val qSpec = of(q)?.spec
-            ?: map.entries.firstOrNull { (_, v) -> parseSpec(v)?.aliases?.contains(q) == true }
-                ?.let { (_, v) -> parseSpec(v)?.spec }
-        if (qSpec == null) return emptyList()
-        return map.entries.filter { (_, v) -> parseSpec(v)?.spec == qSpec }
-            .map { it.key }.sorted()
+        val qSpec = of(q)?.spec ?: aliasToSpec[q] ?: return emptyList()
+        return specToKeys[qSpec] ?: emptyList()
     }
 
     companion object {
