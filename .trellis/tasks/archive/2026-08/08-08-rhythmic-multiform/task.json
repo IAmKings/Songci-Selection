@@ -1,0 +1,28 @@
+{
+  "id": "rhythmic-multiform",
+  "name": "rhythmic-multiform",
+  "title": "格律多体切换(多体展示 + 分段精确率跃升)",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "kuluoluo",
+  "assignee": "kuluoluo",
+  "createdAt": "2026-08-08",
+  "completedAt": "2026-08-08",
+  "branch": null,
+  "base_branch": "master",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "notes": "覆盖报告: 精确分段 57.6% → 74.9%(+17.3pp/+3691 首); 未映射词牌(231)无体可匹配走兜底, 已映射词牌内匹配率 ≈ 87.9%"
+  }
+}
