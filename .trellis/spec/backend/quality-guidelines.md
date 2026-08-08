@@ -9,6 +9,7 @@
 - **desktopTest 数据层基准测试**(`SongciRepositoryTest.kt`):对照 `db/songci.db` 的 SQL 基准(sqlite3 CLI 实测),如 `search("明月")` = 100 行
 - **纯函数单测**:可测逻辑下沉数据层纯函数(`Rhythmic.tuneLines`/`parseSpec`/`expand`),UI 层不测
 - 测试文件同包可访问 `internal` 构造(`Rhythmic internal constructor`)
+- **三端构建验证(必修)**:任何 commonMain 改动后必须 `desktopTest + assembleDebug + compileKotlinIosSimulatorArm64` 全绿——曾因只跑 desktop/android 漏检 `putIfAbsent`(JVM 解析 java.util 默认方法, Kotlin/Native 无此 API)致 iOS 编译挂。平台差异 API(如 MutableMap.putIfAbsent)禁用,用 `getOrPut` 等原生等价物。
 
 ---
 

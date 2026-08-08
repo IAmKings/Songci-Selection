@@ -56,14 +56,14 @@ python3 data/tools/dynasty.py
 # 格律映射(需先 clone 数据源: git clone --depth 1 https://github.com/charlesix59/chinese_word_rhyme /tmp/cwr)
 python3 data/tools/rhythmic_map.py
 
+# 三端验证(commonMain 改动后必修)
+./gradlew :composeApp:desktopTest :composeApp:assembleDebug :composeApp:compileKotlinIosSimulatorArm64
+
 # 桌面(macOS)
 /tmp/gradle-9.7.0/bin/gradle :composeApp:desktopTest :composeApp:desktopJar
 ./gradlew :composeApp:run            # 直接运行(wrapper 需先成功下载发行包)
 
-# Android
-./gradlew :composeApp:assembleDebug
-
-# iOS
+# iOS 完整构建
 open iosApp/iosApp.xcodeproj         # Xcode 构建运行
 ```
 
