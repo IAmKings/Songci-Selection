@@ -1,0 +1,28 @@
+{
+  "id": "jinyuan-completion",
+  "name": "jinyuan-completion",
+  "title": "金元词人补全专项",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "kuluoluo",
+  "assignee": "kuluoluo",
+  "createdAt": "2026-08-08",
+  "completedAt": "2026-08-08",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "notes": "数据源评估(2026-08-08): snowtraces/poetry-source(MIT 许可, 含金 919 + 元 5004 首, 13 位核心金元词人 10 位覆盖, 缺吴激/刘著/王若虚(存世词各 1-8 首); 格式 JSON, title 含词牌需解析复用清洗规则; 作者.json 25454 人)。合并实施(AC4)拆分为下一步独立任务"
+  }
+}
