@@ -68,3 +68,24 @@
 ### Status
 
 [OK] **Completed**
+
+
+## Session 4: M1 体验打磨:字号持久化 + 首启异步 + 朝代覆盖
+
+**Date**: 2026-08-08
+**Task**: M1 体验打磨:字号持久化 + 首启异步 + 朝代覆盖
+**Branch**: `main`
+
+### Summary
+
+三项打磨完成:①字号持久化(Settings expect/actual,SharedPreferences/NSUserDefaults/Properties 原生键值,零依赖)②首启异步(移除 runBlocking,Dispatchers.Default + 加载闸门,复制实测 7ms 定位为线程卫生)③朝代兜底宋(覆盖率 100%,年份规则 900/960 分界 + MIN_YEAR 700 + 策展表,修正王禹偁/吴淑姬/唐珏等回归;作者行显示年份证据 dynasty_evidence.json 159 位)。trellis-check 两轮 8 修 8。排查:字号不切换根因=测试污染设置文件(已隔离);⿰ 缺失字符(词牌 9 处+内容 3038 处)与金/元词人语料缺失(97 名录作者无词)记入 prd 数据缺口,后续必须处理。ponytail 精简 -100 行(正则合并曾致分布漂移已回滚)。8/8 测试 + 三端构建绿。提交 e5fb787。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `e5fb787` | (see git log) |
+
+### Status
+
+[OK] **Completed**
