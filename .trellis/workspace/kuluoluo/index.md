@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 7
+- **Total Sessions**: 8
 - **Last Active**: 2026-08-08
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~155 | Active |
+| `journal-1.md` | ~176 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 8 | 2026-08-08 | 词牌名清洗与格律映射(数据治理第一步) | `a7cb123` | `main` |
 | 7 | 2026-08-08 | 桌面端词库全空白修复(java.sql 模块 + 资源缓存 + 图标缓存) | `e711970` | `main` |
 | 6 | 2026-08-08 | iOS 图标 alpha 修复(App Store 合规) | `4fab352` | `main` |
 | 5 | 2026-08-08 | 三端应用图标接入 + GitNexus 索引 | `e9c0692`, `aaae66d` | `main` |

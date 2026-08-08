@@ -153,3 +153,24 @@
 ### Status
 
 [OK] **Completed**
+
+
+## Session 8: 词牌名清洗与格律映射(数据治理第一步)
+
+**Date**: 2026-08-08
+**Task**: 词牌名清洗与格律映射(数据治理第一步)
+**Branch**: `main`
+
+### Summary
+
+词牌名清洗+钦定词谱格律映射管线完成:rhythmic_map.py(清洗:引号/·拆分/⿰剥离/全角 + desc别名索引565条 + A·B反向回退),映射1195/1423词牌(84.0%),词作覆盖95.3%;unmapped_rhythmics.json活档案228条三分类(placeholder 1交还原专项/alias-mismatch 24策展/missing-in-source 203)。数据源chinese_word_rhyme(818调)不入repo。trellis-check 0阻塞,修复A·B反向回退(84.0%)。抽查5词牌与钦定词谱一致。提交a7cb123。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a7cb123` | (see git log) |
+
+### Status
+
+[OK] **Completed**
