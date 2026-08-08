@@ -1,0 +1,28 @@
+{
+  "id": "alias-curation",
+  "name": "alias-curation",
+  "title": "alias 策展消解(含律体校验)",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "kuluoluo",
+  "assignee": "kuluoluo",
+  "createdAt": "2026-08-08",
+  "completedAt": "2026-08-08",
+  "branch": null,
+  "base_branch": "master",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "notes": "策展决策(2026-08-08): 25 条 alias-mismatch 全部闭环——5 条消解(水调歌→水调歌头 4/5 律合、木兰花→玉楼春 3/3、雨中花→雨中花慢 1/1, 共 16 首), 20 条律体校验确认独立调重归类 missing-in-source(reviewed-independent); 映射率 83.9%→84.2%, 未映射 226 全为数据源缺失"
+  }
+}
