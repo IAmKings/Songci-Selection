@@ -31,18 +31,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.songci.app.data.Poem
+import com.songci.app.data.Segmenter
 import com.songci.app.theme.Kicker
 import com.songci.app.theme.SongciColors
 import com.songci.app.ui.AppViewModel
 import com.songci.app.ui.components.EmptyState
-
-/** 上下阕按中点分栏(数据无阕标记)。 */
-internal fun splitStanzas(content: String): Pair<List<String>, List<String>> {
-    val lines = content.lines().filter { it.isNotBlank() }
-    if (lines.isEmpty()) return emptyList<String>() to emptyList()
-    val mid = lines.size / 2
-    return lines.take(mid) to lines.drop(mid)
-}
 
 /** 词作详情:窄屏单栏,宽屏(≥768dp)双栏并置。 */
 @Composable
@@ -127,7 +120,7 @@ private fun NarrowDetail(
         )
         Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
         Box(modifier = Modifier.fillMaxWidth().padding(vertical = 28.dp).height(1.dp).background(SongciColors.line))
-        PoemLines(poem.content, scale, gap = 34.dp)
+        PoemLines(poem.content, scale, gap = 34.dp, spec = vm.rhythmicSpec(poem.rhythmic))
         DetailActions(vm, favorite, onToggleFavorite, poem, onOpenAuthor, onOpenRhythmic)
     }
 }
@@ -152,11 +145,17 @@ private fun WideDetail(
         )
         Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
         Box(modifier = Modifier.fillMaxWidth().padding(vertical = 36.dp).height(1.dp).background(SongciColors.line))
-        Row(modifier = Modifier.fillMaxWidth()) {
-            val (up, down) = splitStanzas(poem.content)
-            StanzaColumn(up, scale, Modifier.weight(1f).padding(end = 56.dp))
-            Box(modifier = Modifier.width(1.dp).fillMaxSize().background(SongciColors.line))
-            StanzaColumn(down, scale, Modifier.weight(1f).padding(start = 56.dp))
+        val segments = Segmenter.segment(poem.content, vm.rhythmicSpec(poem.rhythmic))
+        if (segments.size == 2) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                StanzaColumn(segments[0], scale, Modifier.weight(1f).padding(end = 56.dp))
+                Box(modifier = Modifier.width(1.dp).fillMaxSize().background(SongciColors.line))
+                StanzaColumn(segments[1], scale, Modifier.weight(1f).padding(start = 56.dp))
+            }
+        } else {
+            Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
+                segments.forEach { StanzaColumn(it, scale) }
+            }
         }
         Box(modifier = Modifier.fillMaxWidth().padding(top = 36.dp)) {
             DetailActions(vm, favorite, onToggleFavorite, poem, onOpenAuthor, onOpenRhythmic)
@@ -178,23 +177,19 @@ private fun StanzaColumn(lines: List<String>, scale: Float, modifier: Modifier =
 }
 
 @Composable
-private fun PoemLines(content: String, scale: Float, gap: androidx.compose.ui.unit.Dp) {
-    val (up, down) = splitStanzas(content)
+private fun PoemLines(content: String, scale: Float, gap: androidx.compose.ui.unit.Dp,
+                      spec: com.songci.app.data.RhythmicSpec?) {
+    val segments = Segmenter.segment(content, spec)
     Column {
-        up.forEach { line ->
-            Text(
-                line,
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = MaterialTheme.typography.bodyMedium.fontSize * scale),
-                color = SongciColors.nearBlack,
-            )
-        }
-        Box(modifier = Modifier.height(gap))
-        down.forEach { line ->
-            Text(
-                line,
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = MaterialTheme.typography.bodyMedium.fontSize * scale),
-                color = SongciColors.nearBlack,
-            )
+        segments.forEachIndexed { i, seg ->
+            if (i > 0) Box(modifier = Modifier.height(gap))
+            seg.forEach { line ->
+                Text(
+                    line,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = MaterialTheme.typography.bodyMedium.fontSize * scale),
+                    color = SongciColors.nearBlack,
+                )
+            }
         }
     }
 }
