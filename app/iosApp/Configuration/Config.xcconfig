@@ -1,0 +1,4 @@
+// 宋词选粹 iOS 构建配置
+TEAM_ID=
+BUNDLE_ID=com.songci.app
+APP_NAME=宋词选粹

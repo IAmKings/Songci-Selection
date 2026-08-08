@@ -1,0 +1,69 @@
+-- 宋词选粹 · 数据模型
+-- 与预建库 db/songci.db 结构一致;运行时以预建库打开,schema 不落地执行。
+
+CREATE TABLE authors (
+    id INTEGER PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    long_desc TEXT
+);
+
+CREATE TABLE poems (
+    id INTEGER PRIMARY KEY NOT NULL,
+    author_id INTEGER,
+    rhythmic TEXT NOT NULL,
+    content TEXT NOT NULL
+);
+
+CREATE TABLE favorites (
+    poem_id INTEGER PRIMARY KEY NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- ===== 查询 =====
+
+randomPoems:
+SELECT p.id, p.rhythmic, p.content, a.id AS author_id, a.name AS author_name
+FROM poems p JOIN authors a ON a.id = p.author_id
+ORDER BY RANDOM() LIMIT ?;
+
+poemById:
+SELECT p.id, p.rhythmic, p.content, p.author_id, a.name AS author_name
+FROM poems p JOIN authors a ON a.id = p.author_id
+WHERE p.id = ?;
+
+allAuthors:
+SELECT id, name FROM authors ORDER BY name;
+
+poemsByAuthor:
+SELECT p.id, p.rhythmic, p.content FROM poems p
+WHERE p.author_id = ? ORDER BY p.id;
+
+allRhythmics:
+SELECT DISTINCT rhythmic FROM poems ORDER BY rhythmic;
+
+poemsByRhythmic:
+SELECT p.id, p.rhythmic, p.content, a.id AS author_id, a.name AS author_name
+FROM poems p JOIN authors a ON a.id = p.author_id
+WHERE p.rhythmic = ? ORDER BY p.id LIMIT ?;
+
+-- 全文搜索:21k 行规模用 LIKE 全扫(实测 <20ms),规避 FTS5 unicode61 对中文整段分词的问题
+search:
+SELECT p.id, p.rhythmic, p.content, a.id AS author_id, a.name AS author_name
+FROM poems p JOIN authors a ON a.id = p.author_id
+WHERE p.content LIKE '%' || ? || '%'
+   OR a.name LIKE '%' || ? || '%'
+   OR p.rhythmic LIKE '%' || ? || '%'
+ORDER BY p.id LIMIT ?;
+
+favorites:
+SELECT p.id, p.rhythmic, p.content, a.id AS author_id, a.name AS author_name, f.created_at
+FROM favorites f
+JOIN poems p ON f.poem_id = p.id
+JOIN authors a ON a.id = p.author_id
+ORDER BY f.created_at DESC;
+
+insertFavorite:
+INSERT OR REPLACE INTO favorites (poem_id) VALUES (?);
+
+deleteFavorite:
+DELETE FROM favorites WHERE poem_id = ?;
