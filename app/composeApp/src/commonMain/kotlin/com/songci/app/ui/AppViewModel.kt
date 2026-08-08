@@ -9,6 +9,7 @@ import com.songci.app.data.Author
 import com.songci.app.data.Dynasty
 import com.songci.app.data.Poem
 import com.songci.app.data.RhythmicSpec
+import com.songci.app.data.Segmenter
 import com.songci.app.data.SongciRepository
 import com.songci.app.data.loadFontScaleName
 import com.songci.app.data.saveFontScaleName
@@ -78,6 +79,14 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
 
     /** 词牌显示归并:含 ⿰ 的异常词牌 → 主词牌(跳转/链接显示用,源数据不动)。 */
     fun cleanRhythmic(raw: String): String = repo.cleanRhythmic(raw)
+
+    /** 按词作字数匹配格律体(分段用);无匹配体回退首体。 */
+    fun matchedSpec(rhythmic: String, content: String): RhythmicSpec? =
+        repo.rhythmic.matchBody(rhythmic, Segmenter.chars(content).length)
+            ?: repo.rhythmic.of(rhythmic)
+
+    /** 全部体(卡片切换用)。 */
+    fun bodiesOf(rhythmic: String): List<RhythmicSpec> = repo.rhythmic.bodiesOf(rhythmic)
 
     suspend fun poem(id: Long): Poem? = repo.poemById(id)
 

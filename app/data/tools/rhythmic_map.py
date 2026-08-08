@@ -21,6 +21,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]          # app/
 DB = ROOT / ".." / "db" / "songci.db"
 OUT_MAP = ROOT / "composeApp" / "src" / "commonMain" / "composeResources" / "files" / "rhythmic_map.json"
+OUT_BODIES = ROOT / "composeApp" / "src" / "commonMain" / "composeResources" / "files" / "rhythmic_bodies.json"
 OUT_UNMAPPED = ROOT / "composeApp" / "src" / "commonMain" / "composeResources" / "files" / "unmapped_rhythmics.json"
 DEFAULT_SOURCE = Path("/tmp/cwr/data/Ci_Tunes.json")
 
@@ -127,7 +128,14 @@ def main():
     for a, spec in alias.items():
         alias_by_spec.setdefault(spec, []).append(a)
 
+    def body_str(f: dict) -> str:
+        tune_seq = "".join(x["tune"] for x in f["tunes"])
+        rhythm = "".join(RHYTHM_CODE.get(x.get("rhythm", ""), "-") for x in f["tunes"])
+        segs = "/".join(str(i) for i in segment_ends(f["tunes"]))
+        return f"{f['sketch']}|{len(f['tunes'])}|{tune_seq}|{rhythm}|{segs}"
+
     map_data = {}
+    bodies = {}
     for raw, (spec_name, src) in mapped.items():
         entry = specs[spec_name]
         f0 = entry["formats"][0]
@@ -136,8 +144,10 @@ def main():
         segs = "/".join(str(i) for i in segment_ends(f0["tunes"]))   # 斜杠分隔:JSON 条目以逗号拆分
         aliases = "/".join(alias_by_spec.get(spec_name, []))
         map_data[raw] = f"{f0['sketch']}|{len(f0['tunes'])}|{len(entry['formats'])}|{tune_seq}|{rhythm}|{segs}|{aliases}|{spec_name}"
+        bodies[raw] = ";".join(body_str(f) for f in entry["formats"])   # 全部体:体间 ; 体内 |
     OUT_MAP.parent.mkdir(parents=True, exist_ok=True)
     OUT_MAP.write_text(json.dumps(map_data, ensure_ascii=False) + "\n", encoding="utf-8")
+    OUT_BODIES.write_text(json.dumps(bodies, ensure_ascii=False) + "\n", encoding="utf-8")
     OUT_UNMAPPED.write_text(json.dumps(unmapped, ensure_ascii=False) + "\n", encoding="utf-8")
 
     # 覆盖报告

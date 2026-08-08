@@ -4,10 +4,21 @@ package com.songci.app.data
  * 词牌格律(句式摘要 + 逐字平仄谱),由 app/data/tools/rhythmic_map.py 生成,
  * 数据源为钦定词谱系 Ci_Tunes.json(818 调)。未映射词牌(未映射清单)返回 null。
  */
-class Rhythmic internal constructor(private val map: Map<String, String>) {
+class Rhythmic internal constructor(
+    private val map: Map<String, String>,
+    private val bodies: Map<String, String> = emptyMap(),
+) {
 
     /** 格律摘要:sketch/chars/forms/tune(平仄串)/rhythm(标记串),无则 null。 */
     fun of(rhythmic: String): RhythmicSpec? = map[rhythmic]?.let(::parseSpec)
+
+    /** 全部体(含首体),无则空。 */
+    fun bodiesOf(rhythmic: String): List<RhythmicSpec> =
+        bodies[rhythmic]?.split(";")?.mapNotNull { parseBody(it) } ?: emptyList()
+
+    /** 按字数匹配体(分段用):体序即数据源顺序,首体优先;无匹配 null。 */
+    fun matchBody(rhythmic: String, charCount: Int): RhythmicSpec? =
+        bodiesOf(rhythmic).firstOrNull { it.chars == charCount }
 
     /** 异名展开:q(词牌名或别名) → 同调全部 db 词牌名(搜索用,如「出塞」→[出塞,出塞·谒金门,谒金门])。 */
     fun expand(q: String): List<String> {
@@ -21,9 +32,11 @@ class Rhythmic internal constructor(private val map: Map<String, String>) {
 
     companion object {
         const val FILE = "files/rhythmic_map.json"
+        const val BODIES_FILE = "files/rhythmic_bodies.json"
 
         suspend fun load(): Rhythmic = Rhythmic(
-            parseMap(songci.composeapp.generated.resources.Res.readBytes(FILE).decodeToString())
+            parseMap(songci.composeapp.generated.resources.Res.readBytes(FILE).decodeToString()),
+            parseMap(songci.composeapp.generated.resources.Res.readBytes(BODIES_FILE).decodeToString()),
         )
 
         /** 解析 {"词牌名":"sketch|chars|forms|tune|rhythm"} —— 对齐 Dynasty.parseMap 极简风格。 */
@@ -48,6 +61,18 @@ class Rhythmic internal constructor(private val map: Map<String, String>) {
             if (segEnds.isEmpty() || segEnds.last() != tune.length - 1) return null
             return RhythmicSpec(sketch, chars.toIntOrNull() ?: 0, forms.toIntOrNull() ?: 0,
                 tune, rhythm, segEnds, aliases.split("/").filter { it.isNotBlank() }, spec)
+        }
+
+        /** 多体条目:"sketch|chars|tune|rhythm|segs"(无 forms/aliases/spec)。 */
+        internal fun parseBody(value: String): RhythmicSpec? {
+            val parts = value.split("|")
+            if (parts.size != 5) return null
+            val (sketch, chars, tune, rhythm, segs) = parts
+            if (tune.length != rhythm.length) return null
+            val segEnds = segs.split("/").mapNotNull { it.toIntOrNull() }
+            if (segEnds.isEmpty() || segEnds.last() != tune.length - 1) return null
+            return RhythmicSpec(sketch, chars.toIntOrNull() ?: 0, 0, tune, rhythm, segEnds,
+                emptyList(), "")
         }
     }
 }

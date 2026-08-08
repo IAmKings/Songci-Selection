@@ -201,7 +201,9 @@ fun RhythmicPoemsScreen(vm: AppViewModel, rhythmic: String, onBack: () -> Unit, 
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(20.dp),
         ) {
-            vm.rhythmicSpec(rhythmic)?.let { item(key = "rhythmic") { RhythmicCard(it) } }
+            vm.rhythmicSpec(rhythmic)?.let { spec ->
+                item(key = "rhythmic") { RhythmicCard(spec, vm.bodiesOf(rhythmic).ifEmpty { listOf(spec) }) }
+            }
             when {
                 list == null -> item { EmptyState("加载中…") }
                 list.isEmpty() -> item { EmptyState("该词牌暂无词作") }
@@ -211,10 +213,12 @@ fun RhythmicPoemsScreen(vm: AppViewModel, rhythmic: String, onBack: () -> Unit, 
     }
 }
 
-/** 格律卡片:句式摘要 + 逐字平仄谱按句分行,阕(段)间空行(韵脚下划线)。 */
+/** 格律卡片:句式摘要 + 逐字平仄谱按句分行,阕(段)间空行(韵脚下划线);多体可切换。 */
 @Composable
-private fun RhythmicCard(spec: RhythmicSpec) {
+private fun RhythmicCard(spec: RhythmicSpec, bodies: List<RhythmicSpec>) {
     val tuneColor = mapOf('平' to SongciColors.primary, '仄' to SongciColors.error, '中' to SongciColors.outline)
+    var selected by remember { mutableStateOf(0) }
+    val current = bodies.getOrNull(selected) ?: spec
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -223,14 +227,27 @@ private fun RhythmicCard(spec: RhythmicSpec) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(spec.sketch, style = MaterialTheme.typography.bodyMedium, color = SongciColors.tertiary)
-        Text("${spec.chars}字 · ${spec.forms}体",
+        Text(current.sketch, style = MaterialTheme.typography.bodyMedium, color = SongciColors.tertiary)
+        Text("${current.chars}字 · ${bodies.size}体",
              style = MaterialTheme.typography.labelMedium, color = SongciColors.outline)
+        if (bodies.size > 1) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                bodies.indices.forEach { i ->
+                    Text(
+                        "体${i + 1}",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = if (i == selected) SongciColors.primary else SongciColors.outline,
+                        textDecoration = if (i == selected) TextDecoration.Underline else TextDecoration.None,
+                        modifier = Modifier.clickable { selected = i },
+                    )
+                }
+            }
+        }
         if (spec.aliases.isNotEmpty()) {
             Text("异名：" + spec.aliases.joinToString(" · "),
                  style = MaterialTheme.typography.labelMedium, color = SongciColors.stone)
         }
-        spec.tuneLines().forEach { line ->
+        current.tuneLines().forEach { line ->
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 line.chars.forEach { (t, m) ->
                     Text(t.toString(), style = MaterialTheme.typography.bodyMedium,

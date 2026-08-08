@@ -120,7 +120,7 @@ private fun NarrowDetail(
         )
         Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
         Box(modifier = Modifier.fillMaxWidth().padding(vertical = 28.dp).height(1.dp).background(SongciColors.line))
-        PoemLines(poem.content, scale, gap = 34.dp, spec = vm.rhythmicSpec(poem.rhythmic))
+        PoemLines(poem.content, scale, gap = 34.dp, spec = vm.matchedSpec(poem.rhythmic, poem.content))
         DetailActions(vm, favorite, onToggleFavorite, poem, onOpenAuthor, onOpenRhythmic)
     }
 }
@@ -145,7 +145,7 @@ private fun WideDetail(
         )
         Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
         Box(modifier = Modifier.fillMaxWidth().padding(vertical = 36.dp).height(1.dp).background(SongciColors.line))
-        val segments = Segmenter.segment(poem.content, vm.rhythmicSpec(poem.rhythmic))
+        val segments = Segmenter.segment(poem.content, vm.matchedSpec(poem.rhythmic, poem.content))
         if (segments.size == 2) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 StanzaColumn(segments[0], scale, Modifier.weight(1f).padding(end = 56.dp))
