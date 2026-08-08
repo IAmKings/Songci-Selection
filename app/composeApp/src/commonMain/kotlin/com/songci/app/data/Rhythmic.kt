@@ -18,7 +18,7 @@ class Rhythmic internal constructor(
         map.forEach { (name, value) ->
             val spec = parseSpec(value) ?: return@forEach
             s2k.getOrPut(spec.spec) { mutableListOf() }.add(name)
-            spec.aliases.forEach { a2s.putIfAbsent(it, spec.spec) }
+            spec.aliases.forEach { a2s.getOrPut(it) { spec.spec } }   // 首个条目优先(原生无 putIfAbsent)
         }
         specToKeys = s2k.mapValues { it.value.sorted() }
         aliasToSpec = a2s

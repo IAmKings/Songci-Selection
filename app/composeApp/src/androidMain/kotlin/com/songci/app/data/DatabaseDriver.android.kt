@@ -12,13 +12,14 @@ object AppContextHolder {
     lateinit var context: Context
 }
 
+private fun File.readTextOrNull(): String? = if (exists()) readText() else null
+
 actual suspend fun createDatabaseDriver(): SqlDriver {
     val ctx = AppContextHolder.context
     val dbPath = ctx.getDatabasePath(DB_FILE_NAME)
     val bytes = Res.readBytes(DB_RESOURCE_PATH)
     val resVersion = Res.readBytes("files/db_version.txt").decodeToString().trim()
     val versionFile = File(dbPath.parentFile, "$DB_FILE_NAME.version")
-    fun File.readTextOrNull(): String? = if (exists()) readText() else null
     // 缓存版本标记: 版本文件缺失/不一致(数据更新) → 重新复制并记录版本
     if (!dbPath.exists() || versionFile.readTextOrNull() != resVersion) {
         dbPath.parentFile?.mkdirs()
