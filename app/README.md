@@ -32,7 +32,7 @@ app/
 │   │   ├── files/rhythmic_map.json    # 词牌格律首体映射(84.2% 词牌/95.4% 词作,8 字段,生成物)
 │   │   ├── files/rhythmic_bodies.json # 格律全部体(多体切换/分段匹配,生成物)
 │   │   ├── files/unmapped_rhythmics.json # 未映射清单活档案(226 条数据源缺失)
-│   │   └── font/                  # Noto Serif SC + Inter(Google Fonts,OFL 许可)
+│   │   └── font/                  # LXGW WenKai 霞鹜文楷 + Inter(OFL 许可,随附 OFL.txt)
 │   └── src/desktopTest/   # 数据层基准测试(对照 db/songci.db SQL 基准)
 ├── iosApp/                # Xcode 壳(构建时经 embedAndSignAppleFrameworkForXcode 调 gradle)
 ├── data/tools/
@@ -71,7 +71,7 @@ open iosApp/iosApp.xcodeproj         # Xcode 构建运行
 
 ## 关键设计决策
 
-- **字体 = Noto Serif SC(OFL 免费许可)**:PRD 曾指定 TsangerJinKai02 仓耳今楷——字体内嵌声明「使用前必须获得北京仓耳文字技术有限公司正式书面许可」,**商业受限未授权弃用**(2026-08-09);字符覆盖实测与 Noto 等价(5,379 词库唯一字符均缺 3 个扩展区生僻字+⿰),无替换收益。未来若获授权可重评(楷体更贴合手稿气质)。
+- **字体 = LXGW WenKai 霞鹜文楷(SIL OFL-1.1)**:仓耳今楷因商业许可未授权弃用(2026-08-09,字体内嵌声明须获书面许可);替代评估——霞鹜文楷楷体贴合手稿设计、覆盖严格优于 Noto Serif SC(词库 5,379 字符缺 1 个扩展区字 vs Noto 缺 3 个,替换零损失),全量替换(不做子集化:搜索框任意输入需全字符集)。OFL.txt 随字体分发。
 - **搜索用 LIKE 而非 FTS5**:21k 行全表扫描实测 <20ms;FTS5 unicode61 对中文是整段分词,`MATCH '明月'` 仅命中 1 行,索引基本失效(详见任务 prd)
 - **预建库 + user_version=1**:SQLDelight 驱动版本匹配时跳过建表,避免 DROP 重建
 - **朝代推导**:`dynasty.py` 关键词 + 年号 + 生卒年回退,覆盖率约 15%(数据本身缺失朝代信息);未覆盖作者归「未知」

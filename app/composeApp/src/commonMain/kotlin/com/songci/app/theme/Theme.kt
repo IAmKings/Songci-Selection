@@ -53,11 +53,11 @@ object SongciColors {
     val backdrop = Color(0xFF3D3D3A)
 }
 
-/** 字体:notoSerif 文学内容,Inter 界面标注(DESIGN.md typography)。Font 为 @Composable 资源加载。 */
+/** 字体:LXGW WenKai(霞鹜文楷,OFL)文学内容,Inter 界面标注(DESIGN.md typography)。Font 为 @Composable 资源加载。 */
 val NotoSerifFamily: FontFamily
     @Composable get() = FontFamily(
-        Font(Res.font.noto_serif_sc_regular, FontWeight.Normal),
-        Font(Res.font.noto_serif_sc_medium, FontWeight.Medium),
+        Font(Res.font.lxgw_wenkai_regular, FontWeight.Normal),
+        Font(Res.font.lxgw_wenkai_medium, FontWeight.Medium),
     )
 
 val InterFamily: FontFamily
