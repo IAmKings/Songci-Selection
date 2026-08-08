@@ -9,6 +9,8 @@ import com.songci.app.data.Author
 import com.songci.app.data.Dynasty
 import com.songci.app.data.Poem
 import com.songci.app.data.SongciRepository
+import com.songci.app.data.loadFontScaleName
+import com.songci.app.data.saveFontScaleName
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -23,7 +25,6 @@ enum class FontScale(val label: String, val scale: Float) {
 class AppViewModel(private val repo: SongciRepository) : ViewModel() {
 
     val dynasty: Dynasty = repo.dynasty
-
 
     private val _randomPoems = MutableStateFlow<List<Poem>>(emptyList())
     val randomPoems: StateFlow<List<Poem>> = _randomPoems
@@ -40,7 +41,9 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
     private val _knownDynasties = MutableStateFlow<List<String>>(emptyList())
     val knownDynasties: StateFlow<List<String>> = _knownDynasties
 
-    var fontScale by mutableStateOf(FontScale.MEDIUM)
+    var fontScale by mutableStateOf(
+        FontScale.entries.firstOrNull { it.name == loadFontScaleName() } ?: FontScale.MEDIUM
+    )
         private set
 
     // 搜索状态
@@ -63,6 +66,7 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
 
     fun updateFontScale(scale: FontScale) {
         fontScale = scale
+        saveFontScaleName(scale.name)
     }
 
     fun refreshRandom() {

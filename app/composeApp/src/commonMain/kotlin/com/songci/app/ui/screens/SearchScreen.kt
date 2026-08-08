@@ -26,6 +26,25 @@ import com.songci.app.ui.AppViewModel
 import com.songci.app.ui.components.EmptyState
 import com.songci.app.ui.components.PoemList
 
+/** 下划线输入框(底色 surfaceContainerLow,聚焦 primary 底线)。 */
+@Composable
+private fun SearchField(value: String, onChange: (String) -> Unit, placeholder: String) {
+    TextField(
+        value = value,
+        onValueChange = onChange,
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+        placeholder = { Text(placeholder, style = MaterialTheme.typography.bodyMedium, color = SongciColors.stone) },
+        textStyle = MaterialTheme.typography.bodyMedium.copy(color = SongciColors.nearBlack),
+        singleLine = true,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = SongciColors.surfaceContainerLow,
+            unfocusedContainerColor = SongciColors.surfaceContainerLow,
+            focusedIndicatorColor = SongciColors.primary,
+            unfocusedIndicatorColor = SongciColors.stone,
+        ),
+    )
+}
+
 /** 搜索:关键词(作者/词牌/诗句) + 朝代筛选 + 词牌精确筛选。 */
 @Composable
 fun SearchScreen(
@@ -50,20 +69,7 @@ fun SearchScreen(
             Text("搜索", style = MaterialTheme.typography.labelMedium, color = SongciColors.stone)
         }
 
-        TextField(
-            value = vm.searchQuery,
-            onValueChange = vm::search,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-            placeholder = { Text("搜索作者、词牌、诗句...", style = MaterialTheme.typography.bodyMedium, color = SongciColors.stone) },
-            textStyle = MaterialTheme.typography.bodyMedium.copy(color = SongciColors.nearBlack),
-            singleLine = true,
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = SongciColors.surfaceContainerLow,
-                unfocusedContainerColor = SongciColors.surfaceContainerLow,
-                focusedIndicatorColor = SongciColors.primary,
-                unfocusedIndicatorColor = SongciColors.stone,
-            ),
-        )
+        SearchField(vm.searchQuery, vm::search, "搜索作者、词牌、诗句...")
 
         Row(
             modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 12.dp),
@@ -84,20 +90,7 @@ fun SearchScreen(
             }
         }
 
-        TextField(
-            value = vm.searchRhythmic,
-            onValueChange = vm::updateSearchRhythmic,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-            placeholder = { Text("词牌筛选(精确,可空)", style = MaterialTheme.typography.bodyMedium, color = SongciColors.stone) },
-            textStyle = MaterialTheme.typography.bodyMedium.copy(color = SongciColors.nearBlack),
-            singleLine = true,
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = SongciColors.surfaceContainerLow,
-                unfocusedContainerColor = SongciColors.surfaceContainerLow,
-                focusedIndicatorColor = SongciColors.primary,
-                unfocusedIndicatorColor = SongciColors.stone,
-            ),
-        )
+        SearchField(vm.searchRhythmic, vm::updateSearchRhythmic, "词牌筛选(精确,可空)")
 
         if (results.isEmpty()) {
             EmptyState("输入关键词开始搜索")

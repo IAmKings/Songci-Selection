@@ -67,6 +67,11 @@ open iosApp/iosApp.xcodeproj         # Xcode 构建运行
 - **自适应**:宽度 ≥768dp 详情双栏(上下阕并置),<768dp 单栏 + 底部导航
 - **图标**:桌面/iOS 暂用占位;`design/app-icon/screen.png` 待接入(阶段 4 未完成项)
 
+## 未来选项(已评估,当前不做)
+
+- **核心库/用户库分离(零复制)**:首启直接只读打开 asset/bundle 中的核心库,favorites 独立小库。评估:收益 = Android 首启省 100–300ms(一次性)+ 磁盘 17MB;成本 = 跨库 JOIN 消失(收藏查询二次查 + 内存合并)+ 三端只读 SQLDelight 驱动适配 + 双库版本管理。当前 favorites 单表极简,ROI 差;**待核心库升级/多应用表出现时再拆** —— 届时「只读核心 + 独立用户库」是正确形态。
+- **字号持久化用 DataStore**:当前用各平台原生键值存储(SharedPreferences/NSUserDefaults/Properties,~40 行零依赖);设置项增多(亮度/通知)时可换 DataStore(需引入 okio 依赖)。
+
 ## 测试
 
 `./gradlew :composeApp:desktopTest` —— 数据层基准测试:搜索(对照 LIKE 基准 648 行)、词牌过滤(743 行)、收藏往返、朝代抽样、随机取词。

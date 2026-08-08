@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,8 +13,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,31 +30,30 @@ import com.songci.app.ui.components.EmptyState
 import com.songci.app.ui.components.PoemList
 import com.songci.app.ui.components.SimpleListScreen
 
-/** 目录索引入口:朝代 / 作者 / 词牌 / 格律(格律无独立数据,按词牌聚合)。 */
+/** 文本行列表通用实现(目录索引/朝代/词牌共用)。 */
 @Composable
-fun IndexScreen(onBack: () -> Unit, onOpen: (String) -> Unit) {
-    SimpleListScreen(title = "目录索引", back = onBack) {
-        val entries = listOf(
-            "朝代" to "index/dynasty",
-            "作者" to "index/authors",
-            "词牌" to "index/rhythmics",
-            "格律" to "index/rhythmics",   // 数据缺口:格律按词牌聚合
-        )
+private fun TextRowList(
+    title: String,
+    back: (() -> Unit)?,
+    rows: List<Pair<String, String>>,   // (label, value)
+    onClick: (String) -> Unit,
+) {
+    SimpleListScreen(title = title, back = back) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = androidx.compose.foundation.layout.PaddingValues(20.dp),
         ) {
-            items(entries) { (label, route) ->
+            items(rows) { (label, value) ->
                 Text(
-                    "$label →",
+                    label,
                     style = MaterialTheme.typography.bodyLarge,
                     color = SongciColors.primary,
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(SongciColors.surfaceContainerLow)
                         .border(1.dp, SongciColors.line)
-                        .clickable { onOpen(route) }
+                        .clickable { onClick(value) }
                         .padding(18.dp),
                 )
             }
@@ -63,31 +61,27 @@ fun IndexScreen(onBack: () -> Unit, onOpen: (String) -> Unit) {
     }
 }
 
+/** 目录索引入口:朝代 / 作者 / 词牌 / 格律(格律无独立数据,按词牌聚合)。 */
+@Composable
+fun IndexScreen(onBack: () -> Unit, onOpen: (String) -> Unit) {
+    TextRowList(
+        title = "目录索引",
+        back = onBack,
+        rows = listOf(
+            "朝代 →" to "index/dynasty",
+            "作者 →" to "index/authors",
+            "词牌 →" to "index/rhythmics",
+            "格律 →" to "index/rhythmics",   // 数据缺口:格律按词牌聚合
+        ),
+        onClick = onOpen,
+    )
+}
+
 /** 朝代列表(仅含数据中存在的朝代)。 */
 @Composable
 fun DynastyListScreen(vm: AppViewModel, onBack: () -> Unit, onOpen: (String) -> Unit) {
     val dynasties by vm.knownDynasties.collectAsState()
-    SimpleListScreen(title = "朝代", back = onBack) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(20.dp),
-        ) {
-            items(dynasties) { d ->
-                Text(
-                    d,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = SongciColors.primary,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(SongciColors.surfaceContainerLow)
-                        .border(1.dp, SongciColors.line)
-                        .clickable { onOpen(d) }
-                        .padding(18.dp),
-                )
-            }
-        }
-    }
+    TextRowList(title = "朝代", back = onBack, rows = dynasties.map { it to it }, onClick = onOpen)
 }
 
 /** 某朝代下的作者列表。 */
@@ -102,22 +96,37 @@ fun DynastyAuthorsScreen(vm: AppViewModel, dynasty: String, onBack: () -> Unit, 
         } else if (list.isEmpty()) {
             EmptyState("该朝代暂无收录作者")
         } else {
-            AuthorList(list, dynastyOf = { vm.dynasty.of(it) }, onAuthor = onAuthor)
+            AuthorList(
+                list,
+                dynastyOf = { vm.dynasty.of(it) },
+                evidenceOf = { vm.dynasty.evidenceOf(it) },
+                onAuthor = onAuthor,
+            )
         }
     }
 }
 
-/** 全部作者列表(带朝代标签)。 */
+/** 全部作者列表(带朝代标签与年份证据)。 */
 @Composable
 fun AuthorsScreen(vm: AppViewModel, onBack: () -> Unit, onAuthor: (Long) -> Unit) {
     val authors by vm.authors.collectAsState()
     SimpleListScreen(title = "作者", back = onBack) {
-        AuthorList(authors, dynastyOf = { vm.dynasty.of(it) }, onAuthor = onAuthor)
+        AuthorList(
+            authors,
+            dynastyOf = { vm.dynasty.of(it) },
+            evidenceOf = { vm.dynasty.evidenceOf(it) },
+            onAuthor = onAuthor,
+        )
     }
 }
 
 @Composable
-private fun AuthorList(authors: List<Author>, dynastyOf: (Long) -> String, onAuthor: (Long) -> Unit) {
+private fun AuthorList(
+    authors: List<Author>,
+    dynastyOf: (Long) -> String,
+    evidenceOf: (Long) -> String?,
+    onAuthor: (Long) -> Unit,
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -135,7 +144,7 @@ private fun AuthorList(authors: List<Author>, dynastyOf: (Long) -> String, onAut
             ) {
                 Text(author.name, style = MaterialTheme.typography.bodyLarge, color = SongciColors.nearBlack)
                 Text(
-                    dynastyOf(author.id),
+                    dynastyOf(author.id) + (evidenceOf(author.id)?.let { " $it" } ?: ""),
                     style = MaterialTheme.typography.labelSmall,
                     color = SongciColors.stone,
                     modifier = Modifier.padding(start = 12.dp),
@@ -149,25 +158,7 @@ private fun AuthorList(authors: List<Author>, dynastyOf: (Long) -> String, onAut
 @Composable
 fun RhythmicsScreen(vm: AppViewModel, onBack: () -> Unit, onOpen: (String) -> Unit) {
     val rhythmics by vm.rhythmics.collectAsState()
-    SimpleListScreen(title = "词牌", back = onBack) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(20.dp),
-        ) {
-            items(rhythmics) { r ->
-                Text(
-                    r,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = SongciColors.primary,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onOpen(r) }
-                        .padding(vertical = 10.dp, horizontal = 4.dp),
-                )
-            }
-        }
-    }
+    TextRowList(title = "词牌", back = onBack, rows = rhythmics.map { it to it }, onClick = onOpen)
 }
 
 /** 某作者的全部词作。 */
@@ -177,7 +168,11 @@ fun AuthorPoemsScreen(vm: AppViewModel, authorId: Long, onBack: () -> Unit, onPo
     LaunchedEffect(authorId) { poems = vm.poemsByAuthor(authorId) }
     val list = poems
     SimpleListScreen(title = "作者词作", back = onBack) {
-        if (list == null) EmptyState("加载中…") else PoemList(list) { onPoem(it.id) }
+        when {
+            list == null -> EmptyState("加载中…")
+            list.isEmpty() -> EmptyState("该作者暂无收录词作")   // 名录含金/元等词人,语料未收录
+            else -> PoemList(list) { onPoem(it.id) }
+        }
     }
 }
 
@@ -188,6 +183,10 @@ fun RhythmicPoemsScreen(vm: AppViewModel, rhythmic: String, onBack: () -> Unit, 
     LaunchedEffect(rhythmic) { poems = vm.poemsByRhythmic(rhythmic) }
     val list = poems
     SimpleListScreen(title = "词牌 · $rhythmic", back = onBack) {
-        if (list == null) EmptyState("加载中…") else PoemList(list) { onPoem(it.id) }
+        when {
+            list == null -> EmptyState("加载中…")
+            list.isEmpty() -> EmptyState("该词牌暂无词作")
+            else -> PoemList(list) { onPoem(it.id) }
+        }
     }
 }

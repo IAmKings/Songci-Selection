@@ -62,7 +62,6 @@ fun PoemCard(poem: Poem, onClick: () -> Unit) {
 fun SimpleListScreen(
     title: String,
     back: (() -> Unit)? = null,
-    emptyText: String = "暂无内容",
     content: @Composable () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize().background(SongciColors.background)) {

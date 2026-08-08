@@ -20,7 +20,11 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -35,6 +39,8 @@ import androidx.navigation.navArgument
 import com.songci.app.data.Dynasty
 import com.songci.app.data.SongciRepository
 import com.songci.app.data.createDatabaseDriver
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import com.songci.app.theme.SongciTheme
 import com.songci.app.ui.screens.AuthorPoemsScreen
 import com.songci.app.ui.screens.AuthorsScreen
@@ -50,7 +56,6 @@ import com.songci.app.ui.screens.SearchScreen
 import com.songci.app.ui.screens.SettingsScreen
 import androidx.savedstate.SavedState
 import androidx.savedstate.read
-import kotlinx.coroutines.runBlocking
 
 /** CMP navigation 2.9 的参数为 SavedState,经 SavedStateReader 读取。 */
 private fun SavedState?.string(key: String): String? =
@@ -85,15 +90,21 @@ private val TABS = listOf(
 @Composable
 fun SongciApp() {
     SongciTheme {
-        val repository = remember {
-            runBlocking {
+        var repository by remember { mutableStateOf<SongciRepository?>(null) }
+        LaunchedEffect(Unit) {
+            repository = withContext(Dispatchers.Default) {
                 SongciRepository(
                     db = com.songci.app.data.db.SongciDb(createDatabaseDriver()),
                     dynasty = Dynasty.load(),
                 )
             }
         }
-        val vm: AppViewModel = viewModel { AppViewModel(repository) }
+        val repo = repository
+        if (repo == null) {
+            LoadingScreen()
+            return@SongciTheme
+        }
+        val vm: AppViewModel = viewModel { AppViewModel(repo) }
         val nav = rememberNavController()
 
         BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -221,6 +232,21 @@ fun SongciApp() {
                 }
             }
         }
+    }
+}
+
+/** 首启加载闸门:数据库复制/打开在后台线程完成后进入主界面。 */
+@Composable
+private fun LoadingScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize().background(com.songci.app.theme.SongciColors.background),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            "正在加载词库…",
+            style = MaterialTheme.typography.titleMedium,
+            color = com.songci.app.theme.SongciColors.stone,
+        )
     }
 }
 

@@ -68,7 +68,7 @@ class SongciRepository(
     }
 
     companion object {
-        private val DYNASTY_ORDER = listOf("唐", "五代", "北宋", "南宋", "金", "元", "明", "清")
+        private val DYNASTY_ORDER = listOf("唐", "五代", "宋", "北宋", "南宋", "金", "元", "明", "清")
     }
 }
 
