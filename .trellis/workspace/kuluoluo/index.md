@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 5
+- **Total Sessions**: 6
 - **Last Active**: 2026-08-08
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~113 | Active |
+| `journal-1.md` | ~134 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 6 | 2026-08-08 | iOS 图标 alpha 修复(App Store 合规) | `4fab352` | `main` |
 | 5 | 2026-08-08 | 三端应用图标接入 + GitNexus 索引 | `e9c0692`, `aaae66d` | `main` |
 | 4 | 2026-08-08 | M1 体验打磨:字号持久化 + 首启异步 + 朝代覆盖 | `e5fb787` | `main` |
 | 3 | 2026-08-08 | 宋词选粹 Compose Multiplatform 应用实现 | `ba606c2` | `main` |

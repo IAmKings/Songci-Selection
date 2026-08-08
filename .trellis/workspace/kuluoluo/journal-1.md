@@ -111,3 +111,24 @@
 ### Status
 
 [OK] **Completed**
+
+
+## Session 6: iOS 图标 alpha 修复(App Store 合规)
+
+**Date**: 2026-08-08
+**Task**: iOS 图标 alpha 修复(App Store 合规)
+**Branch**: `main`
+
+### Summary
+
+修复 trellis-check 遗留项:iOS AppIcon.png 去除 alpha 通道。iOS 改用源图全出血 RGB(1024×1024),圆角由 iOS 系统 squircle 蒙版切,与 macOS 预烘焙圆角卡面区分;桌面/Android 产物字节不变。验证:RGB 无 alpha ✓、xcrun actool 编译 exit 0 ✓、脚本幂等 ✓。adaptive 前景单密度确认为 Android 官方允许做法,不做改动。提交 4fab352。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `4fab352` | (see git log) |
+
+### Status
+
+[OK] **Completed**
