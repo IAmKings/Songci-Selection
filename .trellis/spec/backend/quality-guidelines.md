@@ -1,51 +1,32 @@
 # Quality Guidelines
 
-> Code quality standards for backend development.
+> 数据层质量约定:基准测试、幂等、最小依赖。
 
 ---
 
-## Overview
+## 测试模式
 
-<!--
-Document your project's quality standards here.
-
-Questions to answer:
-- What patterns are forbidden?
-- What linting rules do you enforce?
-- What are your testing requirements?
-- What code review standards apply?
--->
-
-(To be filled by the team)
+- **desktopTest 数据层基准测试**(`SongciRepositoryTest.kt`):对照 `db/songci.db` 的 SQL 基准(sqlite3 CLI 实测),如 `search("明月")` = 100 行
+- **纯函数单测**:可测逻辑下沉数据层纯函数(`Rhythmic.tuneLines`/`parseSpec`/`expand`),UI 层不测
+- 测试文件同包可访问 `internal` 构造(`Rhythmic internal constructor`)
 
 ---
 
-## Forbidden Patterns
+## 生成物与可复现
 
-<!-- Patterns that should never be used and why -->
-
-(To be filled by the team)
-
----
-
-## Required Patterns
-
-<!-- Patterns that must always be used -->
-
-(To be filled by the team)
+- 所有生成脚本:单一职责、幂等(重跑 git diff 干净)、输出入 git(JSON)或 gitignore(db)
+- 数据变更走管线:源数据 → `db/build.py` → `prepare_db.py` → 应用资源,不手工改生成物
 
 ---
 
-## Testing Requirements
+## 依赖原则(ponytail)
 
-<!-- What level of testing is expected -->
-
-(To be filled by the team)
+- **不引新依赖**,能用 stdlib/原生/已有依赖解决就不加:JSON 用手写轻量解析(kotlinx.serialization 不引)、设置用原生键值存储(DataStore 不引)、搜索用 LIKE(FTS5 对中文分词失效)
+- 复用项目既有模式,不发明新架构
 
 ---
 
-## Code Review Checklist
+## 数据准确性
 
-<!-- What reviewers should check -->
-
-(To be filled by the team)
+- 数据修复只信外部权威源(纸本/专业校对站),不靠模型猜测补字
+- 未映射/缺失清单为活档案(`unmapped_rhythmics.json`/`restore_manifest.json`),带原因分类与状态,治理后重跑消解

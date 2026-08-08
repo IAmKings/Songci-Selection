@@ -1,12 +1,12 @@
 # Frontend Development Guidelines
 
-> Best practices for frontend development in this project.
+> Compose Multiplatform UI 层约定(三端共用 commonMain)。
 
 ---
 
 ## Overview
 
-This directory contains guidelines for frontend development. Fill in each file with your project's specific conventions.
+UI 为 Compose Multiplatform(Android/iOS/Desktop 共用),「Classical Manuscript」设计系统(DESIGN.md)。约定围绕:复用组件、单一 ViewModel、主题 token、自适应断点、零新依赖。
 
 ---
 
@@ -14,26 +14,19 @@ This directory contains guidelines for frontend development. Fill in each file w
 
 | Guide | Description | Status |
 |-------|-------------|--------|
-| [Directory Structure](./directory-structure.md) | Module organization and file layout | To fill |
-| [Component Guidelines](./component-guidelines.md) | Component patterns, props, composition | To fill |
-| [Hook Guidelines](./hook-guidelines.md) | Custom hooks, data fetching patterns | To fill |
-| [State Management](./state-management.md) | Local state, global state, server state | To fill |
-| [Quality Guidelines](./quality-guidelines.md) | Code standards, forbidden patterns | To fill |
-| [Type Safety](./type-safety.md) | Type patterns, validation | To fill |
+| [Directory Structure](./directory-structure.md) | UI 分层:导航/屏幕/组件/主题 | ✅ 已填充 |
+| [Component Guidelines](./component-guidelines.md) | SimpleListScreen/TextRowList/PoemCard 复用、屏幕内私有组件 | ✅ 已填充 |
+| [Hook Guidelines](./hook-guidelines.md) | Compose 状态获取模式(React hooks 对应表) | ✅ 已填充 |
+| [State Management](./state-management.md) | 单 AppViewModel + StateFlow/mutableStateOf | ✅ 已填充 |
+| [Quality Guidelines](./quality-guidelines.md) | 768dp 自适应、主题一致性、LazyColumn 滚动、验收闭环 | ✅ 已填充 |
+| [Type Safety](./type-safety.md) | 不可变数据类、防御解析、空安全 | ✅ 已填充 |
 
 ---
 
-## How to Fill These Guidelines
+## 核心模式速查
 
-For each guideline file:
+- 屏幕复用 `SimpleListScreen`(标题栏 + 内容槽);整页滚动用单一 LazyColumn(头部为首 item)
+- 数据加载:`LaunchedEffect + mutableStateOf(null)` → 空态「加载中…」
+- 词牌相关显示走归并逻辑(`cleanRhythmic`:⿰ 词牌 → 主词牌),源数据保留原貌
 
-1. Document your project's **actual conventions** (not ideals)
-2. Include **code examples** from your codebase
-3. List **forbidden patterns** and why
-4. Add **common mistakes** your team has made
-
-The goal is to help AI assistants and new team members understand how YOUR project works.
-
----
-
-**Language**: All documentation should be written in **English**.
+**Language**: 中文(与项目文档一致)。

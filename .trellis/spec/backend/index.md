@@ -1,12 +1,12 @@
 # Backend Development Guidelines
 
-> Best practices for backend development in this project.
+> 数据层与生成管线约定(本项目「backend」= SQLite 数据 + Python 生成脚本 + KMP 数据访问)。
 
 ---
 
 ## Overview
 
-This directory contains guidelines for backend development. Fill in each file with your project's specific conventions.
+项目非传统 web 后端:数据层由三部分组成——`db/songci.db`(SQLite 预建库)、`app/data/tools/*.py`(生成脚本管线)、`composeResources/files/*.json`(运行时加载的生成物)。所有约定围绕:幂等生成、防御解析、最小依赖。
 
 ---
 
@@ -14,25 +14,18 @@ This directory contains guidelines for backend development. Fill in each file wi
 
 | Guide | Description | Status |
 |-------|-------------|--------|
-| [Directory Structure](./directory-structure.md) | Module organization and file layout | To fill |
-| [Database Guidelines](./database-guidelines.md) | ORM patterns, queries, migrations | To fill |
-| [Error Handling](./error-handling.md) | Error types, handling strategies | To fill |
-| [Quality Guidelines](./quality-guidelines.md) | Code standards, forbidden patterns | To fill |
-| [Logging Guidelines](./logging-guidelines.md) | Structured logging, log levels | To fill |
+| [Directory Structure](./directory-structure.md) | 仓库结构:源数据/脚本/运行时分层 | ✅ 已填充 |
+| [Database Guidelines](./database-guidelines.md) | SQLite schema、预建库 user_version=1、LIKE 搜索基准 | ✅ 已填充 |
+| [Error Handling](./error-handling.md) | 防御式解析、校验拒写、幂等、驱动缓存更新 | ✅ 已填充 |
+| [Quality Guidelines](./quality-guidelines.md) | 基准测试、生成物可复现、零新依赖、数据准确性 | ✅ 已填充 |
+| [Logging Guidelines](./logging-guidelines.md) | 零日志框架:应用侧无日志,脚本侧 print 报告 | ✅ 已填充 |
 
 ---
 
-## How to Fill These Guidelines
+## 核心模式速查
 
-For each guideline file:
+- 数据加载:composeResources 扁平 JSON + 手写解析器(`Dynasty.parseMap` 风格),**不引 kotlinx.serialization**
+- 数据变更:源数据 → `db/build.py` → `prepare_db.py`,不手工改生成物
+- 外部数据源不入 repo,`--source` 指定;生成物 JSON 入 git(可复现)
 
-1. Document your project's **actual conventions** (not ideals)
-2. Include **code examples** from your codebase
-3. List **forbidden patterns** and why
-4. Add **common mistakes** your team has made
-
-The goal is to help AI assistants and new team members understand how YOUR project works.
-
----
-
-**Language**: All documentation should be written in **English**.
+**Language**: 中文(与项目文档一致)。

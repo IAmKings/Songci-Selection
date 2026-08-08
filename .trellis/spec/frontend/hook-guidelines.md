@@ -1,51 +1,23 @@
 # Hook Guidelines
 
-> How hooks are used in this project.
+> 本项目无 hooks(非 React)——对应模式为 Compose 状态获取。
 
 ---
 
-## Overview
+## Compose 等价模式
 
-<!--
-Document your project's hook conventions here.
-
-Questions to answer:
-- What custom hooks do you have?
-- How do you handle data fetching?
-- What are the naming conventions?
-- How do you share stateful logic?
--->
-
-(To be filled by the team)
+| React hooks | Compose 对应 |
+|---|---|
+| useState | `remember { mutableStateOf(...) }` |
+| useEffect | `LaunchedEffect(key) { ... }` |
+| useContext | ViewModel 注入(单 VM 全局) |
+| useMemo | `remember(key) { 计算 }` |
+| 订阅 | `collectAsState()` |
 
 ---
 
-## Custom Hook Patterns
+## 约定
 
-<!-- How to create and structure custom hooks -->
-
-(To be filled by the team)
-
----
-
-## Data Fetching
-
-<!-- How data fetching is handled (React Query, SWR, etc.) -->
-
-(To be filled by the team)
-
----
-
-## Naming Conventions
-
-<!-- Hook naming rules (use*, etc.) -->
-
-(To be filled by the team)
-
----
-
-## Common Mistakes
-
-<!-- Hook-related mistakes your team has made -->
-
-(To be filled by the team)
+- `LaunchedEffect` 的 key 必须包含依赖(poemId/rhythmic),避免陈旧数据
+- 首启一次性加载(数据库/映射)用顶层 `LaunchedEffect(Unit)`,加载完成前显示闸门
+- 不把副作用写在组合函数体内(用 LaunchedEffect/DisposableEffect 包装)

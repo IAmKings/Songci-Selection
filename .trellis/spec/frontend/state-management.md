@@ -1,51 +1,26 @@
 # State Management
 
-> How state is managed in this project.
+> AppViewModel + StateFlow/mutableStateOf 模式。
 
 ---
 
-## Overview
+## 架构
 
-<!--
-Document your project's state management conventions here.
-
-Questions to answer:
-- What state management solution do you use?
-- How is local vs global state decided?
-- How do you handle server state?
-- What are the patterns for derived state?
--->
-
-(To be filled by the team)
+- **单一 AppViewModel**(生命周期 ViewModel,viewModelScope):持有 Repository(db/dynasty/rhythmic)
+- Repository 构造注入(App.kt 首启加载闸门内 `withContext(Dispatchers.Default)` 创建,避免主线程 IO)
 
 ---
 
-## State Categories
+## 状态形态
 
-<!-- Local state, global state, server state, URL state -->
-
-(To be filled by the team)
-
----
-
-## When to Use Global State
-
-<!-- Criteria for promoting state to global -->
-
-(To be filled by the team)
+- **列表数据**:`MutableStateFlow<List<T>>`,init 时 `viewModelScope.launch { _x.value = repo.x() }`,UI `collectAsState()`
+- **交互态**:`var x by mutableStateOf(...)`,如字号档位/搜索词/筛选条件
+- **懒加载**:词作详情/作者词作等按需 `suspend fun` + 屏幕内 LaunchedEffect 拉取(不预载)
 
 ---
 
-## Server State
+## 约定
 
-<!-- How server data is cached and synchronized -->
-
-(To be filled by the team)
-
----
-
-## Common Mistakes
-
-<!-- State management mistakes your team has made -->
-
-(To be filled by the team)
+- 数据加载统一后台:`repo.*` 内部 `withContext(Dispatchers.Default)`(SQLDelight 同步查询包装)
+- 写操作幂等:收藏 `setFavorite(poem, target)` 按目标态写入,避免读-取反竞态
+- 搜索状态机:`searchQuery/searchRhythmic/searchDynasty` → `runSearch()` 重算,筛选在内存做(词牌筛选按归并名 `cleanRhythmic`)
