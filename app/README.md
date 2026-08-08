@@ -76,6 +76,8 @@ open iosApp/iosApp.xcodeproj         # Xcode 构建运行
 
 - **核心库/用户库分离(零复制)**:首启直接只读打开 asset/bundle 中的核心库,favorites 独立小库。评估:收益 = Android 首启省 100–300ms(一次性)+ 磁盘 17MB;成本 = 跨库 JOIN 消失(收藏查询二次查 + 内存合并)+ 三端只读 SQLDelight 驱动适配 + 双库版本管理。当前 favorites 单表极简,ROI 差;**待核心库升级/多应用表出现时再拆** —— 届时「只读核心 + 独立用户库」是正确形态。
 - **字号持久化用 DataStore**:当前用各平台原生键值存储(SharedPreferences/NSUserDefaults/Properties,~40 行零依赖);设置项增多(亮度/通知)时可换 DataStore(需引入 okio 依赖)。
+- **格律多体切换**:格律卡片仅展示首体(正格);钦定词谱 826 调共 2,306 体,数据源 Ci_Tunes.json 的 formats 数组已含全部体(生成脚本只提取首体)。待 UI 需要时扩展 rhythmic_map.py 输出多体 + 卡片切换。
+- **词作内容分段(切上下阕)**:按用户决策排在数据治理(⿰ 还原/金元补全)后进行;段边界数据(segEnds)已在 rhythmic_map.json 就绪,复用同一份边界切词作文本;需处理变体字数差异(多体匹配)与无格律兜底(行数对半+单段回退)。
 
 ## 测试
 
