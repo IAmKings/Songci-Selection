@@ -111,7 +111,8 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
                 else -> repo.search(q)
             }
             val filtered = when {
-                searchRhythmic.isNotEmpty() -> results.filter { it.rhythmic == searchRhythmic }
+                searchRhythmic.isNotEmpty() ->
+                    results.filter { repo.cleanRhythmic(it.rhythmic) == searchRhythmic }  // 归并名过滤(含 ⿰ 变体)
                 searchDynasty.isEmpty() -> results
                 else -> results.filter { repo.dynasty.of(it.authorId) == searchDynasty }
             }

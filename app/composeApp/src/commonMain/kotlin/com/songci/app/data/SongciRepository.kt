@@ -33,13 +33,13 @@ class SongciRepository(
 
     /** 词牌列表:仅含 ⿰ 的异常词牌归并到主词牌(「⿰⿰⿰·七娘子」→「七娘子」),不单独成条目。 */
     suspend fun rhythmics(): List<String> = withContext(Dispatchers.Default) {
-        q.allRhythmics().executeAsList().map(::cleanRhythmic).distinct()
+        q.allRhythmics().executeAsList().map(::cleanRhythmic).distinct().sorted()
     }
 
     /** 显示归并:仅 ⿰ 词牌「A·B」取主词牌 B;普通词牌名原样(历史原貌保留)。 */
     fun cleanRhythmic(raw: String): String {
         if ("⿰" !in raw) return raw
-        return raw.replace("⿰", "").substringAfterLast("·").trim()
+        return raw.replace("⿰", "").substringAfterLast("·").trim().ifBlank { raw }
     }
 
     suspend fun poemsByRhythmic(rhythmic: String, limit: Int = 100): List<Poem> =
@@ -52,7 +52,7 @@ class SongciRepository(
             val base = q.search(query, query, query, limit.toLong()).executeAsList().map { it.toPoem() }
             // 异名展开: 搜词牌别名(出塞/大江东去)时并入同调词牌的词(仅 q 命中词牌时触发)
             val expanded = rhythmic.expand(query.trim())
-            if (expanded.size <= 1) return@withContext base
+            if (expanded.isEmpty() || expanded == listOf(query.trim())) return@withContext base
             val byRhythmic = expanded.mapNotNull { name ->
                 q.poemsByRhythmic(name, name, limit.toLong()).executeAsList().map { it.toPoem() }
             }.flatten()

@@ -36,6 +36,13 @@ class SongciRepositoryTest {
         assertTrue(results.all { it.content.contains("明月") || it.authorName.contains("明月") })
     }
 
+    @Test fun searchByAliasReturnsSameSpecPoems() = runBlocking {
+        // 回归:单键同调组别名(青衫湿→人月圆 15 首)搜索必须命中,不因展开数=1 被短路
+        val results = testRepo().search("青衫湿")
+        assertTrue(results.isNotEmpty())
+        assertTrue(results.any { it.rhythmic == "人月圆" })
+    }
+
     @Test fun poemByIdReturnsPoem() = runBlocking {
         val poem = testRepo().poemById(42)
         assertEquals(42L, poem?.id)

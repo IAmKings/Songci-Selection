@@ -1,6 +1,6 @@
 # 宋词选粹 · Compose Multiplatform 应用
 
-「宋词选粹」跨平台应用:Kotlin + Compose Multiplatform,Android / iOS / macOS 三端,内置 21,050 首宋词数据库,遵循 `DESIGN.md`「Classical Manuscript」设计系统。
+「宋词选粹」跨平台应用:Kotlin + Compose Multiplatform,Android / iOS / macOS 三端,内置 21,340 首宋词数据库(含金元词人补全 290 首),遵循 `DESIGN.md`「Classical Manuscript」设计系统。
 
 ## 技术栈与版本
 
@@ -73,6 +73,8 @@ open iosApp/iosApp.xcodeproj         # Xcode 构建运行
 - **图标**:三端已接入 `design/app-icon/screen.png`(卷轴+毛笔),唯一源 + `data/tools/gen_app_icons.py` 生成全部产物。iOS 用全出血 RGB(App Store 拒 alpha,圆角由系统蒙版);macOS/Windows 用预烘焙圆角卡面。注意 CMP 1.11 桌面 DSL 用按平台 `macOS/windows/linux { iconFile }` 块,旧版 `icon(vararg)` 已移除
 
 ## 数据治理决策记录(2026-08-08)
+
+- **驱动缓存策略**:桌面/Android/iOS 首启复制预建库到用户目录,资源与缓存**大小不一致时重新复制**(曾因旧库残留致词库缺失/空白词牌名);词牌显示层:含 ⿰ 词牌归并到主词牌(源数据保留原貌),异名搜索自动展开同调(出塞→谒金门全部词)。
 
 - **⿰ 内容层还原 = 最低优先级**:3,035 处缺失(850 首/4.0%)经评估——chinese-poetry/snowtraces 两大开源数据源同源缺失(均用 □ 占位),搜韵等权威校对网抽查 5 首同样缺字。自动化不可行,人工对照 ROI 极低。**维持现状**:缺失字符以 ⿰ 显示(忠实传递),清单 `data/restore_manifest.json` + `app/data/tools/restore.py` 管道保留,未来若有高质量权威数字源可重评。
 - 词牌名层 ⿰ 已清零(6 个贺铸遗缺词牌归并显示,源数据保留原貌)。
