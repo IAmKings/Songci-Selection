@@ -53,7 +53,7 @@ class SongciRepository(
 
     suspend fun search(query: String, limit: Int = 100): List<Poem> =
         withContext(Dispatchers.Default) {
-            val base = q.search(query, query, query, limit.toLong()).executeAsList().map { it.toPoem() }
+            val base = q.search(query, query, query, query, limit.toLong()).executeAsList().map { it.toPoem() }
             // 异名展开: 搜词牌别名(出塞/大江东去)时并入同调词牌的词(仅 q 命中词牌时触发)
             val expanded = rhythmic.expand(query.trim())
             if (expanded.isEmpty() || expanded == listOf(query.trim())) return@withContext base

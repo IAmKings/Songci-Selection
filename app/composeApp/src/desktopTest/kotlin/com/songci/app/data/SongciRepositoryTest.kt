@@ -32,9 +32,21 @@ class SongciRepositoryTest {
 
     @Test fun searchMatchesBaseline() = runBlocking {
         // 基准:content LIKE '%明月%' = 648 行;LIMIT 100
-        val results = testRepo().search("明月")
+        val repo = testRepo()
+        val results = repo.search("明月")
         assertEquals(100, results.size)
-        assertTrue(results.all { it.content.contains("明月") || it.authorName.contains("明月") })
+        // long_desc 匹配为合法路径: 作者简介含「明月」的作者 id 集合
+        val descAuthors = repo.authors().filter { "明月" in it.longDesc }.map { it.id }.toSet()
+        assertTrue(results.all {
+            it.content.contains("明月") || it.authorName.contains("明月") || (it.authorId in descAuthors)
+        })
+    }
+
+    @Test fun searchByAuthorAliasReturnsAllPoems() = runBlocking {
+        // 作者号(友古居士→蔡伸 175 首)命中 long_desc → 该作者词作全出(LIMIT 100)
+        val results = testRepo().search("友古居士")
+        assertEquals(100, results.size)                       // LIMIT 截断
+        assertTrue(results.all { it.authorName == "蔡伸" })
     }
 
     @Test fun searchByAliasReturnsSameSpecPoems() = runBlocking {

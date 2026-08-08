@@ -57,6 +57,7 @@ FROM poems p JOIN authors a ON a.id = p.author_id
 WHERE p.content LIKE '%' || ? || '%'
    OR a.name LIKE '%' || ? || '%'
    OR p.rhythmic LIKE '%' || ? || '%'
+   OR a.long_desc LIKE '%' || ? || '%'   -- 作者号/别称(友古居士→蔡伸),实测增量 ~4ms
 ORDER BY p.id LIMIT ?;
 
 favorites:
