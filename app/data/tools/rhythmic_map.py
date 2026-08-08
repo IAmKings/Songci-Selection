@@ -52,6 +52,20 @@ def clean_with_fallback(rhythmic: str, specs_keys: set) -> str:
 # 别名提取: 「蔡伸词名《苍梧谣》」「袁去华词亦名《归字谣》」;排除书名/作品名语境(无「名」前置)
 ALIAS_RE = re.compile(r'(?:词)?(?:亦)?名《([^》]{1,8})》')
 
+# 策展映射(2026-08-08 人工确认,律体校验通过: 词作字数/句长命中目标调某体)
+CURATED = {
+    "水调歌": "水调歌头",   # 4/5 词作 95 字命中水调歌头体
+    "木兰花": "玉楼春",     # 3/3 词作 56 字 = 玉楼春格律(非木兰花令)
+    "雨中花": "雨中花慢",   # 1/1 词作 97 字命中
+}
+
+# 律体校验确认的独立调(与数据源形近但字数/句长不合,策展为 missing-in-source)
+REVIEWED_INDEPENDENT = {
+    "人娇", "五彩结同心", "浣溪沙慢", "四犯翦梅花", "归去来兮", "归田乐令",
+    "惜花春起早", "映山红", "满朝欢令", "潇湘忆故人慢", "秋思", "秋蕊香令",
+    "簇水近", "踏莎行慢", "雪明鹊夜", "钿带长中腔", "马索", "新燕过妆楼", "木兰花慢",
+}
+
 def build_alias_index(specs: dict) -> dict:
     alias = {}
     for name, entry in specs.items():
@@ -86,15 +100,19 @@ def main():
             mapped[raw] = (c, "direct")
         elif c in alias:
             mapped[raw] = (alias[c], "alias")
+        elif c in CURATED:
+            mapped[raw] = (CURATED[c], "curated")   # 人工策展(律体校验通过)
         else:
             if "⿰" in raw:
-                cat = "placeholder"
+                cat, status = "placeholder", "open"
+            elif c in REVIEWED_INDEPENDENT:
+                cat, status = "missing-in-source", "reviewed-independent"   # 律体校验:独立调
             elif any(difflib.SequenceMatcher(None, c, k).ratio() >= 0.8 for k in specs):
-                cat = "alias-mismatch"
+                cat, status = "alias-mismatch", "open"
             else:
-                cat = "missing-in-source"
+                cat, status = "missing-in-source", "open"
             unmapped.append({"rhythmic": raw, "cleaned": c, "category": cat,
-                             "poems": n, "status": "open"})
+                             "poems": n, "status": status})
 
     # rhythmic_map.json: 扁平摘要 "词牌名" -> "sketch|chars|forms|tune|rhythm_codes|segments"
     # (对齐 dynasty_map.json 极简解析风格;rhythm 标记转单字符 -/J(句)/Y(韵);
