@@ -122,6 +122,11 @@ def main():
         ends.append(shifts[-1])
         return sorted(set(ends))
 
+    # 主词牌 → 异名列表(desc 别名反向,供详情页「异名」行展示)
+    alias_by_spec = {}
+    for a, spec in alias.items():
+        alias_by_spec.setdefault(spec, []).append(a)
+
     map_data = {}
     for raw, (spec_name, src) in mapped.items():
         entry = specs[spec_name]
@@ -129,7 +134,8 @@ def main():
         tune_seq = "".join(x["tune"] for x in f0["tunes"])
         rhythm = "".join(RHYTHM_CODE.get(x.get("rhythm", ""), "-") for x in f0["tunes"])
         segs = "/".join(str(i) for i in segment_ends(f0["tunes"]))   # 斜杠分隔:JSON 条目以逗号拆分
-        map_data[raw] = f"{f0['sketch']}|{len(f0['tunes'])}|{len(entry['formats'])}|{tune_seq}|{rhythm}|{segs}"
+        aliases = "/".join(alias_by_spec.get(spec_name, []))
+        map_data[raw] = f"{f0['sketch']}|{len(f0['tunes'])}|{len(entry['formats'])}|{tune_seq}|{rhythm}|{segs}|{aliases}|{spec_name}"
     OUT_MAP.parent.mkdir(parents=True, exist_ok=True)
     OUT_MAP.write_text(json.dumps(map_data, ensure_ascii=False) + "\n", encoding="utf-8")
     OUT_UNMAPPED.write_text(json.dumps(unmapped, ensure_ascii=False) + "\n", encoding="utf-8")

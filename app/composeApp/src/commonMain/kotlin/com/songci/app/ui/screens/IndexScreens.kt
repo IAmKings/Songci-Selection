@@ -226,6 +226,10 @@ private fun RhythmicCard(spec: RhythmicSpec) {
         Text(spec.sketch, style = MaterialTheme.typography.bodyMedium, color = SongciColors.tertiary)
         Text("${spec.chars}字 · ${spec.forms}体",
              style = MaterialTheme.typography.labelMedium, color = SongciColors.outline)
+        if (spec.aliases.isNotEmpty()) {
+            Text("异名：" + spec.aliases.joinToString(" · "),
+                 style = MaterialTheme.typography.labelMedium, color = SongciColors.stone)
+        }
         spec.tuneLines().forEach { line ->
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 line.chars.forEach { (t, m) ->

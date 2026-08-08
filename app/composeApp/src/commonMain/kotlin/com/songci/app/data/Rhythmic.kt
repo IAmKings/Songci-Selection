@@ -9,6 +9,16 @@ class Rhythmic internal constructor(private val map: Map<String, String>) {
     /** 格律摘要:sketch/chars/forms/tune(平仄串)/rhythm(标记串),无则 null。 */
     fun of(rhythmic: String): RhythmicSpec? = map[rhythmic]?.let(::parseSpec)
 
+    /** 异名展开:q(词牌名或别名) → 同调全部 db 词牌名(搜索用,如「出塞」→[出塞,出塞·谒金门,谒金门])。 */
+    fun expand(q: String): List<String> {
+        val qSpec = of(q)?.spec
+            ?: map.entries.firstOrNull { (_, v) -> parseSpec(v)?.aliases?.contains(q) == true }
+                ?.let { (_, v) -> parseSpec(v)?.spec }
+        if (qSpec == null) return emptyList()
+        return map.entries.filter { (_, v) -> parseSpec(v)?.spec == qSpec }
+            .map { it.key }.sorted()
+    }
+
     companion object {
         const val FILE = "files/rhythmic_map.json"
 
@@ -29,19 +39,20 @@ class Rhythmic internal constructor(private val map: Map<String, String>) {
 
         internal fun parseSpec(value: String): RhythmicSpec? {
             val parts = value.split("|")
-            if (parts.size != 6) return null
+            if (parts.size != 8) return null
             val sketch = parts[0]; val chars = parts[1]; val forms = parts[2]
             val tune = parts[3]; val rhythm = parts[4]; val segs = parts[5]
+            val aliases = parts[6]; val spec = parts[7]
             if (tune.length != rhythm.length) return null
             val segEnds = segs.split("/").mapNotNull { it.toIntOrNull() }
             if (segEnds.isEmpty() || segEnds.last() != tune.length - 1) return null
             return RhythmicSpec(sketch, chars.toIntOrNull() ?: 0, forms.toIntOrNull() ?: 0,
-                tune, rhythm, segEnds)
+                tune, rhythm, segEnds, aliases.split("/").filter { it.isNotBlank() }, spec)
         }
     }
 }
 
-/** 首体格律:句式摘要/字数/体数/平仄谱(逐字) + 标记(句/韵位置) + 段末字索引(含全词末)。 */
+/** 首体格律:句式摘要/字数/体数/平仄谱(逐字) + 标记(句/韵位置) + 段末字索引 + 异名列表 + 主词牌名。 */
 data class RhythmicSpec(
     val sketch: String,
     val chars: Int,
@@ -49,6 +60,8 @@ data class RhythmicSpec(
     val tune: String,
     val rhythm: String,   // 与 tune 等长: '-' 普通 / 'J' 句末 / 'Y' 韵脚
     val segEnds: List<Int>,   // 段末字索引,如 [20, 41](浣溪沙前段 21 字/后段 21 字)
+    val aliases: List<String>,   // 异名(出塞/大江东去…),无则空
+    val spec: String,   // 主词牌名(钦定词谱调名)
 ) {
     /** 平仄谱按句切行(句末 J/韵 Y 换行),段边界(segEnds)处标记段尾。 */
     fun tuneLines(): List<TuneLine> {

@@ -49,7 +49,14 @@ class SongciRepository(
 
     suspend fun search(query: String, limit: Int = 100): List<Poem> =
         withContext(Dispatchers.Default) {
-            q.search(query, query, query, limit.toLong()).executeAsList().map { it.toPoem() }
+            val base = q.search(query, query, query, limit.toLong()).executeAsList().map { it.toPoem() }
+            // 异名展开: 搜词牌别名(出塞/大江东去)时并入同调词牌的词(仅 q 命中词牌时触发)
+            val expanded = rhythmic.expand(query.trim())
+            if (expanded.size <= 1) return@withContext base
+            val byRhythmic = expanded.mapNotNull { name ->
+                q.poemsByRhythmic(name, name, limit.toLong()).executeAsList().map { it.toPoem() }
+            }.flatten()
+            (base + byRhythmic).distinctBy { it.id }.take(limit)
         }
 
     suspend fun favorites(): List<Favorite> = withContext(Dispatchers.Default) {
