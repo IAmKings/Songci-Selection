@@ -51,6 +51,12 @@ class SongciRepository(
             q.poemsByRhythmic(rhythmic, rhythmic, limit.toLong()).executeAsList().map { it.toPoem() }
         }
 
+    /** 词牌模糊筛选(「水」→水调歌头/水龙吟…)。 */
+    suspend fun poemsByRhythmicContains(rhythmic: String, limit: Int = 100): List<Poem> =
+        withContext(Dispatchers.Default) {
+            q.poemsByRhythmicContains(rhythmic, limit.toLong()).executeAsList().map { it.toPoem() }
+        }
+
     suspend fun search(query: String, limit: Int = 100): List<Poem> =
         withContext(Dispatchers.Default) {
             val base = q.search(query, query, query, query, limit.toLong()).executeAsList().map { it.toPoem() }
@@ -101,6 +107,9 @@ private fun com.songci.app.data.db.PoemsByAuthor.toPoem() =
     Poem(id, rhythmic, content, authorId = null, authorName = "")
 
 private fun com.songci.app.data.db.PoemsByRhythmic.toPoem() =
+    Poem(id, rhythmic, content, author_id, author_name)
+
+private fun com.songci.app.data.db.PoemsByRhythmicContains.toPoem() =
     Poem(id, rhythmic, content, author_id, author_name)
 
 private fun com.songci.app.data.db.Search.toPoem() =

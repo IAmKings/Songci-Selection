@@ -42,6 +42,18 @@ class SongciRepositoryTest {
         })
     }
 
+    @Test fun rhythmicFilterFuzzyMatches() = runBlocking {
+        // 词牌筛选模糊:「水」→ 水调歌头/水龙吟(精确匹配曾致组合搜索 0 结果)
+        val repo = testRepo()
+        val contains = repo.poemsByRhythmicContains("水")
+        assertTrue(contains.isNotEmpty())
+        assertTrue(contains.all { it.rhythmic.contains("水") })
+        // 组合场景: 友古(蔡伸) + 词牌含水 → 水调歌头/水龙吟
+        val combo = repo.search("友古").filter { it.rhythmic.contains("水") }
+        assertTrue(combo.isNotEmpty())
+        assertTrue(combo.all { it.authorName == "蔡伸" })
+    }
+
     @Test fun searchByAuthorAliasReturnsAllPoems() = runBlocking {
         // 作者号(友古居士→蔡伸 175 首)命中 long_desc → 该作者词作全出(LIMIT 100)
         val results = testRepo().search("友古居士")

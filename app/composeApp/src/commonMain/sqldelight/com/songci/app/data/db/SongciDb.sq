@@ -50,6 +50,12 @@ FROM poems p JOIN authors a ON a.id = p.author_id
 WHERE p.rhythmic = ? OR p.rhythmic LIKE '%⿰%·' || ?   -- 含 ⿰ 变体(⿰⿰⿰·七娘子)归入主词牌
 ORDER BY p.id LIMIT ?;
 
+poemsByRhythmicContains:
+SELECT p.id, p.rhythmic, p.content, a.id AS author_id, a.name AS author_name
+FROM poems p JOIN authors a ON a.id = p.author_id
+WHERE p.rhythmic LIKE '%' || ? || '%'   -- 词牌筛选模糊匹配(水→水调歌头/水龙吟)
+ORDER BY p.id LIMIT ?;
+
 -- 全文搜索:21k 行规模用 LIKE 全扫(实测 <20ms),规避 FTS5 unicode61 对中文整段分词的问题
 search:
 SELECT p.id, p.rhythmic, p.content, a.id AS author_id, a.name AS author_name

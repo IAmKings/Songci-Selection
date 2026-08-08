@@ -118,12 +118,12 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
             val q = searchQuery.trim()
             val results = when {
                 q.isEmpty() && searchRhythmic.isEmpty() -> emptyList()
-                q.isEmpty() -> repo.poemsByRhythmic(searchRhythmic)
+                q.isEmpty() -> repo.poemsByRhythmicContains(searchRhythmic)   // 模糊筛选(水→水调歌头)
                 else -> repo.search(q)
             }
             val filtered = when {
                 searchRhythmic.isNotEmpty() ->
-                    results.filter { repo.cleanRhythmic(it.rhythmic) == searchRhythmic }  // 归并名过滤(含 ⿰ 变体)
+                    results.filter { repo.cleanRhythmic(it.rhythmic).contains(searchRhythmic) }  // 归并名模糊(含 ⿰ 变体)
                 searchDynasty.isEmpty() -> results
                 else -> results.filter { repo.dynasty.of(it.authorId) == searchDynasty }
             }

@@ -90,7 +90,7 @@ fun SearchScreen(
             }
         }
 
-        SearchField(vm.searchRhythmic, vm::updateSearchRhythmic, "词牌筛选(精确,可空)")
+        SearchField(vm.searchRhythmic, vm::updateSearchRhythmic, "词牌筛选(模糊,可空)")
 
         if (results.isEmpty()) {
             EmptyState("输入关键词开始搜索")
