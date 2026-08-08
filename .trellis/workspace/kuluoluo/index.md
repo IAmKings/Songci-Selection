@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 15
-- **Last Active**: 2026-08-08
+- **Total Sessions**: 16
+- **Last Active**: 2026-08-09
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~328 | Active |
+| `journal-1.md` | ~355 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 16 | 2026-08-09 | 搜索体系增强 + 字体替换(LXGW 霞鹜文楷) | `08bd24a`, `0e57092`, `5ad96c0`, `d7bafe4`, `262803a`, `a413b78`, `47abc95` | `master` |
 | 15 | 2026-08-08 | 技术债清理与质量闭环(多体体名/预索引/版本标记/三端验证) | `1f9a78f`, `c7b001f`, `cdf669d`, `a4deef0` | `master` |
 | 14 | 2026-08-08 | alias 策展消解(律体校验双条件) | `c45a4cb` | `master` |
 | 13 | 2026-08-08 | 格律多体切换(多体展示 + 分段精确率 57.6%→74.9%) | `1ba3684` | `master` |

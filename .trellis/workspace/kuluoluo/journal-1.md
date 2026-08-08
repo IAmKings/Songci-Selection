@@ -326,3 +326,30 @@ rhythmic_bodies.json 全部体数据(1202 词牌,0 非法体);Rhythmic.bodiesOf/
 ### Status
 
 [OK] **Completed**
+
+
+## Session 16: 搜索体系增强 + 字体替换(LXGW 霞鹜文楷)
+
+**Date**: 2026-08-09
+**Task**: 搜索体系增强 + 字体替换(LXGW 霞鹜文楷)
+**Branch**: `master`
+
+### Summary
+
+作者页面显示简介(db long_desc 100% 覆盖接入,此前数据层丢弃);搜索增强:作者号/别称匹配(long_desc LIKE,友古居士→蔡伸,+4ms 实测)+词牌模糊筛选(水→水调歌头,组合搜索不再 0 结果,0.6ms);字体:仓耳今楷因商业许可未授权弃用(字体内嵌声明),替代评估后全量替换 Noto Serif SC→LXGW WenKai 霞鹜文楷(OFL-1.1,楷体贴合手稿设计,覆盖严格优于 Noto:5,379 字符缺 1 vs 缺 3,替换零损失;子集化分析不值得:搜索框任意输入需全字符集);PRD 全面对齐(状态标注/平台修正/页面清单);README 决策链完整。三端构建全绿(含 iOS compile 约定)。提交 7 个。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `08bd24a` | (see git log) |
+| `0e57092` | (see git log) |
+| `5ad96c0` | (see git log) |
+| `d7bafe4` | (see git log) |
+| `262803a` | (see git log) |
+| `a413b78` | (see git log) |
+| `47abc95` | (see git log) |
+
+### Status
+
+[OK] **Completed**
