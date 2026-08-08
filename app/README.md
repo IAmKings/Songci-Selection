@@ -35,7 +35,8 @@ app/
 ├── data/tools/
 │   ├── prepare_db.py      # db/songci.db → 应用资源副本(user_version=1)
 │   ├── dynasty.py         # authors.long_desc → dynasty_map.json
-│   └── gen_app_icons.py   # design/app-icon/screen.png → 三端图标产物(可复现,改图标重跑)
+│   ├── gen_app_icons.py   # design/app-icon/screen.png → 三端图标产物(可复现,改图标重跑)
+│   └── rhythmic_map.py    # 词牌名清洗 + 钦定词谱格律映射 → rhythmic_map.json + 未映射清单
 └── gradle/
 ```
 
@@ -45,6 +46,8 @@ app/
 # 数据准备(首次或 db 更新后;生成物已 gitignore)
 python3 data/tools/prepare_db.py
 python3 data/tools/dynasty.py
+# 格律映射(需先 clone 数据源: git clone --depth 1 https://github.com/charlesix59/chinese_word_rhyme /tmp/cwr)
+python3 data/tools/rhythmic_map.py
 
 # 桌面(macOS)
 /tmp/gradle-9.7.0/bin/gradle :composeApp:desktopTest :composeApp:desktopJar
