@@ -104,7 +104,10 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "SongciSelection"
-            packageVersion = "0.1.0"
+            packageVersion = "1.0.0"
+            macOS { iconFile.set(project.file("src/desktopMain/resources/icons/icon.icns")) }
+            windows { iconFile.set(project.file("src/desktopMain/resources/icons/icon.ico")) }
+            linux { iconFile.set(project.file("src/desktopMain/resources/icons/icon.png")) }
         }
     }
 }
