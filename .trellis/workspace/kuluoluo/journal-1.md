@@ -260,3 +260,24 @@ Segmenter.kt(data 层纯函数):词作去标点字数与格律首体一致→按
 ### Status
 
 [OK] **Completed**
+
+
+## Session 13: 格律多体切换(多体展示 + 分段精确率 57.6%→74.9%)
+
+**Date**: 2026-08-08
+**Task**: 格律多体切换(多体展示 + 分段精确率 57.6%→74.9%)
+**Branch**: `master`
+
+### Summary
+
+rhythmic_bodies.json 全部体数据(1202 词牌,0 非法体);Rhythmic.bodiesOf/matchBody 按字数匹配体(首体优先);格律卡片体1..N 点击切换显示对应体;词作分段多体匹配(满江红 96 字变体精确切段),精确率 57.6%→74.9%(+3691 首);未映射词牌走兜底(已映射内 87.9%)。测试新增 bodiesAndMatchBody 全绿,用户验收。提交 1ba3684。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `1ba3684` | (see git log) |
+
+### Status
+
+[OK] **Completed**

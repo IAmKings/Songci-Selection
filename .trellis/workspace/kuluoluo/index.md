@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 12
+- **Total Sessions**: 13
 - **Last Active**: 2026-08-08
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~262 | Active |
+| `journal-1.md` | ~283 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 13 | 2026-08-08 | 格律多体切换(多体展示 + 分段精确率 57.6%→74.9%) | `1ba3684` | `master` |
 | 12 | 2026-08-08 | 词作内容分段(格律段边界切上下阕) | `5d1696e` | `master` |
 | 11 | 2026-08-08 | Bootstrap Guidelines 填充(项目真实约定入 spec) | `e67e5b6` | `master` |
 | 10 | 2026-08-08 | 数据治理专项:⿰ 还原工具 + 金元词人补全 | `2d6774a`, `5b81651`, `2b86528` | `main` |
