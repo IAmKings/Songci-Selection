@@ -353,3 +353,26 @@ rhythmic_bodies.json 全部体数据(1202 词牌,0 非法体);Rhythmic.bodiesOf/
 ### Status
 
 [OK] **Completed**
+
+
+## Session 17: 桌面小组件开发(Android Glance 完整 + iOS WidgetKit 基础)
+
+**Date**: 2026-08-09
+**Task**: 桌面小组件开发(Android Glance 完整 + iOS WidgetKit 基础)
+**Branch**: `master`
+
+### Summary
+
+基于 design/widgets 设计稿的三平台小组件:Android(Glance)完整交付——deep link(songci://poem/{id})三端注册机制 + 四规格(2x2/4x1/4x2/4x4 Responsive/LocalSize)+ 刷新/收藏(insertFavorite 写回)/阅读全文交互,同进程直读 db 零复制;iOS(WidgetKit)基础版——pbxproj 手编 Widget Extension target(含 Embed/依赖/App Group entitlements 双端, 中文引号坑)+ Swift TimelineProvider(SQLite3 直查 App Group db)+ App Group db 同步(Kotlin 驱动版本标记);macOS 因 Compose desktop 非 SwiftUI host 记录为后续项;构建验证: pbxproj xcodebuild -list + swiftc typecheck + 三端 Kotlin 全绿(本机缺 iOS runtime 完整构建受限)。提交 bd324ff+0c82352+f51fbc2。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `bd324ff` | (see git log) |
+| `0c82352` | (see git log) |
+| `f51fbc2` | (see git log) |
+
+### Status
+
+[OK] **Completed**
