@@ -36,7 +36,7 @@
 
 - AC1 ✅ macOS 桌面小组件添加成功并展示随机词(小/中/大/超大 4 尺寸)
 - AC2 ✅ App Group 容器 db 从 Compose desktop 同步(21340 首词,SQLite 直查)
-- AC3 待 desktopTest(后续实现阶段跑)
+- AC3 ✅ desktopTest 全绿(5 类 21 测试,0 失败)
 
 ### 关键实测结论(修正研究假设)
 
