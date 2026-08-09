@@ -462,3 +462,25 @@ widget 加 poemId+widgetURL(iOS/macOS);iOS Info.plist scheme+onOpenURL+MainViewC
 ### Status
 
 [OK] **Completed**
+
+
+## Session 22: 安全加固 + 小组件经验沉淀
+
+**Date**: 2026-08-09
+**Task**: 安全加固 + 小组件经验沉淀
+**Branch**: `master`
+
+### Summary
+
+部署脚本签名证书改环境变量读取(~/.songci-signing.env,权限 600),仓库公开+历史含邮箱已评估接受(方案B)。trellis-check 全绿(desktopTest/assembleDebug/lintDebug),widget 五条硬教训沉淀进 spec quality-guidelines(Glance 字体平台限制、ColorProvider 陷阱、深链 trampoline、TCC 弹窗、证书不入库)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `49684bd` | (see git log) |
+| `c294ae1` | (see git log) |
+
+### Status
+
+[OK] **Completed**
