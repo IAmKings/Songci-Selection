@@ -26,6 +26,14 @@ PLIST
 
 pkill -f "/Applications/SongciSelection.app" 2>/dev/null || true
 
+# 注册 songci:// URL scheme(小组件 widgetURL 点击跳转)
+/usr/libexec/PlistBuddy -c "Delete :CFBundleURLTypes" "$APP/Contents/Info.plist" 2>/dev/null || true
+/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes array" "$APP/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0 dict" "$APP/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0:CFBundleURLName string com.songci.app" "$APP/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes array" "$APP/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string songci" "$APP/Contents/Info.plist"
+
 # 扩展已由 xcodebuild 签名(含 sandbox+app-groups);只重签 host(嵌套签名先签子)
 mkdir -p "$APP/Contents/Extensions"
 rm -rf "$APP/Contents/Extensions/SongciWidgetExtension.appex"

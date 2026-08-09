@@ -108,9 +108,9 @@ fun SongciApp(initialPoemId: Long? = null) {
         }
         val vm: AppViewModel = viewModel { AppViewModel(repo) }
         val nav = rememberNavController()
-        // deep link 起始词作(小组件阅读全文): 首帧跳转到对应详情
-        LaunchedEffect(Unit) {
-            initialPoemId?.let { nav.navigate("detail/$it") }
+        // deep link 起始词作(小组件阅读全文): 首帧跳转;值变化(macOS 运行中点击)也响应
+        LaunchedEffect(initialPoemId) {
+            initialPoemId?.let { nav.navigate("detail/$it") { launchSingleTop = true } }
         }
 
         BoxWithConstraints(Modifier.fillMaxSize()) {

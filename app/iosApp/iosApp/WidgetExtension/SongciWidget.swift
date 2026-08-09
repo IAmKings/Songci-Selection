@@ -14,25 +14,26 @@ enum SharedDb {
             .appendingPathComponent(dbName)
     }
 
-    /// 随机一首词(词牌+作者+首句):SQLite 直查,零依赖
-    static func randomPoem() -> (rhythmic: String, author: String, firstLine: String)? {
+    /// 随机一首词(id+词牌+作者+首句):SQLite 直查,零依赖
+    static func randomPoem() -> (id: Int64, rhythmic: String, author: String, firstLine: String)? {
         var db: OpaquePointer?
         guard sqlite3_open(url.path, &db) == SQLITE_OK else { return nil }
         defer { sqlite3_close(db) }
         var stmt: OpaquePointer?
         let sql = """
-        SELECT p.rhythmic, a.name, p.content FROM poems p
+        SELECT p.id, p.rhythmic, a.name, p.content FROM poems p
         JOIN authors a ON a.id = p.author_id
         ORDER BY RANDOM() LIMIT 1
         """
         guard sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK else { return nil }
         defer { sqlite3_finalize(stmt) }
         guard sqlite3_step(stmt) == SQLITE_ROW else { return nil }
-        let rhythmic = String(cString: sqlite3_column_text(stmt, 0))
-        let author = String(cString: sqlite3_column_text(stmt, 1))
-        let content = String(cString: sqlite3_column_text(stmt, 2))
+        let id = sqlite3_column_int64(stmt, 0)
+        let rhythmic = String(cString: sqlite3_column_text(stmt, 1))
+        let author = String(cString: sqlite3_column_text(stmt, 2))
+        let content = String(cString: sqlite3_column_text(stmt, 3))
         let firstLine = content.split(separator: "\n").first.map(String.init) ?? content
-        return (rhythmic, author, firstLine)
+        return (id, rhythmic, author, firstLine)
     }
 }
 
@@ -40,6 +41,7 @@ enum SharedDb {
 
 struct SongciEntry: TimelineEntry {
     let date: Date
+    let poemId: Int64
     let rhythmic: String
     let author: String
     let firstLine: String
@@ -47,7 +49,7 @@ struct SongciEntry: TimelineEntry {
 
 struct SongciProvider: TimelineProvider {
     func placeholder(in context: Context) -> SongciEntry {
-        SongciEntry(date: Date(), rhythmic: "水调歌头", author: "苏轼", firstLine: "明月几时有")
+        SongciEntry(date: Date(), poemId: 0, rhythmic: "水调歌头", author: "苏轼", firstLine: "明月几时有")
     }
 
     func getSnapshot(in context: Context, completion: @escaping (SongciEntry) -> Void) {
@@ -61,6 +63,7 @@ struct SongciProvider: TimelineProvider {
     private func makeEntry() -> SongciEntry {
         let poem = SharedDb.randomPoem()
         return SongciEntry(date: Date(),
+                           poemId: poem?.id ?? 0,
                            rhythmic: poem?.rhythmic ?? "宋词",
                            author: poem?.author ?? "",
                            firstLine: poem?.firstLine ?? "词库未同步")
@@ -83,6 +86,8 @@ struct SongciWidgetView: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        // 整卡点击直达对应词详情(与 Android/macOS 深链一致);id 无效时不挂载
+        .widgetURL(entry.poemId > 0 ? URL(string: "songci://poem/\(entry.poemId)") : nil)
         .background(Color(red: 0.96, green: 0.96, blue: 0.93))
     }
 }

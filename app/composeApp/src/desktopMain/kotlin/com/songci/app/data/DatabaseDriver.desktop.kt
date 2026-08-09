@@ -2,6 +2,7 @@ package com.songci.app.data
 
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
+import kotlinx.coroutines.delay
 import songci.composeapp.generated.resources.Res
 import java.io.File
 
@@ -18,6 +19,9 @@ actual suspend fun createDatabaseDriver(): SqlDriver {
         versionFile.writeText(resVersion)
     }
     // 小组件共享: 复制 db → macOS App Group 容器(WidgetKit 扩展读取),版本标记判新
+    // 延迟 5s:非沙盒 host 首次访问 Group Containers 触发 TCC 弹窗("访问其他App的数据"),
+    // 挪出启动热路径;期间 widget 读旧版 db,无功能影响(整体复制+版本标记,无半写状态)
+    delay(5_000)
     val groupDir = File(System.getProperty("user.home"),
         "Library/Group Containers/group.com.songci.selection")
     if (groupDir.exists() || groupDir.mkdirs()) {
