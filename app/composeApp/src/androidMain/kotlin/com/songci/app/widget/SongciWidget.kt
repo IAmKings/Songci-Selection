@@ -32,6 +32,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import androidx.compose.ui.graphics.Color
 import com.songci.app.MainActivity
 import com.songci.app.data.AppContextHolder
 import com.songci.app.data.Poem
@@ -41,9 +42,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-private val BG = ColorProvider(0xFFF5F4ED.toInt())
-private val INK = ColorProvider(0xFF002046.toInt())
-private val STONE = ColorProvider(0xFF605E59.toInt())
+// 注意:ColorProvider 的 Int 构造器是 colorRes(资源 ID),直接传 0xFFF5F4ED.toInt() 会被当资源引用,
+// launcher 渲染报 "No package ID ff found for resource ID 0xfff5f4ed" → 显示加载失败。
+// 必须包一层 compose Color 才表示 ARGB 值。
+private val BG = ColorProvider(Color(0xFFF5F4ED))
+private val INK = ColorProvider(Color(0xFF002046))
+private val STONE = ColorProvider(Color(0xFF605E59))
 
 /** 宋词 Widget:四规格(2x2/4x1/4x2/4x4),同进程直读 db 随机词,刷新/收藏/阅读全文。 */
 class SongciWidget : GlanceAppWidget() {
