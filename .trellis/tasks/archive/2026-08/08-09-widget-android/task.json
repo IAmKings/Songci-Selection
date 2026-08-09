@@ -1,0 +1,28 @@
+{
+  "id": "widget-android",
+  "name": "widget-android",
+  "title": "Android 小组件(Glance)",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "kuluoluo",
+  "assignee": "kuluoluo",
+  "createdAt": "2026-08-09",
+  "completedAt": "2026-08-09",
+  "branch": null,
+  "base_branch": "master",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-09-desktop-widget",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "notes": "构建验证通过(三端全绿); 四规格+三交互完成; 设备目视验证(添加 widget/刷新/收藏/打开)待 Android 实机确认——AC1-AC4 验收点"
+  }
+}
