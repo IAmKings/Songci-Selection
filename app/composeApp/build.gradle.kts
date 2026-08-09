@@ -47,6 +47,7 @@ kotlin {
             implementation(libs.androidx.navigation.compose)
             implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines)
+            implementation(libs.androidx.glance.appwidget)   // 桌面小组件(App Widget)
         }
         androidMain.dependencies {
             implementation(compose.preview)

@@ -5,6 +5,18 @@
         android:label="宋词选粹"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <!-- 桌面小组件(原型:同进程直读 db 随机词) -->
+        <receiver
+            android:name=".widget.SongciWidgetReceiver"
+            android:exported="true"
+            android:label="宋词选粹小组件">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/songci_widget_info" />
+        </receiver>
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -12,6 +24,12 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>   <!-- 小组件 deep link: songci://poem/{id} -->
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="songci" android:host="poem" />
             </intent-filter>
         </activity>
     </application>

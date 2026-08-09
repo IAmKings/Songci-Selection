@@ -11,8 +11,12 @@ class MainActivity : ComponentActivity() {
         AppContextHolder.context = applicationContext
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        // deep link: songci://poem/{id}(小组件阅读全文)
+        val initialPoemId = intent?.data?.let { uri ->
+            if (uri.scheme == "songci" && uri.host == "poem") uri.lastPathSegment?.toLongOrNull() else null
+        }
         setContent {
-            App()
+            App(initialPoemId = initialPoemId)
         }
     }
 }

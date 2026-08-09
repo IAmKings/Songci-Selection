@@ -89,7 +89,7 @@ private val TABS = listOf(
 )
 
 @Composable
-fun SongciApp() {
+fun SongciApp(initialPoemId: Long? = null) {
     SongciTheme {
         var repository by remember { mutableStateOf<SongciRepository?>(null) }
         LaunchedEffect(Unit) {
@@ -108,6 +108,10 @@ fun SongciApp() {
         }
         val vm: AppViewModel = viewModel { AppViewModel(repo) }
         val nav = rememberNavController()
+        // deep link 起始词作(小组件阅读全文): 首帧跳转到对应详情
+        LaunchedEffect(Unit) {
+            initialPoemId?.let { nav.navigate("detail/$it") }
+        }
 
         BoxWithConstraints(Modifier.fillMaxSize()) {
             val wide = maxWidth >= 768.dp

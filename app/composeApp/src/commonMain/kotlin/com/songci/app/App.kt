@@ -4,6 +4,6 @@ import androidx.compose.runtime.Composable
 import com.songci.app.ui.SongciApp
 
 @Composable
-fun App() {
-    SongciApp()
+fun App(initialPoemId: Long? = null) {
+    SongciApp(initialPoemId = initialPoemId)
 }
