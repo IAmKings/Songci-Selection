@@ -7,12 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		245BF14D7ACD /* SongciWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4521F75B4B0 /* SongciWidget.swift */; };
+		C4568456995B /* SongciWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A118F9F15923 /* SongciWidgetBundle.swift */; };
+		7E8F1072D92D /* SongciWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = C17208E7FFBD /* SongciWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D4521F75B4B0 /* SongciWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongciWidget.swift; sourceTree = "<group>"; };
+		A118F9F15923 /* SongciWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongciWidgetBundle.swift; sourceTree = "<group>"; };
+		C17208E7FFBD /* SongciWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SongciWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1CF5853B72C /* SongciWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SongciWidgetExtension.entitlements; sourceTree = "<group>"; };
 		058557BA273AAA24004C7B11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* 宋词选粹.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "宋词选粹.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -20,10 +27,18 @@
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7555FF8E242A565B00829871 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		AB1DB47929225F7C00F7AF9C /* composeApp */ = {isa = PBXFileReference; lastKnownFileType = text; name = composeApp; path = ../composeApp; sourceTree = "<group>"; };
+		607C7D770409 /* WidgetExtension */ = {isa = PBXGroup; children = (D4521F75B4B0 /* SongciWidget.swift */, A118F9F15923 /* SongciWidgetBundle.swift */, D1CF5853B72C /* SongciWidgetExtension.entitlements */, ); name = WidgetExtension; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		7555FF78242A565900829871 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		43A36DC86CD7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -64,6 +79,7 @@
 			children = (
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
 				7555FF82242A565900829871 /* ContentView.swift */,
+				607C7D770409 /* WidgetExtension */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 			);
@@ -98,6 +114,23 @@
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* 宋词选粹.app */;
 			productType = "com.apple.product-type.application";
+		};
+		E7845BD609F0 /* SongciWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BAC03303F76F /* Build configuration list for PBXNativeTarget "SongciWidgetExtension" */;
+			buildPhases = (
+				303CE5723715 /* Sources */,
+				43A36DC86CD7 /* Frameworks */,
+				C86209B0A754 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SongciWidgetExtension;
+			productName = SongciWidgetExtension;
+			productReference = C17208E7FFBD /* SongciWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -142,8 +175,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C86209B0A754 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
+		757113357E75 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				7E8F1072D92D /* SongciWidgetExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* Begin PBXShellScriptBuildPhase section */
 		F36B1CEF2AC323D700A6F5CA /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -176,6 +227,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		303CE5723715 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				245BF14D7ACD /* SongciWidget.swift in Sources */,
+				C4568456995B /* SongciWidgetBundle.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* Begin PBXTargetDependency section */
+		35D8DE71C09E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E7845BD609F0 /* SongciWidgetExtension */;
+			targetProxy = 35D8DE71C09F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -323,6 +391,7 @@
 					ComposeApp,
 					"-lsqlite3",
 				);
+				CODE_SIGN_ENTITLEMENTS = iosApp.entitlements;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID)";
 				PRODUCT_NAME = "$(APP_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -356,8 +425,59 @@
 					ComposeApp,
 					"-lsqlite3",
 				);
+				CODE_SIGN_ENTITLEMENTS = iosApp.entitlements;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID)";
 				PRODUCT_NAME = "$(APP_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		7A6E133EC072 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SongciWidgetExtension/SongciWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "宋词选粹";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songci.app.SongciWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BE608DB3B2AD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SongciWidgetExtension/SongciWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "宋词选粹";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songci.app.SongciWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -380,6 +500,15 @@
 			buildConfigurations = (
 				7555FFA6242A565B00829871 /* Debug */,
 				7555FFA7242A565B00829871 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BAC03303F76F /* Build configuration list for PBXNativeTarget "SongciWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A6E133EC072 /* Debug */,
+				BE608DB3B2AD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

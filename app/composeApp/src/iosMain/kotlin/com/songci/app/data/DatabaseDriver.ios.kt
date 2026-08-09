@@ -38,6 +38,25 @@ actual suspend fun createDatabaseDriver(): SqlDriver {
         data.writeToFile(path, atomically = true)
         (resVersion as NSString).writeToFile(versionPath, atomically = true, encoding = NSUTF8StringEncoding, error = null)
     }
+    // 小组件共享: 复制 db → App Group 容器(WidgetKit 扩展读取),版本标记判新
+    val groupDir = fileManager.containerURLForSecurityApplicationGroupIdentifier(GROUP_ID)?.path
+    if (groupDir != null) {
+        val groupDb = "$groupDir/$DB_FILE_NAME"
+        val groupVersion = "$groupDir/$DB_FILE_NAME.version"
+        val groupCached = fileManager.contentsAtPath(groupVersion)?.let {
+            NSString.create(data = it, encoding = NSUTF8StringEncoding) as String
+        }?.trim()
+        if (!fileManager.fileExistsAtPath(groupDb) || groupCached != resVersion) {
+            val data = bytes.usePinned { pinned ->
+                NSData.create(bytes = pinned.addressOf(0), length = bytes.size.toULong())
+            }
+            data.writeToFile(groupDb, atomically = true)
+            (resVersion as NSString).writeToFile(groupVersion, atomically = true, encoding = NSUTF8StringEncoding, error = null)
+        }
+    }
     // 预建库 user_version=1 与 schema.version 一致,驱动跳过建表
     return NativeSqliteDriver(SongciDb.Schema, path)
 }
+
+/** 小组件 App Group(与 iosApp Widget Extension 共享)。 */
+private const val GROUP_ID = "group.com.songci.selection"
