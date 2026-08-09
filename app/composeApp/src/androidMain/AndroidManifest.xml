@@ -6,17 +6,50 @@
         android:label="宋词选粹"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
-        <!-- 桌面小组件(原型:同进程直读 db 随机词) -->
+        <!-- 桌面小组件:四规格独立条目(与 macOS 四规格对应,2x2/4x1/4x2/4x4) -->
         <receiver
             android:name=".widget.SongciWidgetReceiver"
             android:exported="true"
-            android:label="宋词选粹小组件">
+            android:label="宋词选粹·小">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/songci_widget_info" />
+                android:resource="@xml/songci_widget_small" />
+        </receiver>
+        <receiver
+            android:name=".widget.SongciWidgetBannerReceiver"
+            android:exported="true"
+            android:label="宋词选粹·横幅">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/songci_widget_banner" />
+        </receiver>
+        <receiver
+            android:name=".widget.SongciWidgetMediumReceiver"
+            android:exported="true"
+            android:label="宋词选粹·中">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/songci_widget_medium" />
+        </receiver>
+        <receiver
+            android:name=".widget.SongciWidgetLargeReceiver"
+            android:exported="true"
+            android:label="宋词选粹·大">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/songci_widget_large" />
         </receiver>
         <activity
             android:name=".MainActivity"
