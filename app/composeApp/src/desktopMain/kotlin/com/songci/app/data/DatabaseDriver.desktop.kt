@@ -17,6 +17,17 @@ actual suspend fun createDatabaseDriver(): SqlDriver {
         dbFile.writeBytes(bytes)
         versionFile.writeText(resVersion)
     }
+    // 小组件共享: 复制 db → macOS App Group 容器(WidgetKit 扩展读取),版本标记判新
+    val groupDir = File(System.getProperty("user.home"),
+        "Library/Group Containers/group.com.songci.selection")
+    if (groupDir.exists() || groupDir.mkdirs()) {
+        val groupDb = File(groupDir, DB_FILE_NAME)
+        val groupVersion = File(groupDir, "$DB_FILE_NAME.version")
+        if (!groupDb.exists() || groupVersion.readTextOrNull() != resVersion) {
+            groupDb.writeBytes(bytes)
+            groupVersion.writeText(resVersion)
+        }
+    }
     return JdbcSqliteDriver("jdbc:sqlite:${dbFile.absolutePath}")
 }
 

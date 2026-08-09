@@ -1,0 +1,39 @@
+#!/bin/bash
+# 嵌入小组件扩展(.appex)→ 重签 host app → 部署 /Applications。
+# 前置:app/iosApp 下 xcodebuild 已产出 .appex,compose 已产出 .app(见 README 或 prd.md)。
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+APP=app/composeApp/build/compose/binaries/main/app/SongciSelection.app
+APPEX=app/iosApp/build/dd/Build/Products/Debug/SongciWidgetExtension.appex
+DEST=/Applications/SongciSelection.app
+CERT="Apple Development: w496830083@qq.com (GZLGVHRJ46)"
+
+[ -d "$APPEX" ] || { echo "缺少 $APPEX —— 先跑 xcodebuild" >&2; exit 1; }
+[ -d "$APP" ] || { echo "缺少 $APP —— 先跑 compose 打包" >&2; exit 1; }
+
+# host app 需要 application-groups entitlement(与扩展共享 App Group 容器)
+ENT_APP=$(mktemp /tmp/songci-app-ent.XXXXXX.plist)
+trap 'rm -f "$ENT_APP"' EXIT
+cat > "$ENT_APP" <<'PLIST'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>com.apple.security.application-groups</key>
+  <array><string>group.com.songci.selection</string></array>
+</dict></plist>
+PLIST
+
+pkill -f "/Applications/SongciSelection.app" 2>/dev/null || true
+
+# 扩展已由 xcodebuild 签名(含 sandbox+app-groups);只重签 host(嵌套签名先签子)
+mkdir -p "$APP/Contents/Extensions"
+rm -rf "$APP/Contents/Extensions/SongciWidgetExtension.appex"
+cp -R "$APPEX" "$APP/Contents/Extensions/"
+codesign --force --sign "$CERT" --entitlements "$ENT_APP" "$APP"
+
+rm -rf "$DEST"
+cp -R "$APP" "$DEST"
+codesign --verify --deep --strict --verbose=2 "$DEST"
+echo "部署完成,启动中..."
+open "$DEST"
