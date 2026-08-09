@@ -47,12 +47,12 @@ kotlin {
             implementation(libs.androidx.navigation.compose)
             implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines)
-            implementation(libs.androidx.glance.appwidget)   // 桌面小组件(App Widget)
         }
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.sqldelight.android.driver)
+            implementation(libs.androidx.glance.appwidget)   // 桌面小组件(App Widget, 仅 Android)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
