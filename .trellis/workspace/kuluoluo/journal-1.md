@@ -420,3 +420,24 @@ Android widget 排障:ColorProvider 资源ID陷阱、AppContextHolder 冷启动 
 ### Status
 
 [OK] **Completed**
+
+
+## Session 20: Widget 设计稿对齐 + 字体能力调研
+
+**Date**: 2026-08-09
+**Task**: Widget 设计稿对齐 + 字体能力调研
+**Branch**: `master`
+
+### Summary
+
+Android 四规格 widget 对齐 design/widgets:布局(居中/三段式/品牌区/竖排)/图标 drawable/圆角边框/色板 token;截断机制(词牌 15 字/首句 77 字实测, maxLines+take 双保险);FontFamily.Serif+Italic 补上(1.1.1 实际支持)。字体结论:Glance 渲染在 launcher 进程,自定义 TTF 无法跨进程,1.1.1→1.3.0-alpha02 全系不支持,升级路线终止(1.2.0-rc01 编译零破坏但无 API;1.3.0-alpha02 需 compileSdk 37)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `baf134a` | (see git log) |
+
+### Status
+
+[OK] **Completed**
