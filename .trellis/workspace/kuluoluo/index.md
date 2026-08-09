@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 17
+- **Total Sessions**: 18
 - **Last Active**: 2026-08-09
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~378 | Active |
+| `journal-1.md` | ~400 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 18 | 2026-08-09 | macOS WidgetKit 扩展接入验证通过 | `6ea4581`, `53a3995` | `master` |
 | 17 | 2026-08-09 | 桌面小组件开发(Android Glance 完整 + iOS WidgetKit 基础) | `bd324ff`, `0c82352`, `f51fbc2` | `master` |
 | 16 | 2026-08-09 | 搜索体系增强 + 字体替换(LXGW 霞鹜文楷) | `08bd24a`, `0e57092`, `5ad96c0`, `d7bafe4`, `262803a`, `a413b78`, `47abc95` | `master` |
 | 15 | 2026-08-08 | 技术债清理与质量闭环(多体体名/预索引/版本标记/三端验证) | `1f9a78f`, `c7b001f`, `cdf669d`, `a4deef0` | `master` |

@@ -376,3 +376,25 @@ rhythmic_bodies.json 全部体数据(1202 词牌,0 非法体);Rhythmic.bodiesOf/
 ### Status
 
 [OK] **Completed**
+
+
+## Session 18: macOS WidgetKit 扩展接入验证通过
+
+**Date**: 2026-08-09
+**Task**: macOS WidgetKit 扩展接入验证通过
+**Branch**: `master`
+
+### Summary
+
+桌面小组件无法加载的两大根因:仅部署 build 目录不注册 pluginkit(须 /Applications)+ 扩展缺 app-sandbox entitlement。补 containerBackground(macOS 26 硬性)。scripts/macos-widget-deploy.sh 固化嵌入/重签/部署。App Group db 同步 + 21 测试全绿。AC1-3 达成
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `6ea4581` | (see git log) |
+| `53a3995` | (see git log) |
+
+### Status
+
+[OK] **Completed**
