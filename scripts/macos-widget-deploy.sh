@@ -7,7 +7,13 @@ cd "$(dirname "$0")/.."
 APP=app/composeApp/build/compose/binaries/main/app/SongciSelection.app
 APPEX=app/iosApp/build/dd/Build/Products/Debug/SongciWidgetExtension.appex
 DEST=/Applications/SongciSelection.app
-CERT="Apple Development: w496830083@qq.com (GZLGVHRJ46)"
+# 签名身份从环境变量读取(避免账号信息入库);本地可放 ~/.songci-signing.env 自动加载
+CERT="${CERT_IDENTITY:-}"
+if [ -z "$CERT" ] && [ -f "$HOME/.songci-signing.env" ]; then
+    # shellcheck disable=SC1090
+    . "$HOME/.songci-signing.env"
+fi
+[ -n "$CERT" ] || { echo "缺少签名证书:设置 CERT_IDENTITY 环境变量或 ~/.songci-signing.env" >&2; exit 1; }
 
 [ -d "$APPEX" ] || { echo "缺少 $APPEX —— 先跑 xcodebuild" >&2; exit 1; }
 [ -d "$APP" ] || { echo "缺少 $APP —— 先跑 compose 打包" >&2; exit 1; }
