@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 20
+- **Total Sessions**: 21
 - **Last Active**: 2026-08-09
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~443 | Active |
+| `journal-1.md` | ~464 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 21 | 2026-08-09 | iOS/macOS 小组件点击直达深链 | `35525ed` | `master` |
 | 20 | 2026-08-09 | Widget 设计稿对齐 + 字体能力调研 | `baf134a` | `master` |
 | 19 | 2026-08-09 | Android 四规格小组件 + 全链路排障 | `10f30c6`, `b60136d` | `master` |
 | 18 | 2026-08-09 | macOS WidgetKit 扩展接入验证通过 | `6ea4581`, `53a3995` | `master` |

@@ -441,3 +441,24 @@ Android 四规格 widget 对齐 design/widgets:布局(居中/三段式/品牌区
 ### Status
 
 [OK] **Completed**
+
+
+## Session 21: iOS/macOS 小组件点击直达深链
+
+**Date**: 2026-08-09
+**Task**: iOS/macOS 小组件点击直达深链
+**Branch**: `master`
+
+### Summary
+
+widget 加 poemId+widgetURL(iOS/macOS);iOS Info.plist scheme+onOpenURL+MainViewController 透传;macOS Desktop.setOpenURIHandler+部署脚本注入 CFBundleURLTypes;common 导航改 LaunchedEffect(initialPoemId) 响应运行中点击。macOS 实机跳转验证通过;TCC 弹窗=开发重签所致,正式签名仅首次;App Group 同步延迟方案回退(阻塞数据加载)。iOS 代码完成待编译验证
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `35525ed` | (see git log) |
+
+### Status
+
+[OK] **Completed**
