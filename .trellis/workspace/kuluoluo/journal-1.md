@@ -398,3 +398,25 @@ rhythmic_bodies.json 全部体数据(1202 词牌,0 非法体);Rhythmic.bodiesOf/
 ### Status
 
 [OK] **Completed**
+
+
+## Session 19: Android 四规格小组件 + 全链路排障
+
+**Date**: 2026-08-09
+**Task**: Android 四规格小组件 + 全链路排障
+**Branch**: `master`
+
+### Summary
+
+Android widget 排障:ColorProvider 资源ID陷阱、AppContextHolder 冷启动 NPE、actionStartActivity 深链失效(改 ACTION_VIEW ActionCallback)。四规格独立 provider 落地:添加面板 4 条目(2x2/4x1/4x2/4x4),minHeight 按 cellHeight 反推(60/170/320),共享 WidgetContent 按 spec 渲染。AC1-5 全过,21 测试绿
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `10f30c6` | (see git log) |
+| `b60136d` | (see git log) |
+
+### Status
+
+[OK] **Completed**
