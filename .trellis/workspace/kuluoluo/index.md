@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 25
+- **Total Sessions**: 26
 - **Last Active**: 2026-08-10
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~549 | Active |
+| `journal-1.md` | ~570 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 26 | 2026-08-10 | 字体风格选择 + 词库子集化 | `9e8d05b` | `master` |
 | 25 | 2026-08-10 | GitNexus 索引刷新 + Swift 解析纳入 | `b2fafb6` | `master` |
 | 24 | 2026-08-10 | 宽屏 master-detail 双栏 + 深链事件通道重构 | `b2043ef` | `master` |
 | 23 | 2026-08-10 | 导航分层重构(grill 驱动)+ 索引 tab + rail | `f693003` | `master` |

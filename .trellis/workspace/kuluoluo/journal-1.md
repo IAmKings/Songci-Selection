@@ -547,3 +547,24 @@ npx gitnexus analyze --force 全量重建索引:1052 symbols/1951 edges/85 flows
 ### Status
 
 [OK] **Completed**
+
+
+## Session 26: 字体风格选择 + 词库子集化
+
+**Date**: 2026-08-10
+**Task**: 字体风格选择 + 词库子集化
+**Branch**: `master`
+
+### Summary
+
+设置页新增楷体/宋体选择(霞鹜新致宋屏幕版),三端即时生效+持久化+widget 标注;scripts/subset-fonts.sh 词库 5275 字子集化(WenKai 25MB→2.6MB,新致宋 11.9MB→2.2MB,覆盖零损失);APK 72.6→31.3MB;IPA 授权入库。grill 收敛:动机为宋体审美非繁简转换
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `9e8d05b` | (see git log) |
+
+### Status
+
+[OK] **Completed**
