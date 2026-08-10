@@ -568,3 +568,24 @@ npx gitnexus analyze --force 全量重建索引:1052 symbols/1951 edges/85 flows
 ### Status
 
 [OK] **Completed**
+
+
+## Session 27: 首页每日推荐池
+
+**Date**: 2026-08-11
+**Task**: 首页每日推荐池
+**Branch**: `master`
+
+### Summary
+
+每日 20 首推荐池:预建库加 recommended_date+recommendation_pool;build.py user_version=1 同步 Schema(修 Android table already exists);异常过滤(⿰ 词牌/内容、超长、单行、缺字);当天快照固定、90% 重置循环;运行中精确 0 点刷新(纯算术午夜);4 池测试。踩坑:桌面 db 在 ~/.songci(非 App Group)、datetime 0.7 API 反转、池快照不自动净化
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ccc8c48` | (see git log) |
+
+### Status
+
+[OK] **Completed**
