@@ -65,3 +65,10 @@
 - **字体风格切换**:SongciTheme 双层(外层默认 + 内层按 vm.fontStyle,加载完成后生效);Typography 参数化;词文字体 WenKai(楷体)/ 新致宋(宋体)
 - **widget 无法用自定义字体**(平台限制,渲染在系统进程):字体设置标注「仅应用内生效」
 - **构建缓存残留**:APK 出现源码不存在的字体(如 noto_serif_sc)→ gradle clean 重建,勿手工删
+
+## kotlinx-datetime 0.7 陷阱(2026-08-11 实证)
+
+- **转换 API 方向反转**:`Instant.toLocalDateTime(TimeZone)`(0.6)→ 0.7 为 `TimeZone.toLocalDateTime(Instant)`/`toLocalDateTime(instant, zone)` 扩展;`kotlinx.datetime.Clock` 移除,改用 `kotlin.time.Clock.System`(@ExperimentalTime)
+- **DAY 常量位置变化**:`DateTimeUnit.DAY` → 嵌套 companion(`DayBased.DAY` 等),`LocalDate.plus` 签名也变;**0.7 的日期算术 API 不稳定,优先纯算术**(本地午夜 = localMillis 对齐 86400000,DST 只影响 1-4 点,0 点恒成立)
+- 扩展函数必须显式 import(`toLocalDateTime`/`offsetAt` 等),全限定调用同样可行
+- **db 资源不入库**(大二进制,db/build.py 本地生成):schema 变更 = 改 build.py → 重建 → 复制 composeResources/files → 递增 db_version.txt(客户端判新复制)

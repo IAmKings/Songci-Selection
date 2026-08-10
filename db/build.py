@@ -62,6 +62,9 @@ def build_db():
     conn.execute("PRAGMA foreign_keys = ON")
     conn.execute("PRAGMA journal_mode = WAL")
     conn.execute("PRAGMA synchronous = NORMAL")
+    # 与 SQLDelight Schema.version 同步:Android 驱动按 user_version 判等,不一致会执行建表
+    # (预建库已有表 → "table already exists" 崩溃)。sq 变更时同步此值。
+    conn.execute("PRAGMA user_version = 1")
 
     # --- 重建核心表 ---
     if db_exists:
@@ -80,10 +83,11 @@ def build_db():
         );
 
         CREATE TABLE poems (
-            id          INTEGER PRIMARY KEY,
-            author_id   INTEGER,
-            rhythmic    TEXT    NOT NULL,
-            content     TEXT    NOT NULL,
+            id               INTEGER PRIMARY KEY,
+            author_id        INTEGER,
+            rhythmic         TEXT    NOT NULL,
+            content          TEXT    NOT NULL,
+            recommended_date INTEGER,   -- 每日推荐池标记:最近推荐日期(epoch day),非 NULL = 已推荐过
             FOREIGN KEY (author_id) REFERENCES authors(id)
         );
 
@@ -104,6 +108,15 @@ def build_db():
             )
         """)
         conn.execute("CREATE INDEX idx_favorites_poem_id ON favorites(poem_id)")
+
+    # 每日推荐池:date(epoch day) → 20 首 poem_ids(逗号分隔);当天固定
+    # 独立于 db_exists 分支:新增表对已有 db 幂等创建
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS recommendation_pool (
+            date     INTEGER PRIMARY KEY,
+            poem_ids TEXT NOT NULL
+        )
+    """)
 
     # --- 插入诗人数据 ---
     print("插入诗人数据 ...")
