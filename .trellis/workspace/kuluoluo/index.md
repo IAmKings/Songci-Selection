@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 23
+- **Total Sessions**: 24
 - **Last Active**: 2026-08-10
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~507 | Active |
+| `journal-1.md` | ~528 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 24 | 2026-08-10 | 宽屏 master-detail 双栏 + 深链事件通道重构 | `b2043ef` | `master` |
 | 23 | 2026-08-10 | 导航分层重构(grill 驱动)+ 索引 tab + rail | `f693003` | `master` |
 | 22 | 2026-08-09 | 安全加固 + 小组件经验沉淀 | `49684bd`, `c294ae1` | `master` |
 | 21 | 2026-08-09 | iOS/macOS 小组件点击直达深链 | `35525ed` | `master` |

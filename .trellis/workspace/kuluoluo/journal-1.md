@@ -505,3 +505,24 @@ grill-me 收敛导航模型:频道层/内容层分离。详情全屏盖 tab、op
 ### Status
 
 [OK] **Completed**
+
+
+## Session 24: 宽屏 master-detail 双栏 + 深链事件通道重构
+
+**Date**: 2026-08-10
+**Task**: 宽屏 master-detail 双栏 + 深链事件通道重构
+**Branch**: `master`
+
+### Summary
+
+词牌/作者页宽屏双栏(左列表+右详情,选词内部切换);DetailBody 抽取复用;路由 poemId 参数(从详情进入右侧无缝衔接)。深链大修:macOS 同词重复失效根因=状态参数层快照脱节(证据链:handler 正常/写值正确/参数恒读旧值),改 Channel 事件通道组合内挂起迭代直接导航;ConcurrentLinkedQueue→Channel 修 iOS 跨平台隐患;openPoem inclusive 修复防详情叠加。合并 master,21 测试绿
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `b2043ef` | (see git log) |
+
+### Status
+
+[OK] **Completed**
