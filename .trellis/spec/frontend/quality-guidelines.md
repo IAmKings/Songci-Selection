@@ -57,3 +57,11 @@
 - **实证坑**:OpenURIHandler(AppKit 线程)写 state 后,即便切 UI 线程、即便组合作用域内写,`App(deepLinkToken = token)` 参数侧仍恒读旧值(token=0)——组合调用点参数求值与协程内写之间存在快照/调度脱节,effect 不重跑,同词重复深链失效
 - **平台差异**:Android(新 Activity)/iOS(控制器重建)每次深链全量重建,首帧 effect 必跑,天然免疫;只有 macOS 常驻窗口依赖「状态变化→重组」链路,踩坑
 - **深链同词重复**:iOS 用重建键含 token(`.id("id-token")`);macOS 用队列直通(事件即导航);Android 天然新实例
+
+## 字体(2026-08-10)
+
+- **内嵌字体必须子集化**:词库实测 5275 字 + UI 白名单 → `scripts/subset-fonts.sh`(fonttools pyftsubset);WenKai 25MB→2.6MB、新致宋 11.9MB→2.2MB;词库变更后重跑(幂等);子集化后用 cmap 全量覆盖验证(缺字须确认原字体本就不含)
+- **授权文件勿放 composeResources**(插件为文件名生成访问器,`.` 非法):放 `licenses/`
+- **字体风格切换**:SongciTheme 双层(外层默认 + 内层按 vm.fontStyle,加载完成后生效);Typography 参数化;词文字体 WenKai(楷体)/ 新致宋(宋体)
+- **widget 无法用自定义字体**(平台限制,渲染在系统进程):字体设置标注「仅应用内生效」
+- **构建缓存残留**:APK 出现源码不存在的字体(如 noto_serif_sc)→ gradle clean 重建,勿手工删
