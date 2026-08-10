@@ -24,3 +24,20 @@ actual fun loadFontScaleName(): String? {
     file.inputStream().use(props::load)
     return props.getProperty("font_scale")
 }
+
+actual fun saveFontStyle(name: String) {
+    val file = settingsFile()
+    val props = Properties()
+    if (file.exists()) file.inputStream().use(props::load)
+    props.setProperty("font_style", name)
+    file.parentFile.mkdirs()
+    file.outputStream().use { props.store(it, "songci settings") }
+}
+
+actual fun loadFontStyle(): String? {
+    val file = settingsFile()
+    if (!file.exists()) return null
+    val props = Properties()
+    file.inputStream().use(props::load)
+    return props.getProperty("font_style")
+}
