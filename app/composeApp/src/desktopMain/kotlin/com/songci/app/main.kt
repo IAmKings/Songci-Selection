@@ -1,5 +1,6 @@
 package com.songci.app
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -25,8 +26,11 @@ fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         title = "宋词选粹",
-        state = rememberWindowState(size = DpSize(480.dp, 760.dp))
+        state = rememberWindowState(size = DpSize(480.dp, 760.dp)),
     ) {
+        // 最小窗口尺寸:防止过窄导致排版错位(窄屏路径按 768dp 断点,360 像素约为最小可用)
+        // WindowScope.window 为公开属性(ComposeWindow)
+        LaunchedEffect(Unit) { window.minimumSize = java.awt.Dimension(360, 520) }
         App(initialPoemId = poemId)
     }
 }

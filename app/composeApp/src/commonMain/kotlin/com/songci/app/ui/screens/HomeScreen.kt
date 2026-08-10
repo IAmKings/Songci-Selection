@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,11 +26,10 @@ import com.songci.app.ui.AppViewModel
 import com.songci.app.ui.components.PoemCard
 import com.songci.app.theme.SongciColors
 
-/** 首页:顶栏(目录索引/标题/搜索) + 推荐词流。 */
+/** 首页:顶栏(标题/搜索) + 推荐词流。索引已提升为独立 tab,首页不再保留入口。 */
 @Composable
 fun HomeScreen(
     vm: AppViewModel,
-    onOpenIndex: () -> Unit,
     onOpenSearch: () -> Unit,
     onOpenPoem: (Long) -> Unit,
 ) {
@@ -43,9 +41,6 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onOpenIndex) {
-                Icon(Icons.Filled.List, contentDescription = "目录索引", tint = SongciColors.primary)
-            }
             Text(
                 "宋词选粹",
                 style = MaterialTheme.typography.headlineMedium,

@@ -15,9 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
+import com.songci.app.ui.BookmarkBorderIcon
+import com.songci.app.ui.BookmarkIcon
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -112,10 +111,13 @@ private fun NarrowDetail(
             .padding(horizontal = 30.dp, vertical = 24.dp),
     ) {
         Kicker(width = 40.dp, height = 4.dp)
+        // 词牌名最长 15 字(含变体全称),超长截断防整词换行
         Text(
             poem.rhythmic,
             style = MaterialTheme.typography.headlineMedium,
             color = SongciColors.primary,
+            maxLines = 2,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
             modifier = Modifier.padding(top = 22.dp),
         )
         Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
@@ -135,12 +137,17 @@ private fun WideDetail(
     onOpenAuthor: (Long) -> Unit,
     onOpenRhythmic: (String) -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 64.dp, vertical = 40.dp)) {
+    // 必须可滚动:长词/大字号会把底部操作区(收藏/作者/词牌链接)挤出视口,
+    // 曾导致宽屏"偶尔出现作者/词牌跳转"(短词可见、长词被裁)
+    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+        .padding(horizontal = 64.dp, vertical = 40.dp)) {
         Kicker(width = 56.dp, height = 5.dp)
         Text(
             poem.rhythmic,
             style = MaterialTheme.typography.headlineLarge,
             color = SongciColors.primary,
+            maxLines = 2,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
             modifier = Modifier.padding(top = 30.dp),
         )
         Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
@@ -216,7 +223,7 @@ private fun DetailActions(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
-                    if (favorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                    if (favorite) BookmarkIcon else BookmarkBorderIcon,   // 书签语义
                     contentDescription = null,
                     tint = SongciColors.primary,
                     modifier = Modifier.height(18.dp),

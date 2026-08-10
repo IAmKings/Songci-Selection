@@ -5,6 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -74,12 +76,12 @@ private fun TextRowList(
     }
 }
 
-/** 目录索引入口:朝代 / 作者 / 词牌(含格律,详情页内置平仄谱卡片)。 */
+/** 目录索引入口:朝代 / 作者 / 词牌(含格律,详情页内置平仄谱卡片)。tab 根页,无返回。 */
 @Composable
-fun IndexScreen(onBack: () -> Unit, onOpen: (String) -> Unit) {
+fun IndexScreen(onOpen: (String) -> Unit) {
     TextRowList(
         title = "目录索引",
-        back = onBack,
+        back = null,
         rows = listOf(
             "朝代 →" to "index/dynasty",
             "作者 →" to "index/authors",
@@ -255,7 +257,9 @@ private fun RhythmicCard(spec: RhythmicSpec, bodies: List<RhythmicSpec>) {
         Text("${current.chars}字 · ${bodies.size}体",
              style = MaterialTheme.typography.labelMedium, color = SongciColors.outline)
         if (bodies.size > 1) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            // FlowRow 换行:变体名可能很长(如一剪梅多体),单行 Row 会挤压溢出
+            @OptIn(ExperimentalLayoutApi::class)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 bodies.indices.forEach { i ->
                     val label = bodies[i].author.ifBlank { null }?.let { "${it}体" } ?: "体${i + 1}"
                     Text(

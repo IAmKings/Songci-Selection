@@ -1,22 +1,22 @@
 package com.songci.app.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +27,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -84,7 +87,8 @@ private data class Tab(val route: String, val label: String, val icon: ImageVect
 
 private val TABS = listOf(
     Tab(Routes.HOME, "首页", Icons.Filled.Home),
-    Tab(Routes.FAVORITES, "收藏", Icons.Filled.Favorite),
+    Tab(Routes.INDEX, "索引", IndexIcon),
+    Tab(Routes.FAVORITES, "收藏", BookmarkIcon),   // 书签语义:书页挑选→书签保留
     Tab(Routes.SETTINGS, "设置", Icons.Filled.Settings),
 )
 
@@ -108,73 +112,114 @@ fun SongciApp(initialPoemId: Long? = null) {
         }
         val vm: AppViewModel = viewModel { AppViewModel(repo) }
         val nav = rememberNavController()
+
+        /** 内容层路由(详情/词牌/作者):全屏盖 tab。 */
+        fun isContentRoute(route: String?) = route != null &&
+            (route.startsWith("detail/") || route.startsWith("rhythmic/") || route.startsWith("author/"))
+
+        /**
+         * 进入详情(统一入口):同层唯一。
+         * 从跳板(词牌/作者)选词 → 弹掉跳板之上的旧详情(保留跳板),再压新详情;
+         * 其余入口(首页/搜索/收藏/深链)直接压栈。跨跳板链(详情→词牌→作者→选词)
+         * 旧详情留在栈底,单栈限制的已知近似(prd 记录)。
+         */
+        fun openPoem(id: Long) {
+            val current = nav.currentBackStackEntry?.destination?.route
+            nav.navigate("detail/$id") {
+                if (current != null && (current.startsWith("rhythmic/") || current.startsWith("author/"))) {
+                    popUpTo(current) { inclusive = false }
+                }
+                launchSingleTop = true
+            }
+        }
+
+        /**
+         * 切 tab 差异化规则:
+         * 1. 先清内容层(详情/词牌/作者)——切 tab 放弃内容层上下文(已定决策)
+         * 2. 频道层内部栈 saveState/restoreState——索引 tab 子页浏览位置保留(挖宝翻阅感),
+         *    内容层已提前弹出,不会被恢复成"双详情"
+         */
+        fun switchTab(route: String, current: String?) {
+            if (current == route) return
+            while (isContentRoute(nav.currentBackStackEntry?.destination?.route)) {
+                nav.popBackStack()
+            }
+            nav.navigate(route) {
+                popUpTo(Routes.HOME) { saveState = true }
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
+
         // deep link 起始词作(小组件阅读全文): 首帧跳转;值变化(macOS 运行中点击)也响应
         LaunchedEffect(initialPoemId) {
-            initialPoemId?.let { nav.navigate("detail/$it") { launchSingleTop = true } }
+            initialPoemId?.let { openPoem(it) }
         }
 
         BoxWithConstraints(Modifier.fillMaxSize()) {
             val wide = maxWidth >= 768.dp
+            val currentRoute = nav.currentBackStackEntryAsState().value?.destination?.route
+            val showChrome = !isContentRoute(currentRoute)   // 内容层(详情/词牌/作者)全屏盖导航
 
-            Scaffold(
-                containerColor = com.songci.app.theme.SongciColors.background,
-                topBar = if (wide) {
-                    {
-                        val currentRoute = nav.currentBackStackEntryAsState().value?.destination?.route
-                        WideTopBar(currentRoute, nav::navigate)
-                    }
-                } else {
-                    {}
-                },
-                bottomBar = if (!wide) {
-                    {
-                        NavigationBar(containerColor = com.songci.app.theme.SongciColors.surfaceContainerLow) {
-                            TABS.forEach { tab ->
-                                val current = nav.currentBackStackEntryAsState().value?.destination?.route
-                                NavigationBarItem(
-                                    selected = current == tab.route,
-                                    onClick = {
-                                        if (current != tab.route) {
-                                            nav.navigate(tab.route) {
-                                                popUpTo(Routes.HOME) { saveState = true }
-                                                launchSingleTop = true
-                                                restoreState = true
-                                            }
-                                        }
-                                    },
-                                    icon = { Icon(tab.icon, contentDescription = tab.label) },
-                                    label = { Text(tab.label, style = MaterialTheme.typography.labelMedium) },
-                                )
-                            }
+            Row(Modifier.fillMaxSize()) {
+                // 宽屏:频道层用 rail(图标+标签竖排);内容层隐藏
+                if (wide && showChrome) {
+                    NavigationRail(containerColor = com.songci.app.theme.SongciColors.surfaceContainerLow) {
+                        TABS.forEach { tab ->
+                            NavigationRailItem(
+                                selected = currentRoute == tab.route,
+                                onClick = { switchTab(tab.route, currentRoute) },
+                                icon = { Icon(tab.icon, contentDescription = tab.label) },
+                                label = { Text(tab.label, style = MaterialTheme.typography.labelMedium) },
+                            )
                         }
+                        // 搜索入口统一在首页顶栏(与窄屏一致),rail 不重复放
                     }
-                } else {
-                    {}
-                },
-            ) { padding ->
-                Box(Modifier.fillMaxSize().padding(padding)) {
+                }
+                Box(Modifier.weight(1f)) {
+                    Scaffold(
+                        containerColor = com.songci.app.theme.SongciColors.background,
+                        topBar = {},
+                        bottomBar = if (!wide && showChrome) {
+                            {
+                                NavigationBar(containerColor = com.songci.app.theme.SongciColors.surfaceContainerLow) {
+                                    TABS.forEach { tab ->
+                                        val current = nav.currentBackStackEntryAsState().value?.destination?.route
+                                        NavigationBarItem(
+                                            selected = current == tab.route,
+                                            onClick = { switchTab(tab.route, current) },
+                                            icon = { Icon(tab.icon, contentDescription = tab.label) },
+                                            label = { Text(tab.label, style = MaterialTheme.typography.labelMedium) },
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            {}
+                        },
+                    ) { padding ->
+                        Box(Modifier.fillMaxSize().padding(padding)) {
                     NavHost(navController = nav, startDestination = Routes.HOME) {
                         composable(Routes.HOME) {
                             HomeScreen(
                                 vm = vm,
-                                onOpenIndex = { nav.navigate(Routes.INDEX) },
                                 onOpenSearch = { nav.navigate(Routes.SEARCH) },
-                                onOpenPoem = { id -> nav.navigate("detail/$id") },
+                                onOpenPoem = { id -> openPoem(id) },
                             )
                         }
                         composable(Routes.SEARCH) {
                             SearchScreen(vm = vm, onBack = { nav.popBackStack() }) { poem ->
-                                nav.navigate("detail/${poem.id}")
+                                openPoem(poem.id)
                             }
                         }
                         composable(Routes.FAVORITES) {
-                            FavoritesScreen(vm = vm) { id -> nav.navigate("detail/$id") }
+                            FavoritesScreen(vm = vm) { id -> openPoem(id) }
                         }
                         composable(Routes.SETTINGS) {
                             SettingsScreen(vm = vm)
                         }
                         composable(Routes.INDEX) {
-                            IndexScreen(onBack = { nav.popBackStack() }) { route -> nav.navigate(route) }
+                            IndexScreen(onOpen = { route -> nav.navigate(route) })
                         }
                         composable(Routes.INDEX_DYNASTY) {
                             DynastyListScreen(vm = vm, onBack = { nav.popBackStack() }) { d ->
@@ -208,7 +253,7 @@ fun SongciApp(initialPoemId: Long? = null) {
                             AuthorPoemsScreen(
                                 vm = vm, authorId = authorId,
                                 onBack = { nav.popBackStack() },
-                                onPoem = { id -> nav.navigate("detail/$id") },
+                                onPoem = { id -> openPoem(id) },
                             )
                         }
                         composable(
@@ -219,7 +264,7 @@ fun SongciApp(initialPoemId: Long? = null) {
                             RhythmicPoemsScreen(
                                 vm = vm, rhythmic = rhythmic,
                                 onBack = { nav.popBackStack() },
-                                onPoem = { id -> nav.navigate("detail/$id") },
+                                onPoem = { id -> openPoem(id) },
                             )
                         }
                         composable(
@@ -233,6 +278,8 @@ fun SongciApp(initialPoemId: Long? = null) {
                                 onOpenAuthor = { id -> nav.navigate("author/$id") },
                                 onOpenRhythmic = { r -> nav.navigate("rhythmic/${encodePath(r)}") },
                             )
+                        }
+                    }
                         }
                     }
                 }
@@ -256,35 +303,3 @@ private fun LoadingScreen() {
     }
 }
 
-/** 宽屏顶栏:标题 + 首页/收藏/设置页签 + 搜索。 */
-@Composable
-private fun WideTopBar(currentRoute: String?, navigate: (String) -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth().background(com.songci.app.theme.SongciColors.surfaceContainerLow).padding(horizontal = 24.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            "宋词选粹",
-            style = MaterialTheme.typography.headlineMedium,
-            color = com.songci.app.theme.SongciColors.primary,
-            modifier = Modifier.padding(end = 32.dp),
-        )
-        TABS.forEach { tab ->
-            val route = currentRoute
-            Text(
-                tab.label,
-                style = MaterialTheme.typography.labelLarge,
-                color = if (route == tab.route) com.songci.app.theme.SongciColors.primary else com.songci.app.theme.SongciColors.stone,
-                modifier = Modifier.padding(end = 24.dp).clickable {
-                    if (route != tab.route) navigate(tab.route)
-                },
-            )
-        }
-        Text(
-            "搜索",
-            style = MaterialTheme.typography.labelLarge,
-            color = com.songci.app.theme.SongciColors.primary,
-            modifier = Modifier.padding(start = 16.dp).clickable { navigate(Routes.SEARCH) },
-        )
-    }
-}
