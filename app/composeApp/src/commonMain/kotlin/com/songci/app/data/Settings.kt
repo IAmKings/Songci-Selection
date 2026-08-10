@@ -11,3 +11,8 @@ internal const val SETTINGS_FILE_PROPERTY = "songci.settings.file"
 expect fun saveFontScaleName(name: String)
 
 expect fun loadFontScaleName(): String?
+
+/** 字体风格(KAITI/SONGTI)持久化,与字号同机制。 */
+expect fun saveFontStyle(name: String)
+
+expect fun loadFontStyle(): String?

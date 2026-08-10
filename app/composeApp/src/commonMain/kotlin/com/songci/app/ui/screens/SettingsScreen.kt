@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.songci.app.theme.SongciColors
 import com.songci.app.ui.AppViewModel
 import com.songci.app.ui.FontScale
+import com.songci.app.ui.FontStyle
 import com.songci.app.ui.components.SimpleListScreen
 
 /** 设置:阅读设置(字号)+ 关于;账号/通知/退出登录为占位。 */
@@ -42,6 +43,34 @@ fun SettingsScreen(vm: AppViewModel) {
                 )
             }
         }
+        Text(
+            "字体风格",
+            style = MaterialTheme.typography.labelMedium,
+            color = SongciColors.stone,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
+        )
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
+            FontStyle.entries.forEach { style ->
+                val selected = vm.fontStyle == style
+                Text(
+                    style.label,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = if (selected) SongciColors.onPrimary else SongciColors.primary,
+                    modifier = Modifier
+                        .padding(end = 12.dp)
+                        .border(1.dp, SongciColors.primary)
+                        .background(if (selected) SongciColors.primary else SongciColors.surfaceContainerLow)
+                        .clickable { vm.updateFontStyle(style) }
+                        .padding(horizontal = 20.dp, vertical = 10.dp),
+                )
+            }
+        }
+        Text(
+            "仅应用内生效(小组件使用系统字体)",
+            style = MaterialTheme.typography.labelSmall,
+            color = SongciColors.stone,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
+        )
         Text(
             "关于宋词选粹",
             style = MaterialTheme.typography.labelMedium,

@@ -110,6 +110,8 @@ fun SongciApp(
             return@SongciTheme
         }
         val vm: AppViewModel = viewModel { AppViewModel(repo) }
+        // 内层 Theme 按用户字体风格(加载完成后;外层负责 LoadingScreen 默认样式)
+        SongciTheme(fontStyle = vm.fontStyle) {
         val nav = rememberNavController()
 
         /** 内容层路由(详情/词牌/作者):全屏盖 tab。 */
@@ -316,6 +318,7 @@ fun SongciApp(
                 }
             }
         }
+        }   // 内层 SongciTheme(fontStyle)
     }
 }
 

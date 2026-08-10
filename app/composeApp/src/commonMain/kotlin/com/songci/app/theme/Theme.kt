@@ -60,33 +60,46 @@ val NotoSerifFamily: FontFamily
         Font(Res.font.lxgw_wenkai_medium, FontWeight.Medium),
     )
 
+/** 宋体:LXGW Neo ZhiSong Screen(霞鹜新致宋,IPA Font License v1.0)。 */
+val SongFamily: FontFamily
+    @Composable get() = FontFamily(
+        Font(Res.font.lxgw_neozhisong_screen, FontWeight.Normal),
+    )
+
 val InterFamily: FontFamily
     @Composable get() = FontFamily(
         Font(Res.font.inter_regular, FontWeight.Normal),
         Font(Res.font.inter_medium, FontWeight.Medium),
     )
 
+/** 词文字体按风格选择:楷体(WenKai)/ 宋体(新致宋)。 */
+@Composable
+private fun poemFamily(style: com.songci.app.ui.FontStyle): FontFamily =
+    if (style == com.songci.app.ui.FontStyle.SONGTI) SongFamily else NotoSerifFamily
+
 /** DESIGN.md typography:标题 46/36、正文 20/18、行高 2.05–2.1、标注 Inter 加宽字距。 */
-val SongciTypography: Typography
-    @Composable get() = Typography(
+@Composable
+fun SongciTypography(fontStyle: com.songci.app.ui.FontStyle): Typography {
+    val poemFont = poemFamily(fontStyle)
+    return Typography(
     headlineLarge = TextStyle(
-        fontFamily = NotoSerifFamily, fontSize = 46.sp, fontWeight = FontWeight.Medium,
+        fontFamily = poemFont, fontSize = 46.sp, fontWeight = FontWeight.Medium,
         lineHeight = 55.sp, letterSpacing = 0.06.em,
     ),
     headlineMedium = TextStyle(
-        fontFamily = NotoSerifFamily, fontSize = 36.sp, fontWeight = FontWeight.Medium,
+        fontFamily = poemFont, fontSize = 36.sp, fontWeight = FontWeight.Medium,
         lineHeight = 43.sp, letterSpacing = 0.06.em,
     ),
     titleMedium = TextStyle(
-        fontFamily = NotoSerifFamily, fontSize = 15.sp, fontWeight = FontWeight.Normal,
+        fontFamily = poemFont, fontSize = 15.sp, fontWeight = FontWeight.Normal,
         lineHeight = 22.5.sp, letterSpacing = 0.02.em,
     ),
     bodyLarge = TextStyle(
-        fontFamily = NotoSerifFamily, fontSize = 20.sp, fontWeight = FontWeight.Normal,
+        fontFamily = poemFont, fontSize = 20.sp, fontWeight = FontWeight.Normal,
         lineHeight = 42.sp, letterSpacing = 0.02.em,   // 平板:行高 2.1
     ),
     bodyMedium = TextStyle(
-        fontFamily = NotoSerifFamily, fontSize = 18.sp, fontWeight = FontWeight.Normal,
+        fontFamily = poemFont, fontSize = 18.sp, fontWeight = FontWeight.Normal,
         lineHeight = 37.sp, letterSpacing = 0.02.em,   // 手机:行高 2.05
     ),
     labelLarge = TextStyle(
@@ -101,7 +114,8 @@ val SongciTypography: Typography
         fontFamily = InterFamily, fontSize = 11.sp, fontWeight = FontWeight.Normal,
         lineHeight = 15.sp, letterSpacing = 0.14.em,
     ),
-)
+    )
+}
 
 /** DESIGN.md「Shapes:严格直角」—— 全部 0dp。 */
 val SongciShapes = Shapes(
@@ -142,10 +156,10 @@ val SongciColorScheme: ColorScheme = lightColorScheme(
 )
 
 @Composable
-fun SongciTheme(content: @Composable () -> Unit) {
+fun SongciTheme(fontStyle: com.songci.app.ui.FontStyle = com.songci.app.ui.FontStyle.KAITI, content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = SongciColorScheme,
-        typography = SongciTypography,
+        typography = SongciTypography(fontStyle),
         shapes = SongciShapes,
         content = content,
     )

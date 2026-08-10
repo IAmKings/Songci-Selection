@@ -12,7 +12,9 @@ import com.songci.app.data.RhythmicSpec
 import com.songci.app.data.Segmenter
 import com.songci.app.data.SongciRepository
 import com.songci.app.data.loadFontScaleName
+import com.songci.app.data.loadFontStyle
 import com.songci.app.data.saveFontScaleName
+import com.songci.app.data.saveFontStyle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -22,6 +24,12 @@ enum class FontScale(val label: String, val scale: Float) {
     SMALL("小", 0.9f),
     MEDIUM("中", 1.0f),
     LARGE("大", 1.15f),
+}
+
+/** 词文字体风格:楷体(LXGW WenKai,默认)/ 宋体(霞鹜新致宋)。widget 无法使用自定义字体(平台限制),仅应用内生效。 */
+enum class FontStyle(val label: String) {
+    KAITI("楷体"),
+    SONGTI("宋体"),
 }
 
 class AppViewModel(private val repo: SongciRepository) : ViewModel() {
@@ -48,6 +56,11 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
     )
         private set
 
+    var fontStyle by mutableStateOf(
+        FontStyle.entries.firstOrNull { it.name == loadFontStyle() } ?: FontStyle.KAITI
+    )
+        private set
+
     // 搜索状态
     var searchQuery by mutableStateOf("")
         private set
@@ -69,6 +82,11 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
     fun updateFontScale(scale: FontScale) {
         fontScale = scale
         saveFontScaleName(scale.name)
+    }
+
+    fun updateFontStyle(style: FontStyle) {
+        fontStyle = style
+        saveFontStyle(style.name)
     }
 
     fun refreshRandom() {

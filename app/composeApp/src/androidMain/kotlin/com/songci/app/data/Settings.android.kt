@@ -10,3 +10,12 @@ actual fun saveFontScaleName(name: String) {
 actual fun loadFontScaleName(): String? =
     AppContextHolder.context.getSharedPreferences("songci_settings", Context.MODE_PRIVATE)
         .getString("font_scale", null)
+
+actual fun saveFontStyle(name: String) {
+    AppContextHolder.context.getSharedPreferences("songci_settings", Context.MODE_PRIVATE)
+        .edit().putString("font_style", name).apply()
+}
+
+actual fun loadFontStyle(): String? =
+    AppContextHolder.context.getSharedPreferences("songci_settings", Context.MODE_PRIVATE)
+        .getString("font_style", null)
