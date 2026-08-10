@@ -484,3 +484,24 @@ widget 加 poemId+widgetURL(iOS/macOS);iOS Info.plist scheme+onOpenURL+MainViewC
 ### Status
 
 [OK] **Completed**
+
+
+## Session 23: 导航分层重构(grill 驱动)+ 索引 tab + rail
+
+**Date**: 2026-08-10
+**Task**: 导航分层重构(grill 驱动)+ 索引 tab + rail
+**Branch**: `master`
+
+### Summary
+
+grill-me 收敛导航模型:频道层/内容层分离。详情全屏盖 tab、openPoem 同层唯一(消除无限循环)、切 tab 内容层清+频道层内部保留(索引挖宝翻阅感)。索引进第 4 tab(自绘填充书本图标),宽屏 NavigationRail,收藏改书签(书页挑选→书签保留)。词牌变体名 FlowRow、窗口最小 360px、长名截断。桌面实机验收通过,21 测试绿
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `f693003` | (see git log) |
+
+### Status
+
+[OK] **Completed**
