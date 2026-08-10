@@ -18,6 +18,8 @@ import com.songci.app.data.saveFontStyle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.offsetAt
+import kotlinx.datetime.toLocalDateTime
 
 /** 阅读字号档位(相对正文 18/20px 的比例)。 */
 enum class FontScale(val label: String, val scale: Float) {
@@ -32,12 +34,37 @@ enum class FontStyle(val label: String) {
     SONGTI("宋体"),
 }
 
+/** 当日日期(本地时区)。datetime 0.7 转换 API 为 Instant.toLocalDateTime(TimeZone) 扩展。 */
+@OptIn(kotlin.time.ExperimentalTime::class)
+fun todayLocalDate(): kotlinx.datetime.LocalDate {
+    val now = kotlin.time.Clock.System.now()
+    val tz = kotlinx.datetime.TimeZone.currentSystemDefault()
+    return now.toLocalDateTime(tz).date
+}
+
+/**
+ * 距下一个本地午夜(0 点)的毫秒数:首页跨天精确刷新用。
+ * 纯算术:本地 0 点 = localMillis 对齐 86400000(任何时区恒成立;DST 只影响 1-4 点,0 点不动)。
+ * 不依赖 datetime 0.7 的 plus/atStartOfDayIn(API 变更频繁)。
+ */
+@OptIn(kotlin.time.ExperimentalTime::class)
+fun msUntilNextMidnight(): Long {
+    val now = kotlin.time.Clock.System.now()
+    val tz = kotlinx.datetime.TimeZone.currentSystemDefault()
+    val offsetSec = tz.offsetAt(now).totalSeconds.toLong()
+    val localNow = now.toEpochMilliseconds() + offsetSec * 1000L
+    return 86_400_000L - localNow % 86_400_000L
+}
+
 class AppViewModel(private val repo: SongciRepository) : ViewModel() {
 
     val dynasty: Dynasty = repo.dynasty
 
     private val _randomPoems = MutableStateFlow<List<Poem>>(emptyList())
     val randomPoems: StateFlow<List<Poem>> = _randomPoems
+
+    private val _dailyPoems = MutableStateFlow<List<Poem>>(emptyList())
+    val dailyPoems: StateFlow<List<Poem>> = _dailyPoems
 
     private val _favorites = MutableStateFlow<List<com.songci.app.data.Favorite>>(emptyList())
     val favorites: StateFlow<List<com.songci.app.data.Favorite>> = _favorites
@@ -91,6 +118,13 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
 
     fun refreshRandom() {
         viewModelScope.launch { _randomPoems.value = repo.randomPoems(20) }
+    }
+
+    /** 每日推荐池(当天固定 20 首,0 点/首次进入刷新)。日期可注入(测试/0 点轮询)。 */
+    fun refreshDaily(date: kotlinx.datetime.LocalDate = todayLocalDate()) {
+        viewModelScope.launch {
+            _dailyPoems.value = repo.dailyPool(date.toEpochDays())
+        }
     }
 
     fun rhythmicSpec(rhythmic: String): RhythmicSpec? = repo.rhythmic.of(rhythmic)

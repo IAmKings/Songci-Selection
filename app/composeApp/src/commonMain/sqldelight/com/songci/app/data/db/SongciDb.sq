@@ -11,12 +11,18 @@ CREATE TABLE poems (
     id INTEGER PRIMARY KEY NOT NULL,
     author_id INTEGER,
     rhythmic TEXT NOT NULL,
-    content TEXT NOT NULL
+    content TEXT NOT NULL,
+    recommended_date INTEGER
 );
 
 CREATE TABLE favorites (
     poem_id INTEGER PRIMARY KEY NOT NULL,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE recommendation_pool (
+    date INTEGER PRIMARY KEY NOT NULL,
+    poem_ids TEXT NOT NULL
 );
 
 -- ===== 查询 =====
@@ -78,3 +84,29 @@ INSERT OR REPLACE INTO favorites (poem_id) VALUES (?);
 
 deleteFavorite:
 DELETE FROM favorites WHERE poem_id = ?;
+
+-- ===== 每日推荐池 =====
+
+poolByDate:
+SELECT poem_ids FROM recommendation_pool WHERE date = ?;
+
+insertPool:
+INSERT OR REPLACE INTO recommendation_pool (date, poem_ids) VALUES (?, ?);
+
+-- 候选:未推荐 + 基础异常过滤(词牌/内容无 ⿰;词牌 ≤12 字;内容至少 2 行)。
+-- 缺字过滤在应用层(字体缺失字符集,SQL 侧 json_each 不被 SQLDelight 支持)
+dailyCandidates:
+SELECT p.id, p.rhythmic, p.content, a.id AS author_id, a.name AS author_name
+FROM poems p JOIN authors a ON a.id = p.author_id
+WHERE p.recommended_date IS NULL
+  AND p.rhythmic NOT LIKE '%⿰%'
+  AND instr(p.content, '⿰') = 0
+  AND length(p.rhythmic) <= 12
+  AND instr(p.content, char(10)) > 0
+ORDER BY RANDOM() LIMIT ?;
+
+markRecommended:
+UPDATE poems SET recommended_date = ? WHERE id IN ?;
+
+resetRecommendations:
+UPDATE poems SET recommended_date = NULL WHERE recommended_date IS NOT NULL;

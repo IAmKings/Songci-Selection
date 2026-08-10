@@ -33,8 +33,15 @@ fun HomeScreen(
     onOpenSearch: () -> Unit,
     onOpenPoem: (Long) -> Unit,
 ) {
-    val poems by vm.randomPoems.collectAsState()
-    LaunchedEffect(Unit) { vm.refreshRandom() }
+    val poems by vm.dailyPoems.collectAsState()
+    LaunchedEffect(Unit) {
+        vm.refreshDaily()   // 当日推荐池(缓存,0 点后首次进入生成新池)
+        // 跨 0 点精确刷新:delay 到下一个本地午夜(毫秒数计算在 AppViewModel,datetime API 集中管理)
+        while (true) {
+            kotlinx.coroutines.delay(com.songci.app.ui.msUntilNextMidnight())
+            vm.refreshDaily(com.songci.app.ui.todayLocalDate())
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize().background(SongciColors.background)) {
         Row(

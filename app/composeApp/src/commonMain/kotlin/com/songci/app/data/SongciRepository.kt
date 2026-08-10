@@ -15,6 +15,33 @@ class SongciRepository(
         q.randomPoems(limit.toLong()).executeAsList().map { it.toPoem() }
     }
 
+    /**
+     * 每日推荐池:当天固定 20 首(池缓存);未推荐+非异常候选随机,标记推荐日期;
+     * 候选不足(池将尽)→ 重置标记循环。缺字词在应用层过滤(与子集化字体联动)。
+     */
+    suspend fun dailyPool(date: Long): List<Poem> = withContext(Dispatchers.Default) {
+        q.poolByDate(date).executeAsOneOrNull()?.let { raw ->   // raw: 逗号分隔 poem_ids(String)
+            return@withContext raw.split(',')
+                .mapNotNull { it.toLongOrNull() }
+                .mapNotNull { id -> q.poemById(id).executeAsOneOrNull()?.toPoem() }
+        }
+        // 异常字符过滤:⿰ 为汉字结构描述符(源数据合体字错误拆分,如"月⿰金");缺字字符渲染豆腐块
+        // (与 scripts/font-charset.txt 联动);SQL 侧已滤 ⿰,此处双保险
+        val missingChars = listOf("⿰", "𠴇", "𫍙")   // U+2FF0 / U+20D07 / U+2B359
+        fun filterMissing(list: List<com.songci.app.data.db.DailyCandidates>): List<com.songci.app.data.db.DailyCandidates> =
+            list.filter { row -> missingChars.none { row.content.contains(it) } }
+
+        var candidates = filterMissing(q.dailyCandidates(200).executeAsList())
+        if (candidates.size < 20) {
+            q.resetRecommendations()   // 池将尽:重置循环
+            candidates = filterMissing(q.dailyCandidates(200).executeAsList())
+        }
+        val picked = candidates.take(20)
+        q.insertPool(date, picked.joinToString(",") { it.id.toString() })
+        q.markRecommended(date, picked.map { it.id })
+        picked.map { it.toPoem() }
+    }
+
     suspend fun poemById(id: Long): Poem? = withContext(Dispatchers.Default) {
         q.poemById(id).executeAsOneOrNull()?.toPoem()
     }
@@ -101,6 +128,9 @@ private fun com.songci.app.data.db.RandomPoems.toPoem() =
     Poem(id, rhythmic, content, author_id, author_name)
 
 private fun com.songci.app.data.db.PoemById.toPoem() =
+    Poem(id, rhythmic, content, author_id, author_name)
+
+private fun com.songci.app.data.db.DailyCandidates.toPoem() =
     Poem(id, rhythmic, content, author_id, author_name)
 
 private fun com.songci.app.data.db.PoemsByAuthor.toPoem() =

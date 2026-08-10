@@ -47,6 +47,7 @@ kotlin {
             implementation(libs.androidx.navigation.compose)
             implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines)
+            implementation(libs.kotlinx.datetime)
         }
         androidMain.dependencies {
             implementation(compose.preview)
