@@ -12,6 +12,7 @@ CERT="${CERT_IDENTITY:-}"
 if [ -z "$CERT" ] && [ -f "$HOME/.songci-signing.env" ]; then
     # shellcheck disable=SC1090
     . "$HOME/.songci-signing.env"
+    CERT="${CERT_IDENTITY:-}"   # source 后再取一次(env 文件设置的是 CERT_IDENTITY)
 fi
 [ -n "$CERT" ] || { echo "缺少签名证书:设置 CERT_IDENTITY 环境变量或 ~/.songci-signing.env" >&2; exit 1; }
 

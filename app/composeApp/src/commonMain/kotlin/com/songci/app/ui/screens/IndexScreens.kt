@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
@@ -178,7 +180,11 @@ fun RhythmicsScreen(vm: AppViewModel, onBack: () -> Unit, onOpen: (String) -> Un
 
 /** 某作者的全部词作。 */
 @Composable
-fun AuthorPoemsScreen(vm: AppViewModel, authorId: Long, onBack: () -> Unit, onPoem: (Long) -> Unit) {
+fun AuthorPoemsScreen(
+    vm: AppViewModel, authorId: Long, wide: Boolean, initialPoemId: Long?,
+    onBack: () -> Unit, onPoem: (Long) -> Unit,
+    onOpenAuthor: (Long, Long) -> Unit, onOpenRhythmic: (String, Long) -> Unit,
+) {
     var author by remember { mutableStateOf<Author?>(null) }
     var poems by remember { mutableStateOf<List<Poem>?>(null) }
     LaunchedEffect(authorId) {
@@ -186,6 +192,26 @@ fun AuthorPoemsScreen(vm: AppViewModel, authorId: Long, onBack: () -> Unit, onPo
         poems = vm.poemsByAuthor(authorId)
     }
     val list = poems
+    if (wide) {
+        MasterDetailPane(
+            title = author?.name ?: "作者词作",
+            onBack = onBack, vm = vm, initialPoemId = initialPoemId, list = list,
+            onOpenAuthor = onOpenAuthor, onOpenRhythmic = onOpenRhythmic,
+        ) {
+            author?.longDesc?.takeIf { it.isNotBlank() }?.let { desc ->
+                Text(
+                    desc,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = SongciColors.tertiary,
+                    modifier = Modifier.fillMaxWidth()
+                        .background(SongciColors.surfaceContainerLow)
+                        .border(1.dp, SongciColors.line)
+                        .padding(16.dp),
+                )
+            }
+        }
+        return
+    }
     SimpleListScreen(title = author?.name ?: "作者词作", back = onBack) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -217,10 +243,26 @@ fun AuthorPoemsScreen(vm: AppViewModel, authorId: Long, onBack: () -> Unit, onPo
 
 /** 某词牌下的全部词作(格律卡片为首 item,整页统一滚动;未映射词牌无卡片)。 */
 @Composable
-fun RhythmicPoemsScreen(vm: AppViewModel, rhythmic: String, onBack: () -> Unit, onPoem: (Long) -> Unit) {
+fun RhythmicPoemsScreen(
+    vm: AppViewModel, rhythmic: String, wide: Boolean, initialPoemId: Long?,
+    onBack: () -> Unit, onPoem: (Long) -> Unit,
+    onOpenAuthor: (Long, Long) -> Unit, onOpenRhythmic: (String, Long) -> Unit,
+) {
     var poems by remember { mutableStateOf<List<Poem>?>(null) }
     LaunchedEffect(rhythmic) { poems = vm.poemsByRhythmic(rhythmic) }
     val list = poems
+    if (wide) {
+        MasterDetailPane(
+            title = "词牌 · $rhythmic",
+            onBack = onBack, vm = vm, initialPoemId = initialPoemId, list = list,
+            onOpenAuthor = onOpenAuthor, onOpenRhythmic = onOpenRhythmic,
+        ) {
+            vm.rhythmicSpec(rhythmic)?.let { spec ->
+                RhythmicCard(spec, vm.bodiesOf(rhythmic).ifEmpty { listOf(spec) })
+            }
+        }
+        return
+    }
     SimpleListScreen(title = "词牌 · $rhythmic", back = onBack) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -287,4 +329,85 @@ private fun RhythmicCard(spec: RhythmicSpec, bodies: List<RhythmicSpec>) {
             if (line.segmentEnd) Spacer(Modifier.height(12.dp))   // 阕间空行
         }
     }
+}
+
+/** 宽屏 master-detail 双栏:左列表(常驻浏览上下文)+ 右侧所选词详情。选词为内部状态,不导航。 */
+@Composable
+private fun MasterDetailPane(
+    title: String,
+    onBack: () -> Unit,
+    vm: AppViewModel,
+    initialPoemId: Long?,
+    list: List<Poem>?,
+    onOpenAuthor: (Long, Long) -> Unit,       // (authorId, 当前选中词 id,跳转携带)
+    onOpenRhythmic: (String, Long) -> Unit,   // (rhythmic, 当前选中词 id)
+    header: @Composable () -> Unit,
+) {
+    var selectedId by remember { mutableStateOf(initialPoemId) }
+    Row(Modifier.fillMaxSize()) {
+        // 左栏:列表(master)
+        Column(Modifier.width(300.dp).fillMaxSize().background(SongciColors.surfaceContainerLow)) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    "‹",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = SongciColors.primary,
+                    modifier = Modifier.padding(end = 8.dp).clickable(onClick = onBack),
+                )
+                Text(title, style = MaterialTheme.typography.labelMedium, color = SongciColors.stone)
+            }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(12.dp),
+            ) {
+                item { header() }
+                when {
+                    list == null -> item { EmptyState("加载中…") }
+                    list.isEmpty() -> item { EmptyState("暂无词作") }
+                    else -> items(list, key = { it.id }) { PoemCard(it) { selectedId = it.id } }
+                }
+            }
+        }
+        Box(Modifier.width(1.dp).fillMaxSize().background(SongciColors.line))
+        // 右栏:所选词详情(detail);跳转回调携带当前选中词,保证新双栏页初始词衔接
+        Box(Modifier.weight(1f)) {
+            val id = selectedId
+            if (id == null) EmptyState("点击左侧词作")
+            else SelectedDetail(vm, id,
+                onOpenAuthor = { authorId -> onOpenAuthor(authorId, id) },
+                onOpenRhythmic = { r -> onOpenRhythmic(r, id) },
+            )
+        }
+    }
+}
+
+/** 双栏右侧详情:加载所选词 + DetailBody(窄版密度,防窄区挤压)。 */
+@Composable
+private fun SelectedDetail(
+    vm: AppViewModel,
+    poemId: Long,
+    onOpenAuthor: (Long) -> Unit,
+    onOpenRhythmic: (String) -> Unit,
+) {
+    var poem by remember { mutableStateOf<Poem?>(null) }
+    var favorite by remember { mutableStateOf(false) }
+    LaunchedEffect(poemId) {
+        poem = vm.poem(poemId)
+        favorite = vm.isFavorite(poemId)
+    }
+    val current = poem
+    if (current == null) {
+        EmptyState("加载中…")
+        return
+    }
+    DetailBody(
+        vm = vm, poem = current, scale = vm.fontScale.scale, wide = false,
+        favorite = favorite,
+        onToggleFavorite = { vm.setFavorite(current, !favorite); favorite = !favorite },
+        onOpenAuthor = onOpenAuthor, onOpenRhythmic = onOpenRhythmic,
+    )
 }

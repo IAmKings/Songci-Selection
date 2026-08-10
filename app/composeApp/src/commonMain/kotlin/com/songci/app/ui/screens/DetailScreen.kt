@@ -72,99 +72,80 @@ fun DetailScreen(
             )
             Text("词作详情", style = MaterialTheme.typography.labelMedium, color = SongciColors.stone)
         }
-        if (wide) {
-            WideDetail(
-                vm = vm,
-                poem = current,
-                scale = scale,
-                favorite = favorite,
-                onToggleFavorite = { vm.setFavorite(current, !favorite); favorite = !favorite },
-                onOpenAuthor = onOpenAuthor,
-                onOpenRhythmic = onOpenRhythmic,
-            )
-        } else {
-            NarrowDetail(
-                vm = vm,
-                poem = current,
-                scale = scale,
-                favorite = favorite,
-                onToggleFavorite = { vm.setFavorite(current, !favorite); favorite = !favorite },
-                onOpenAuthor = onOpenAuthor,
-                onOpenRhythmic = onOpenRhythmic,
-            )
-        }
+        DetailBody(
+            vm = vm, poem = current, scale = scale, wide = wide,
+            favorite = favorite,
+            onToggleFavorite = { vm.setFavorite(current, !favorite); favorite = !favorite },
+            onOpenAuthor = onOpenAuthor,
+            onOpenRhythmic = onOpenRhythmic,
+        )
     }
 }
 
+/**
+ * 词作内容体(与页面壳解耦):全屏详情与双栏右侧共用。
+ * wide = 布局密度(全屏详情传屏宽判断;双栏右侧传 false 防窄区挤压)。
+ */
 @Composable
-private fun NarrowDetail(
+fun DetailBody(
     vm: AppViewModel,
     poem: Poem,
     scale: Float,
+    wide: Boolean,
     favorite: Boolean,
     onToggleFavorite: () -> Unit,
     onOpenAuthor: (Long) -> Unit,
     onOpenRhythmic: (String) -> Unit,
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-            .padding(horizontal = 30.dp, vertical = 24.dp),
-    ) {
-        Kicker(width = 40.dp, height = 4.dp)
-        // 词牌名最长 15 字(含变体全称),超长截断防整词换行
-        Text(
-            poem.rhythmic,
-            style = MaterialTheme.typography.headlineMedium,
-            color = SongciColors.primary,
-            maxLines = 2,
-            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-            modifier = Modifier.padding(top = 22.dp),
-        )
-        Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
-        Box(modifier = Modifier.fillMaxWidth().padding(vertical = 28.dp).height(1.dp).background(SongciColors.line))
-        PoemLines(poem.content, scale, gap = 34.dp, spec = vm.matchedSpec(poem.rhythmic, poem.content))
-        DetailActions(vm, favorite, onToggleFavorite, poem, onOpenAuthor, onOpenRhythmic)
-    }
-}
-
-@Composable
-private fun WideDetail(
-    vm: AppViewModel,
-    poem: Poem,
-    scale: Float,
-    favorite: Boolean,
-    onToggleFavorite: () -> Unit,
-    onOpenAuthor: (Long) -> Unit,
-    onOpenRhythmic: (String) -> Unit,
-) {
-    // 必须可滚动:长词/大字号会把底部操作区(收藏/作者/词牌链接)挤出视口,
-    // 曾导致宽屏"偶尔出现作者/词牌跳转"(短词可见、长词被裁)
-    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-        .padding(horizontal = 64.dp, vertical = 40.dp)) {
-        Kicker(width = 56.dp, height = 5.dp)
-        Text(
-            poem.rhythmic,
-            style = MaterialTheme.typography.headlineLarge,
-            color = SongciColors.primary,
-            maxLines = 2,
-            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-            modifier = Modifier.padding(top = 30.dp),
-        )
-        Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
-        Box(modifier = Modifier.fillMaxWidth().padding(vertical = 36.dp).height(1.dp).background(SongciColors.line))
-        val segments = Segmenter.segment(poem.content, vm.matchedSpec(poem.rhythmic, poem.content))
-        if (segments.size == 2) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                StanzaColumn(segments[0], scale, Modifier.weight(1f).padding(end = 56.dp))
-                Box(modifier = Modifier.width(1.dp).fillMaxSize().background(SongciColors.line))
-                StanzaColumn(segments[1], scale, Modifier.weight(1f).padding(start = 56.dp))
+    if (wide) {
+        // 宽版:双栏词句。必须可滚动——长词/大字号会把底部操作区(收藏/作者/词牌链接)挤出视口
+        Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+            .padding(horizontal = 64.dp, vertical = 40.dp)) {
+            Kicker(width = 56.dp, height = 5.dp)
+            Text(
+                poem.rhythmic,
+                style = MaterialTheme.typography.headlineLarge,
+                color = SongciColors.primary,
+                maxLines = 2,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 30.dp),
+            )
+            Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
+            Box(modifier = Modifier.fillMaxWidth().padding(vertical = 36.dp).height(1.dp).background(SongciColors.line))
+            val segments = Segmenter.segment(poem.content, vm.matchedSpec(poem.rhythmic, poem.content))
+            if (segments.size == 2) {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    StanzaColumn(segments[0], scale, Modifier.weight(1f).padding(end = 56.dp))
+                    Box(modifier = Modifier.width(1.dp).fillMaxSize().background(SongciColors.line))
+                    StanzaColumn(segments[1], scale, Modifier.weight(1f).padding(start = 56.dp))
+                }
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
+                    segments.forEach { StanzaColumn(it, scale) }
+                }
             }
-        } else {
-            Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
-                segments.forEach { StanzaColumn(it, scale) }
+            Box(modifier = Modifier.fillMaxWidth().padding(top = 36.dp)) {
+                DetailActions(vm, favorite, onToggleFavorite, poem, onOpenAuthor, onOpenRhythmic)
             }
         }
-        Box(modifier = Modifier.fillMaxWidth().padding(top = 36.dp)) {
+    } else {
+        Column(
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+                .padding(horizontal = 30.dp, vertical = 24.dp),
+        ) {
+            Kicker(width = 40.dp, height = 4.dp)
+            // 词牌名最长 15 字(含变体全称),超长截断防整词换行
+            Text(
+                poem.rhythmic,
+                style = MaterialTheme.typography.headlineMedium,
+                color = SongciColors.primary,
+                maxLines = 2,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 22.dp),
+            )
+            Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
+            Box(modifier = Modifier.fillMaxWidth().padding(vertical = 28.dp).height(1.dp).background(SongciColors.line))
+            PoemLines(poem.content, scale, gap = 34.dp, spec = vm.matchedSpec(poem.rhythmic, poem.content))
             DetailActions(vm, favorite, onToggleFavorite, poem, onOpenAuthor, onOpenRhythmic)
         }
     }

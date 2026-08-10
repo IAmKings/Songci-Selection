@@ -73,8 +73,8 @@ private object Routes {
     const val INDEX_DYNASTY_AUTHORS = "index/dynasty/{dynasty}"
     const val INDEX_AUTHORS = "index/authors"
     const val INDEX_RHYTHMICS = "index/rhythmics"
-    const val AUTHOR = "author/{authorId}"
-    const val RHYTHMIC = "rhythmic/{rhythmic}"
+    const val AUTHOR = "author/{authorId}?poemId={poemId}"
+    const val RHYTHMIC = "rhythmic/{rhythmic}?poemId={poemId}"
     const val DETAIL = "detail/{poemId}"
 }
 
@@ -88,7 +88,11 @@ private val TABS = listOf(
 )
 
 @Composable
-fun SongciApp(initialPoemId: Long? = null) {
+fun SongciApp(
+    initialPoemId: Long? = null,
+    deepLinkToken: Int = 0,
+    deepLinkQueue: kotlinx.coroutines.channels.Channel<Long>? = null,
+) {
     SongciTheme {
         var repository by remember { mutableStateOf<SongciRepository?>(null) }
         LaunchedEffect(Unit) {
@@ -114,15 +118,17 @@ fun SongciApp(initialPoemId: Long? = null) {
 
         /**
          * 进入详情(统一入口):同层唯一。
-         * 从跳板(词牌/作者)选词 → 弹掉跳板之上的旧详情(保留跳板),再压新详情;
-         * 其余入口(首页/搜索/收藏/深链)直接压栈。跨跳板链(详情→词牌→作者→选词)
-         * 旧详情留在栈底,单栈限制的已知近似(prd 记录)。
+         * 当前在内容层时替换,避免详情叠加:
+         * - 详情页收深链(inclusive=true 连自身弹掉,彻底替换,否则目标=栈顶时保留自身会叠层)
+         * - 跳板(词牌/作者)选词(inclusive=false 保留跳板)
+         * 其余入口(首页/搜索/收藏/冷启动深链)直接压栈。
+         * 跨跳板链(详情→词牌→作者→选词)旧详情留在栈底,单栈限制的已知近似(prd 记录)。
          */
         fun openPoem(id: Long) {
             val current = nav.currentBackStackEntry?.destination?.route
             nav.navigate("detail/$id") {
-                if (current != null && (current.startsWith("rhythmic/") || current.startsWith("author/"))) {
-                    popUpTo(current) { inclusive = false }
+                if (current != null && isContentRoute(current)) {
+                    popUpTo(current) { inclusive = current.startsWith("detail/") }
                 }
                 launchSingleTop = true
             }
@@ -146,8 +152,23 @@ fun SongciApp(initialPoemId: Long? = null) {
             }
         }
 
-        // deep link 起始词作(小组件阅读全文): 首帧跳转;值变化(macOS 运行中点击)也响应
-        LaunchedEffect(initialPoemId) {
+        // 深链事件通道(macOS):组合内挂起迭代直接导航——事件→导航闭环,
+        // 不经参数传递(state 参数层快照脱节,实证 token 恒 0)。同词重复事件天然逐次处理
+        LaunchedEffect(nav, deepLinkQueue) {
+            for (id in deepLinkQueue ?: return@LaunchedEffect) {
+                val current = nav.currentBackStackEntry?.destination?.route
+                nav.navigate("detail/$id") {
+                    if (current != null && isContentRoute(current)) {
+                        popUpTo(current) { inclusive = current.startsWith("detail/") }
+                    }
+                    launchSingleTop = true
+                }
+            }
+        }
+
+        // deep link 起始词作(iOS/Android 经 initialPoemId 参数):首帧跳转;值变化也响应;
+        // deepLinkToken 每次深链事件递增——同一词重复点击也强制重导航(LaunchedEffect 按值判重)
+        LaunchedEffect(initialPoemId, deepLinkToken) {
             initialPoemId?.let { openPoem(it) }
         }
 
@@ -242,24 +263,39 @@ fun SongciApp(initialPoemId: Long? = null) {
                         }
                         composable(
                             Routes.AUTHOR,
-                            arguments = listOf(navArgument("authorId") { type = NavType.LongType }),
+                            arguments = listOf(
+                                navArgument("authorId") { type = NavType.LongType },
+                                navArgument("poemId") { type = NavType.LongType; defaultValue = -1L },
+                            ),
                         ) { entry ->
                             val authorId = entry.arguments.long("authorId")
                             AuthorPoemsScreen(
                                 vm = vm, authorId = authorId,
+                                wide = wide,
+                                initialPoemId = entry.arguments.long("poemId").takeIf { it > 0 },
                                 onBack = { nav.popBackStack() },
                                 onPoem = { id -> openPoem(id) },
+                                onOpenAuthor = { id, curId -> nav.navigate("author/$id?poemId=$curId") },
+                                onOpenRhythmic = { r, curId -> nav.navigate("rhythmic/${encodePath(r)}?poemId=$curId") },
                             )
                         }
                         composable(
                             Routes.RHYTHMIC,
-                            arguments = listOf(navArgument("rhythmic") { type = NavType.StringType }),
+                            arguments = listOf(
+                                navArgument("rhythmic") { type = NavType.StringType },
+                                navArgument("poemId") { type = NavType.LongType; defaultValue = -1L },
+                            ),
                         ) { entry ->
                             val rhythmic = entry.arguments.string("rhythmic").orEmpty()
+                            val currentPoemId = entry.arguments.long("poemId").takeIf { it > 0 } ?: -1L
                             RhythmicPoemsScreen(
                                 vm = vm, rhythmic = rhythmic,
+                                wide = wide,
+                                initialPoemId = entry.arguments.long("poemId").takeIf { it > 0 },
                                 onBack = { nav.popBackStack() },
                                 onPoem = { id -> openPoem(id) },
+                                onOpenAuthor = { id, curId -> nav.navigate("author/$id?poemId=$curId") },
+                                onOpenRhythmic = { r, curId -> nav.navigate("rhythmic/${encodePath(r)}?poemId=$curId") },
                             )
                         }
                         composable(
@@ -270,8 +306,8 @@ fun SongciApp(initialPoemId: Long? = null) {
                             DetailScreen(
                                 vm = vm, poemId = poemId, wide = wide,
                                 onBack = { nav.popBackStack() },
-                                onOpenAuthor = { id -> nav.navigate("author/$id") },
-                                onOpenRhythmic = { r -> nav.navigate("rhythmic/${encodePath(r)}") },
+                                onOpenAuthor = { id -> nav.navigate("author/$id?poemId=$poemId") },
+                                onOpenRhythmic = { r -> nav.navigate("rhythmic/${encodePath(r)}?poemId=$poemId") },
                             )
                         }
                     }
