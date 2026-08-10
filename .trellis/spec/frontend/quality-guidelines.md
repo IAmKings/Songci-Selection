@@ -40,3 +40,13 @@
 - **Glance 整卡点击**:`actionStartActivity` 的参数经 trampoline 变 intent extra,不进 `intent.data` → 深链要用 `ActionCallback` + 显式 `ACTION_VIEW`
 - **macOS 非沙盒 host 写 App Group 容器**:触发 TCC 弹窗("访问其他App的数据"),开发期每次重签都弹,正式签名仅首次;不要用 delay 回避(阻塞数据加载链路)
 - **部署脚本敏感信息**:签名证书等本机身份从 `CERT_IDENTITY` 环境变量/`~/.songci-signing.env` 读取,禁止硬编码入库(仓库公开!)
+
+## 导航分层模型(2026-08-10 决策)
+
+- **两层模型**:频道层(tab/rail,4 tab:首页/索引/收藏/设置)↔ 内容层(详情/词牌/作者,全屏盖导航)
+- **进入详情统一走 openPoem(id)**:从跳板(词牌/作者)选词 = popUpTo 跳板保留 + 压新详情(同层唯一,防循环入栈);其余入口直接压
+- **切 tab 差异化**:先清内容层(详情/词牌/作者)→ 频道层 saveState/restoreState(索引子页浏览位置保留,挖宝翻阅感);索引是唯一有深子页的 tab
+- **宽屏 rail**:频道导航用 NavigationRail(内容层隐藏),搜索入口统一在首页顶栏,不重复放
+- **图标语义**:自绘 AppIcons.kt(core 集无书签/填充书本)——书本=索引(书页挑选),书签=收藏(保留),逻辑闭环
+- **长名称**:词牌名 maxLines=2 截断;变体名列表 FlowRow 换行(一剪梅多体场景);窗口最小 360px(工程值,设计稿 375 为手机样张)
+- **已知近似**:跨跳板链(详情→词牌→作者→选词)旧详情留栈底,单栈限制,返回多步清空(prd 记录)
