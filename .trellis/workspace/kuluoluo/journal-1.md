@@ -526,3 +526,24 @@ grill-me 收敛导航模型:频道层/内容层分离。详情全屏盖 tab、op
 ### Status
 
 [OK] **Completed**
+
+
+## Session 25: GitNexus 索引刷新 + Swift 解析纳入
+
+**Date**: 2026-08-10
+**Task**: GitNexus 索引刷新 + Swift 解析纳入
+**Branch**: `master`
+
+### Summary
+
+npx gitnexus analyze --force 全量重建索引:1052 symbols/1951 edges/85 flows;Swift 解析器 rebuild 后纳入 6 个 swift 文件(无跳过);CLAUDE.md/AGENTS.md 上下文同步
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `b2fafb6` | (see git log) |
+
+### Status
+
+[OK] **Completed**
