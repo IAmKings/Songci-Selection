@@ -103,6 +103,18 @@ class SongciRepositoryTest {
         assertEquals(20, poems.map { it.id }.toSet().size)
     }
 
+    @Test fun randomPoemsFiltersAbnormalChars() = runBlocking {
+        // 回归:随机诗与推荐池同源过滤(widget/首页随机入口共用),异常字符不推荐
+        repeat(5) {
+            testRepo().randomPoems(20).forEach { p ->
+                assertTrue("⿰" !in p.rhythmic && "⿰" !in p.content, "含 ⿰: ${p.rhythmic}")
+                assertTrue("𠴇" !in p.content && "𫍙" !in p.content, "含缺字: ${p.rhythmic}")
+                assertTrue(p.rhythmic.length <= 12, "词牌超长: ${p.rhythmic}")
+                assertTrue(p.content.lines().size >= 2, "单行词: ${p.rhythmic}")
+            }
+        }
+    }
+
     @Test fun poemsByRhythmicBaseline() = runBlocking {
         // 基准:rhythmic='水调歌头' = 743 行;LIMIT 100
         val poems = testRepo().poemsByRhythmic("水调歌头")
