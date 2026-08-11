@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 28
-- **Last Active**: 2026-08-11
+- **Total Sessions**: 29
+- **Last Active**: 2026-08-12
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~672 | Active |
+| `journal-1.md` | ~735 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 29 | 2026-08-12 | macOS 打包部署+修复(路径模板坑/小组件黑背景)+trellis-check | `0d2edcb`, `dcf0c96` | `master` |
 | 28 | 2026-08-11 | widget 收尾:过滤回归测试 + 全量质量检查 | `8bfc534` | `master` |
 | 27 | 2026-08-11 | 首页每日推荐池 | `ccc8c48` | `master` |
 | 26 | 2026-08-10 | 字体风格选择 + 词库子集化 | `9e8d05b` | `master` |

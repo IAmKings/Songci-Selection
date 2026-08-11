@@ -711,3 +711,25 @@ grilling 评审收敛:不做完整历史,做「最近查看」——进入详情
 ### Status
 
 [OK] **Completed**
+
+
+## Session 29: macOS 打包部署+修复(路径模板坑/小组件黑背景)+trellis-check
+
+**Date**: 2026-08-12
+**Task**: macOS 打包部署+修复(路径模板坑/小组件黑背景)+trellis-check
+**Branch**: `master`
+
+### Summary
+
+macOS 版打包安装:createDistributable 裸产物覆盖导致小组件扩展丢失,恢复用 macos-widget-deploy.sh 完整流程(xcodebuild 构建 .appex+嵌入+重签);修复 desktop 版本文件路径模板坑($dbFile.name→${dbFile.name},每次启动整库刷新+报错弹窗);修复 macOS 小组件黑背景(SDK26 编译的 containerBackground 在 macOS15 失效,叠加 .background 兜底);确认系统 widget 变黄为 macOS15 系统行为(所有小组件一致,非 app 问题);trellis-check 全绿,Android 验收版本不受后续改动影响
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `0d2edcb` | (see git log) |
+| `dcf0c96` | (see git log) |
+
+### Status
+
+[OK] **Completed**
