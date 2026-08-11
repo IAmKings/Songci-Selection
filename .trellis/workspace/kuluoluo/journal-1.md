@@ -670,3 +670,23 @@ trellis-check 全绿:补 randomPoems 异常字符过滤回归测试(5轮x20首�
 ### Status
 
 [OK] **Completed**
+
+## Session 29: 最近查看(grilling 需求评审 → 落地)
+
+**Date**: 2026-08-11
+**Task**: 08-11-recent-views
+**Branch**: `master`
+
+### Summary
+
+grilling 评审收敛:不做完整历史,做「最近查看」——进入详情页记录(openPoem 唯一入口),SQLite 新表 recent_views(去重置顶,epoch 毫秒排序,上限 30 自动淘汰),搜索页空查询态展示。全链路:build.py 幂等建表 + SongciDb.sq + Repository/ViewModel + SongciApp 记录点(macOS 深链队列合并进 openPoem)+ SearchScreen 空态 + 回归测试(35→30 裁剪/去重/置顶)。desktopTest 全绿。踩坑:SQLDelight 解析器不支持 DEFAULT 里 cast(... as integer),换纯表达式;无 .sqm 时 Schema.version 恒 1,user_version 不随 .sq 改动。spec 沉淀进 database-guidelines.md。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `3a29ca5` | feat(search): 最近查看(详情页自动记录,搜索页空态展示,去重置顶上限30) |
+
+### Status
+
+[OK] **Completed**
