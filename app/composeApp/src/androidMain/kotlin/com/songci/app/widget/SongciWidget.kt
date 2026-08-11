@@ -76,9 +76,13 @@ enum class WidgetSpec(
 
 /** 同进程直读 db 随机一首词。失败返回 null → 渲染兜底文案。 */
 private suspend fun randomPoem(): Poem? = try {
-    val db = SongciDb(createDatabaseDriver())
-    db.songciDbQueries.randomPoems(1L).executeAsList().firstOrNull()
-        ?.let { Poem(it.id, it.rhythmic, it.content, null, "") }
+    val driver = createDatabaseDriver()
+    try {
+        SongciDb(driver).songciDbQueries.randomPoems(1L).executeAsList().firstOrNull()
+            ?.let { Poem(it.id, it.rhythmic, it.content, null, "") }
+    } finally {
+        driver.close()   // 泄漏连接会耗尽 SQLite 连接池(上限4),后续刷新失效
+    }
 } catch (e: Exception) {
     null
 }
@@ -316,8 +320,12 @@ class FavoriteAction : ActionCallback {
         val poemId = parameters[POEM_KEY] ?: return
         CoroutineScope(Dispatchers.Default).launch {
             runCatching {
-                val db = SongciDb(createDatabaseDriver())
-                db.songciDbQueries.insertFavorite(poemId)
+                val driver = createDatabaseDriver()
+                try {
+                    SongciDb(driver).songciDbQueries.insertFavorite(poemId)
+                } finally {
+                    driver.close()
+                }
             }
         }
     }
