@@ -23,6 +23,12 @@ enum SharedDb {
         let sql = """
         SELECT p.id, p.rhythmic, a.name, p.content FROM poems p
         JOIN authors a ON a.id = p.author_id
+        WHERE p.rhythmic NOT LIKE '%⿰%'
+          AND instr(p.content, '⿰') = 0
+          AND instr(p.content, '𠴇') = 0
+          AND instr(p.content, '𫍙') = 0
+          AND length(p.rhythmic) <= 12
+          AND instr(p.content, char(10)) > 0
         ORDER BY RANDOM() LIMIT 1
         """
         guard sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK else { return nil }

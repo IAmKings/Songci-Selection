@@ -27,9 +27,16 @@ CREATE TABLE recommendation_pool (
 
 -- ===== 查询 =====
 
+-- 随机词:过滤异常字符(与 dailyCandidates 同源,加缺字),widget/首页随机入口共用
 randomPoems:
 SELECT p.id, p.rhythmic, p.content, a.id AS author_id, a.name AS author_name
 FROM poems p JOIN authors a ON a.id = p.author_id
+WHERE p.rhythmic NOT LIKE '%⿰%'
+  AND instr(p.content, '⿰') = 0
+  AND instr(p.content, '𠴇') = 0
+  AND instr(p.content, '𫍙') = 0
+  AND length(p.rhythmic) <= 12
+  AND instr(p.content, char(10)) > 0
 ORDER BY RANDOM() LIMIT ?;
 
 poemById:
