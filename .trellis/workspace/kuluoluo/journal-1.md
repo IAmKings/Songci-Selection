@@ -589,3 +589,23 @@ npx gitnexus analyze --force 全量重建索引:1052 symbols/1951 edges/85 flows
 ### Status
 
 [OK] **Completed**
+
+## Session 28: 凌晨小组件自动更新
+
+**Date**: 2026-08-11
+**Task**: 凌晨小组件自动更新
+**Branch**: `master`
+
+### Summary
+
+三端 widget 每日凌晨自动刷新为随机诗(与推荐池无关)。Android:MidnightRefreshWorker(WorkManager 一次性延迟+尾部重排,enqueueUniqueWork REPLACE 幂等防堆积,复用 msUntilNextMidnight 纯算术延迟,内置重启恢复零权限);iOS/macOS:Timeline policy .after(nextMidnight)(Calendar.nextDate 本地 0 点),系统到点刷新无需 app 运行。选型:用户对比后选 WorkManager(弃 AlarmManager 手动 BOOT_COMPLETED/updatePeriodMillis 30min 下限)。零新增权限、无 manifest 变更。assembleDebug/testDebugUnitTest/desktopTest/lintDebug/swiftc 全绿,detect_changes LOW
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `12414b9` | (see git log) |
+
+### Status
+
+[OK] **Completed**
