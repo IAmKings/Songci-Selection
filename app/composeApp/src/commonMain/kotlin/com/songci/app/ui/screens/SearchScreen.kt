@@ -54,6 +54,7 @@ fun SearchScreen(
 ) {
     val results by vm.searchResults.collectAsState()
     val dynasties by vm.knownDynasties.collectAsState()
+    val recentViews by vm.recentViews.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize().background(SongciColors.background)) {
         Row(
@@ -92,8 +93,22 @@ fun SearchScreen(
 
         SearchField(vm.searchRhythmic, vm::updateSearchRhythmic, "词牌筛选(模糊,可空)")
 
+        // 仅空查询态显示「最近查看」(无关键词/词牌筛选/朝代筛选);任一条件生效即视为查询态
+        val idle = vm.searchQuery.isBlank() && vm.searchRhythmic.isBlank() && vm.searchDynasty.isEmpty()
         if (results.isEmpty()) {
-            EmptyState("输入关键词开始搜索")
+            if (idle && recentViews.isNotEmpty()) {
+                Column {
+                    Text(
+                        "最近查看",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = SongciColors.stone,
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+                    )
+                    PoemList(recentViews, onClick = onOpenPoem)
+                }
+            } else {
+                EmptyState("输入关键词开始搜索")
+            }
         } else {
             PoemList(results, onClick = onOpenPoem)
         }

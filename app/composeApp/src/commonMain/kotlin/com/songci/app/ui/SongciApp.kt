@@ -127,6 +127,7 @@ fun SongciApp(
          * 跨跳板链(详情→词牌→作者→选词)旧详情留在栈底,单栈限制的已知近似(prd 记录)。
          */
         fun openPoem(id: Long) {
+            vm.recordView(id)   // 最近查看:所有详情入口(widget 深链/目录/搜索/收藏)统一在此记录
             val current = nav.currentBackStackEntry?.destination?.route
             nav.navigate("detail/$id") {
                 if (current != null && isContentRoute(current)) {
@@ -155,16 +156,11 @@ fun SongciApp(
         }
 
         // 深链事件通道(macOS):组合内挂起迭代直接导航——事件→导航闭环,
-        // 不经参数传递(state 参数层快照脱节,实证 token 恒 0)。同词重复事件天然逐次处理
+        // 不经参数传递(state 参数层快照脱节,实证 token 恒 0)。同词重复事件天然逐次处理。
+        // 统一走 openPoem(与 iOS/Android 深链同路径,浏览记录/导航替换逻辑单点)
         LaunchedEffect(nav, deepLinkQueue) {
             for (id in deepLinkQueue ?: return@LaunchedEffect) {
-                val current = nav.currentBackStackEntry?.destination?.route
-                nav.navigate("detail/$id") {
-                    if (current != null && isContentRoute(current)) {
-                        popUpTo(current) { inclusive = current.startsWith("detail/") }
-                    }
-                    launchSingleTop = true
-                }
+                openPoem(id)
             }
         }
 

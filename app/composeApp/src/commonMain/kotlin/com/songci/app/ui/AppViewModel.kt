@@ -69,6 +69,9 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
     private val _favorites = MutableStateFlow<List<com.songci.app.data.Favorite>>(emptyList())
     val favorites: StateFlow<List<com.songci.app.data.Favorite>> = _favorites
 
+    private val _recentViews = MutableStateFlow<List<Poem>>(emptyList())
+    val recentViews: StateFlow<List<Poem>> = _recentViews
+
     private val _authors = MutableStateFlow<List<Author>>(emptyList())
     val authors: StateFlow<List<Author>> = _authors
 
@@ -101,6 +104,7 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
     init {
         // 随机词流由 HomeScreen 进入时刷新(refreshRandom),此处不预载
         viewModelScope.launch { _favorites.value = repo.favorites() }
+        viewModelScope.launch { _recentViews.value = repo.recentViews() }
         viewModelScope.launch { _authors.value = repo.authors() }
         viewModelScope.launch { _rhythmics.value = repo.rhythmics() }
         viewModelScope.launch { _knownDynasties.value = repo.knownDynasties() }
@@ -200,4 +204,12 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
 
     suspend fun isFavorite(poemId: Long): Boolean =
         repo.favorites().any { it.poem.id == poemId }
+
+    /** 进入详情页即记录浏览(openPoem 统一入口);列表去重置顶,上限 30 条。 */
+    fun recordView(poemId: Long) {
+        viewModelScope.launch {
+            repo.recordView(poemId)
+            _recentViews.value = repo.recentViews()
+        }
+    }
 }

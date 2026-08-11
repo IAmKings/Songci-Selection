@@ -113,6 +113,17 @@ class SongciRepository(
         q.deleteFavorite(poemId)
     }
 
+    /** 最近查看(去重置顶,上限 30):进入详情页时由 recordView 记录。 */
+    suspend fun recentViews(limit: Int = 30): List<Poem> = withContext(Dispatchers.Default) {
+        q.recentViews(limit.toLong()).executeAsList().map { it.toPoem() }
+    }
+
+    /** 记录一次浏览:同词刷新时间戳置顶(INSERT OR REPLACE),随后裁剪到最近 N 条。 */
+    suspend fun recordView(poemId: Long, limit: Int = 30) = withContext(Dispatchers.Default) {
+        q.recordView(poemId)
+        q.trimRecentViews(limit.toLong())
+    }
+
     /** 数据中实际存在的朝代(按时间序),用于筛选 chip。 */
     suspend fun knownDynasties(): List<String> = withContext(Dispatchers.Default) {
         val present = authors().mapNotNull { dynasty.of(it.id).takeIf { d -> d != Dynasty.UNKNOWN } }
@@ -143,4 +154,7 @@ private fun com.songci.app.data.db.PoemsByRhythmicContains.toPoem() =
     Poem(id, rhythmic, content, author_id, author_name)
 
 private fun com.songci.app.data.db.Search.toPoem() =
+    Poem(id, rhythmic, content, author_id, author_name)
+
+private fun com.songci.app.data.db.RecentViews.toPoem() =
     Poem(id, rhythmic, content, author_id, author_name)

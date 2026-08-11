@@ -118,6 +118,16 @@ def build_db():
         )
     """)
 
+    # 最近查看:进入详情页记录(openPoem 统一入口);viewed_at 为 epoch 毫秒(毫秒级去重置顶,
+    # 秒级 datetime 在同秒多查看时排序不稳定)。应用层每次记录后裁剪至最近 30 条。
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS recent_views (
+            poem_id   INTEGER PRIMARY KEY,
+            viewed_at INTEGER NOT NULL DEFAULT ((julianday('now') - 2440587.5) * 86400000),
+            FOREIGN KEY (poem_id) REFERENCES poems(id)
+        )
+    """)
+
     # --- 插入诗人数据 ---
     print("插入诗人数据 ...")
     author_rows = [

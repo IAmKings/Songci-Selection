@@ -77,6 +77,19 @@ CREATE INDEX idx_poems_favorite ON poems(is_favorite);
 - `foreign_keys = ON`
 - `journal_mode = WAL`
 
+### 新增应用表流程(已有 db 上的幂等演进)
+
+应用数据表一律走**独立表 + 幂等创建**,不 ALTER 核心表:
+
+1. `db/build.py`:新增 `CREATE TABLE IF NOT EXISTS ...`(与 `recommendation_pool` 同模式,独立于 `db_exists` 分支)
+2. `SongciDb.sq`:同步表结构 + 查询(编译期 schema 源)
+3. 重跑 `db/build.py` → `app/data/tools/prepare_db.py`(复制资源 + 版本哈希)
+4. 提交 `db_version.txt`(资源 db 本体 gitignore;哈希变化 → 设备端重新复制,会清掉设备本地 favorites/recent_views——已知升级行为)
+
+注意:
+- **SQLDelight 解析器不支持 DEFAULT 里的 `cast(... as integer)`**,用纯表达式 `((julianday('now') - 2440587.5) * 86400000)`
+- 无 `.sqm` 迁移文件时 `Schema.version` 恒为 1,`user_version` **不要**随 `.sq` 改动而提升(build.py 注释的"同步此值"仅指引入迁移时)
+
 ### 4. Validation & Error Matrix
 
 | Condition | Behavior |

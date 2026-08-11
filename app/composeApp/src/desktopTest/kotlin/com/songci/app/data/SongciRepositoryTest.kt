@@ -82,6 +82,23 @@ class SongciRepositoryTest {
         assertTrue(r.favorites().none { it.poem.id == 42L })
     }
 
+    @Test fun recentViewsDedupCapOrder() = runBlocking {
+        val r = testRepo()
+        val ids = r.randomPoems(35).map { it.id }
+        assertEquals(35, ids.size)
+        // 5ms 间隔:viewed_at 为 epoch 毫秒,保证时间戳严格递增(同毫秒排序不稳)
+        ids.forEach { id -> r.recordView(id); kotlinx.coroutines.delay(5) }
+        val recent = r.recentViews()
+        assertEquals(30, recent.size)                      // 上限裁剪:35 → 30
+        assertEquals(ids.last(), recent.first().id)        // 最新在前
+        assertTrue(recent.map { it.id }.all { it in ids.drop(5).toSet() })  // 最旧 5 条被淘汰
+        r.recordView(ids.first())                          // 重复查看 → 去重置顶
+        val after = r.recentViews()
+        assertEquals(30, after.size)
+        assertEquals(1, after.count { it.id == ids.first() })   // 无重复条目
+        assertEquals(ids.first(), after.first().id)             // 置顶
+    }
+
     @Test fun dynastySamples() = runBlocking {
         val r = testRepo()
         val dynasty = r.dynasty
