@@ -649,3 +649,24 @@ widget 随机诗与首页推荐池统一过滤:⿰ 词牌/内容、𠴇/𫍙 缺
 ### Status
 
 [OK] **Completed**
+
+
+## Session 28: widget 收尾:过滤回归测试 + 全量质量检查
+
+**Date**: 2026-08-11
+**Task**: widget 收尾:过滤回归测试 + 全量质量检查
+**Branch**: `master`
+
+### Summary
+
+trellis-check 全绿:补 randomPoems 异常字符过滤回归测试(5轮x20首断言 ⿰/缺字/超长词牌/单行),lintDebug/desktopTest/testDebugUnitTest/swiftc 通过;清理验证时误建空文件 app/data/songci.db;GitNexus 索引刷新 1113 nodes。本会话全部工作:凌晨自动刷新(12414b9)+连接池泄漏修复(adaa1c3)+随机诗过滤(c39da31)+spec 沉淀(9496c5f)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8bfc534` | (see git log) |
+
+### Status
+
+[OK] **Completed**
