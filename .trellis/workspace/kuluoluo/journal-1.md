@@ -690,3 +690,24 @@ grilling 评审收敛:不做完整历史,做「最近查看」——进入详情
 ### Status
 
 [OK] **Completed**
+
+## Session 30: 数据库升级迁移(用户数据保留)
+
+**Date**: 2026-08-11
+**Task**: 08-11-db-upgrade-migration
+**Branch**: `master`
+
+### Summary
+
+修复资源库更新整库覆盖导致用户数据全丢的缺陷(自"驱动缓存版本标记"引入即存在)。三端驱动升级路径改为临时副本→mergeUserData(ATTACH 旧库逐表 INSERT OR REPLACE)→原子替换,缺表/失败逐表降级;prepare_db.py 产物清空用户表 + WAL checkpoint 后哈希(发现并修复:哈希读未落盘字节,版本标记与随包不一致)。设备实测注入收藏→强制升级→收藏保留。坑:Android attachDatabase 隐藏 API(execSQL ATTACH)、native executeQuery mapper 泛型推断不稳(统一 execute)、K/N Apple 目标无 platform.sqlite3。同会话顺带提交 search 页全屏(隐藏底部 tab)。desktopTest 全绿,spec 沉淀。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `4b0614f` | feat(search): 搜索页全屏,隐藏底部 tab |
+| `6833127` | feat(db): 资源库升级迁移——复制覆盖时保留收藏/推荐池/最近查看 |
+
+### Status
+
+[OK] **Completed**

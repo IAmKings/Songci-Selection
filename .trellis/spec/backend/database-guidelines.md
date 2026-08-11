@@ -90,6 +90,16 @@ CREATE INDEX idx_poems_favorite ON poems(is_favorite);
 - **SQLDelight 解析器不支持 DEFAULT 里的 `cast(... as integer)`**,用纯表达式 `((julianday('now') - 2440587.5) * 86400000)`
 - 无 `.sqm` 迁移文件时 `Schema.version` 恒为 1,`user_version` **不要**随 `.sq` 改动而提升(build.py 注释的"同步此值"仅指引入迁移时)
 
+### 升级迁移(用户数据保留)
+
+驱动升级路径(三端一致):版本不一致 → 资源字节写**临时副本**(不覆盖旧库)→ `mergeUserData(旧库, 临时副本)`(ATTACH 旧库,逐表 `INSERT OR REPLACE INTO t SELECT * FROM olddb.t`)→ 原子替换 → 写版本标记。契约在 `commonMain/data/UserDataMigration.kt`(`USER_TABLES` 与 prepare_db.py 的清单保持一致)。
+
+- **降级策略**:每表失败单独跳过(缺表=老版本,数据不合=坏数据);ATTACH 失败整体降级为直接替换——任何情况不阻塞应用启动,丢失的仅是本次该表数据
+- **prepare_db.py 产物必须清空用户表**(否则开发期数据随包下发),且**先 `PRAGMA wal_checkpoint(TRUNCATE)` 再哈希**(源库 WAL 模式,不落盘时哈希读不到本次写入,版本标记与随包字节不一致,变更检测失效)
+- **平台坑**:
+  - Android `attachDatabase/detachDatabase` 是隐藏 API(public SDK 无符号)→ `execSQL("ATTACH DATABASE ...")` + `quoteLiteral` 转义路径
+  - SQLDelight native(NativeSqliteDriver)`executeQuery` 的 mapper 泛型推断不稳 → 统一用 `execute`(INSERT...SELECT 每表直接执行,失败即跳过)
+
 ### 4. Validation & Error Matrix
 
 | Condition | Behavior |
