@@ -17,7 +17,8 @@ private fun refreshDbFile(dbFile: File, tmpFile: File, bytes: ByteArray, version
     }
     tmpFile.copyTo(dbFile, overwrite = true)
     tmpFile.delete()
-    val versionFile = File(dbFile.parentFile, "$dbFile.name.version")
+    // 注意 ${dbFile.name}:写成 "$dbFile.name" 会把 $dbFile 当整体,产出 "songci.db.name.version" 路径
+    val versionFile = File(dbFile.parentFile, "${dbFile.name}.version")
     versionFile.writeText(version)
 }
 
