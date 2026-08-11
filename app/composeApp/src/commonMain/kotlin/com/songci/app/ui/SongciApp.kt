@@ -114,9 +114,10 @@ fun SongciApp(
         SongciTheme(fontStyle = vm.fontStyle) {
         val nav = rememberNavController()
 
-        /** 内容层路由(详情/词牌/作者):全屏盖 tab。 */
+        /** 内容层路由(详情/词牌/作者/搜索):全屏盖 tab。搜索为全屏专注流程,与详情一致无导航栏。 */
         fun isContentRoute(route: String?) = route != null &&
-            (route.startsWith("detail/") || route.startsWith("rhythmic/") || route.startsWith("author/"))
+            (route.startsWith("detail/") || route.startsWith("rhythmic/") || route.startsWith("author/") ||
+                route.startsWith("search"))
 
         /**
          * 进入详情(统一入口):同层唯一。
