@@ -629,3 +629,23 @@ npx gitnexus analyze --force 全量重建索引:1052 symbols/1951 edges/85 flows
 ### Status
 
 [OK] **Completed**
+
+## Session 30: widget 随机诗异常字符过滤
+
+**Date**: 2026-08-11
+**Task**: widget 随机诗异常字符过滤
+**Branch**: `master`
+
+### Summary
+
+widget 随机诗与首页推荐池统一过滤:⿰ 词牌/内容、𠴇/𫍙 缺字、词牌>12字、单行词全部排除。过滤下沉 randomPoems 查询层(与 dailyCandidates 同源),widget 与首页随机入口统一受益;iOS/macOS Swift SQL 字面量同步。真实数据验证 21340→20024 首(排除 1316 异常词),候选充足随机不受影响。assembleDebug/testDebugUnitTest/desktopTest/swiftc 全绿
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `c39da31` | (see git log) |
+
+### Status
+
+[OK] **Completed**
