@@ -57,7 +57,16 @@ struct SongciProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<SongciEntry>) -> Void) {
-        completion(Timeline(entries: [makeEntry()], policy: .after(Date().addingTimeInterval(3600))))
+        completion(Timeline(entries: [makeEntry()], policy: .after(nextMidnight())))
+    }
+
+    /// 下一个本地 0 点:凌晨自动刷新(无需 app 运行,系统到点调 getTimeline)。
+    private func nextMidnight() -> Date {
+        Calendar.current.nextDate(
+            after: Date(),
+            matching: DateComponents(hour: 0, minute: 0),
+            matchingPolicy: .nextTime
+        ) ?? Date().addingTimeInterval(86400)
     }
 
     private func makeEntry() -> SongciEntry {

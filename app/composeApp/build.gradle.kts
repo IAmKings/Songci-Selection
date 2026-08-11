@@ -54,6 +54,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.sqldelight.android.driver)
             implementation(libs.androidx.glance.appwidget)   // 桌面小组件(App Widget, 仅 Android)
+            implementation(libs.androidx.work.runtime.ktx)   // 凌晨小组件自动刷新(WorkManager 定时任务)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
