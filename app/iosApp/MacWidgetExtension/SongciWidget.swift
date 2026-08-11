@@ -103,7 +103,10 @@ struct SongciWidgetView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         // 整卡点击直达对应词详情(与 Android/iOS 深链一致);id 无效时不挂载
         .widgetURL(entry.poemId > 0 ? URL(string: "songci://poem/\(entry.poemId)") : nil)
-        // macOS 26 起 widget 背景必须走 containerBackground,否则显示 "adopt containerBackground" 占位
+        // 背景双层:containerBackground 是 macOS 26 的强制要求(否则占位提示),但实测 SDK 26 编译的
+        // 扩展在 macOS 15 上该 API 不生效(深色模式下回退系统默认黑色背景)→ 叠加普通 .background 兜底。
+        // 两处固定米白(与 app 主题一致,不随外观变化)。
+        .background(Color(red: 0.96, green: 0.96, blue: 0.93))
         .containerBackground(for: .widget) { Color(red: 0.96, green: 0.96, blue: 0.93) }
     }
 }
