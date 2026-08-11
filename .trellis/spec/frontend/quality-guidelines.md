@@ -41,6 +41,8 @@
 - **macOS 非沙盒 host 写 App Group 容器**:触发 TCC 弹窗("访问其他App的数据"),开发期每次重签都弹,正式签名仅首次;不要用 delay 回避(阻塞数据加载链路)
 - **部署脚本敏感信息**:签名证书等本机身份从 `CERT_IDENTITY` 环境变量/`~/.songci-signing.env` 读取,禁止硬编码入库(仓库公开!)
 - **凌晨定时刷新模式(2026-08-11)**:每日凌晨自动刷新 = Android WorkManager 一次性延迟 + 尾部重排(`enqueueUniqueWork("midnight-refresh", REPLACE)` 幂等防堆积;延迟复用 `msUntilNextMidnight()`,纯算术本地 0 点);iOS/macOS = Timeline policy `.after(nextMidnight())`(Calendar.nextDate 算下一本地 0 点),系统到点自行刷新无需 app 运行。选型:updatePeriodMillis 最小 30min 无法对齐凌晨;AlarmManager 需手动 BOOT_COMPLETED 重挂,WorkManager 内置重启恢复
+- **手动刷新黑盒节流(实机验证)**:Android 手动 `updateAll` 全链路每次成功(广播→onAction→渲染→RemoteViews 推送→launcher callbacks 均被调用),但 ColorOS 等多 ROM launcher 对短时间连续更新丢弃不重绘(节流窗口黑盒,过几分钟恢复)。**结论:手动快速刷新不可控,不作为需求**;刷新可靠性只保证凌晨定时路径。iOS/macOS WidgetKit 无 widget 内按钮,无此场景;若要手动刷新须 iOS 17+/macOS 14+ AppIntent 交互式 widget(未实施)
+- **db 连接泄漏**:widget 每次 `createDatabaseDriver()` 必须 finally `driver.close()`,否则泄漏耗尽 SQLite 连接池(上限4)后后续刷新静默失效(实机重现"第二次点击无响应")
 
 ## 导航分层模型(2026-08-10 决策)
 

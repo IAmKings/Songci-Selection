@@ -609,3 +609,23 @@ npx gitnexus analyze --force 全量重建索引:1052 symbols/1951 edges/85 flows
 ### Status
 
 [OK] **Completed**
+
+## Session 29: 凌晨刷新实机验收 + 手动刷新黑盒排查
+
+**Date**: 2026-08-11
+**Task**: 凌晨小组件自动更新(验收)
+**Branch**: `master`
+
+### Summary
+
+一加13 实机验收:凌晨任务入队指向 0 点(jobId 动态,强制触发 cmd jobscheduler run -f -n androidx.work.systemjobscheduler)、MidnightRefreshWorker 四规格更新+尾部重排全通过。排障"连续点击无响应":加诊断日志确认全链路每次成功(广播→onAction→SessionWorker→渲染→updateViews→launcher callbacks),根因=ColorOS launcher 更新节流黑盒(窗口内丢弃重绘,数分钟恢复),无法从 app 侧修复。顺带修复真 bug:randomPoem/FavoriteAction 不关 driver → SQLite 连接池泄漏(上限4)耗尽致刷新静默失效(adaa1c3)。决策:手动快速刷新不可控不作为需求,只保证凌晨刷新;iOS/macOS 无此场景,手动刷新需 iOS17+/macOS14+ AppIntent(未实施)。spec 沉淀 3 条(widget 节流/db 泄漏/凌晨模式)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `adaa1c3` | fix(widget): 关闭 db driver 修复连接池泄漏致重复刷新失效 |
+
+### Status
+
+[OK] **Completed**
