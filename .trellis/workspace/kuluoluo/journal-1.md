@@ -773,3 +773,24 @@ macOS 版打包安装:createDistributable 裸产物覆盖导致小组件扩展�
 ### Status
 
 [OK] **Completed**
+
+## Session 34: 三端通知权限引导 + macOS 通知链路四连修(真机实测)
+
+**Date**: 2026-08-13
+**Task**: 无(用户选择不建 task)
+**Branch**: `master`
+
+### Summary
+
+安卓真机(OnePlus 13)部署验收 + macOS 打包验收。权限引导闭环:设置页进入检查权限、未授权引导行、开启开关未授权先弹授权框、授权返回自动补开+排期;Android requestNotificationPermission 从空实现改为真实弹框(AppContextHolder 增加 activity 注入)。macOS 排期链路四连修(授权后首次真跑暴露):①dateByAddingUnit unit=1→16(NSCalendarUnitDay),nil components 崩;②lastScheduledDay=0→day=1→1970 年全部立即触发无限通知,滚动窗口重写(removeAll+重排未来 7 天,改时间当天生效);③Denied 不再弹框 → 深链系统设置通知页;④点击无回调(weak delegate+JNA 弱引用回调)→ 常驻持有;⑤点击崩溃:UNNotificationResponse 无 request 属性(iOS API),链为 response.notification.request.content。踩坑:ColorOS 封 pm revoke/appops/pm clear;macOS 通知授权只弹一次;gradlew :run 无 bundle 抛 NSException 验证不了,须打包 .app。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `97b4365` | fix(notification): macOS block 崩溃——descriptor/write/常驻回调 + sendLong 修 NSInteger 解引用 |
+| `d3b5892` | fix(notification): 三端权限引导闭环 + macOS 通知链路四连修 |
+
+### Status
+
+[OK] **Completed**
