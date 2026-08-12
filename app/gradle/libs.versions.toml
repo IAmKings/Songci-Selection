@@ -30,6 +30,9 @@ sqldelight-jvm-driver = { module = "app.cash.sqldelight:sqlite-driver", version.
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
+# macOS 每日一词通知:纯 JVM 调 UNUserNotificationCenter 的唯一途径(ObjC 桥;jna 主包提供 Function/Callback/Structure)
+jna = { module = "net.java.dev.jna:jna", version = "5.14.0" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }

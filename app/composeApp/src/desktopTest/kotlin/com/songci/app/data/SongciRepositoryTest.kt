@@ -158,6 +158,23 @@ class SettingsPersistenceTest {
             testFile.delete()
         }
     }
+
+    @Test fun notificationPrefsRoundtrip() {
+        System.setProperty(SETTINGS_FILE_PROPERTY, testFile.absolutePath)
+        try {
+            // 默认值
+            assertEquals(NotificationPrefs(), loadNotificationPrefs())
+            // 全字段往返(含 lastScheduledDay 滚动窗口标记)
+            saveNotificationPrefs(NotificationPrefs(enabled = true, hour = 7, minute = 30, lastScheduledDay = 20000L))
+            assertEquals(NotificationPrefs(enabled = true, hour = 7, minute = 30, lastScheduledDay = 20000L), loadNotificationPrefs())
+            // 关闭状态与 0 点(00:00 合法,非默认 21:00)
+            saveNotificationPrefs(NotificationPrefs(enabled = false, hour = 0, minute = 0))
+            assertEquals(NotificationPrefs(enabled = false, hour = 0, minute = 0), loadNotificationPrefs())
+        } finally {
+            System.clearProperty(SETTINGS_FILE_PROPERTY)
+            testFile.delete()
+        }
+    }
 }
 
 /** 字号状态:更新即时生效(VM 层)。 */

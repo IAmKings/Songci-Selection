@@ -11,10 +11,14 @@ import com.songci.app.data.Poem
 import com.songci.app.data.RhythmicSpec
 import com.songci.app.data.Segmenter
 import com.songci.app.data.SongciRepository
+import com.songci.app.data.NotificationPrefs
 import com.songci.app.data.loadFontScaleName
 import com.songci.app.data.loadFontStyle
+import com.songci.app.data.loadNotificationPrefs
+import com.songci.app.data.rescheduleDailyNotification
 import com.songci.app.data.saveFontScaleName
 import com.songci.app.data.saveFontStyle
+import com.songci.app.data.saveNotificationPrefs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -91,6 +95,10 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
     )
         private set
 
+    // 每日一词通知设置(本地通知,无服务器)
+    var notificationPrefs by mutableStateOf(loadNotificationPrefs())
+        private set
+
     // 搜索状态
     var searchQuery by mutableStateOf("")
         private set
@@ -118,6 +126,13 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
     fun updateFontStyle(style: FontStyle) {
         fontStyle = style
         saveFontStyle(style.name)
+    }
+
+    /** 保存通知设置并触发平台重排(开启→排期,关闭→取消)。 */
+    fun updateNotificationPrefs(prefs: NotificationPrefs) {
+        notificationPrefs = prefs
+        saveNotificationPrefs(prefs)
+        rescheduleDailyNotification(prefs)
     }
 
     fun refreshRandom() {

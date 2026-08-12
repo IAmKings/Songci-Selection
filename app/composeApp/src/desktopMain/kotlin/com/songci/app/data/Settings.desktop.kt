@@ -41,3 +41,30 @@ actual fun loadFontStyle(): String? {
     file.inputStream().use(props::load)
     return props.getProperty("font_style")
 }
+
+private fun loadProps(): Properties {
+    val props = Properties()
+    val file = settingsFile()
+    if (file.exists()) file.inputStream().use(props::load)
+    return props
+}
+
+actual fun loadNotificationPrefs(): NotificationPrefs = loadProps().let {
+    NotificationPrefs(
+        enabled = it.getProperty("notify_enabled", "false").toBoolean(),
+        hour = it.getProperty("notify_hour", "21").toIntOrNull() ?: 21,
+        minute = it.getProperty("notify_minute", "0").toIntOrNull() ?: 0,
+        lastScheduledDay = it.getProperty("notify_last_day", "0").toLongOrNull() ?: 0L,
+    )
+}
+
+actual fun saveNotificationPrefs(prefs: NotificationPrefs) {
+    val props = loadProps()
+    props.setProperty("notify_enabled", prefs.enabled.toString())
+    props.setProperty("notify_hour", prefs.hour.toString())
+    props.setProperty("notify_minute", prefs.minute.toString())
+    props.setProperty("notify_last_day", prefs.lastScheduledDay.toString())
+    val file = settingsFile()
+    file.parentFile.mkdirs()
+    file.outputStream().use { props.store(it, "songci settings") }
+}

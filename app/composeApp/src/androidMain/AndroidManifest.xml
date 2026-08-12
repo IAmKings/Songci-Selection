@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 每日一词通知(Android 13+ 运行时权限;未授予则 Worker 静默跳过) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application
         android:name=".SongciApp"
         android:icon="@mipmap/ic_launcher"

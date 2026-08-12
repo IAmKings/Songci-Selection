@@ -63,6 +63,7 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.sqldelight.jvm.driver)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.jna)   // macOS 通知:UNUserNotificationCenter ObjC 桥(仅桌面端)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

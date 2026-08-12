@@ -15,6 +15,8 @@ fun main() = application {
     // 组合内挂起迭代消费(组合作用域内处理才可靠——application 块 state + 事件线程写
     // 会导致快照跟踪脱节:写值正确但组合读旧值/不重组)
     val deepLinkChannel = Channel<Long>(capacity = Channel.UNLIMITED)
+    // 每日一词通知点击回调 → 同一深链通道(main.kt 唯一注入点)
+    com.songci.app.data.macDeepLinkChannel = deepLinkChannel
     if (Desktop.isDesktopSupported()) {
         Desktop.getDesktop().setOpenURIHandler(OpenURIHandler { e ->
             val uri = e.uri

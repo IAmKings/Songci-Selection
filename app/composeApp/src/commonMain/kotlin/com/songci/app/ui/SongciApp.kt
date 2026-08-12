@@ -38,6 +38,8 @@ import com.songci.app.data.Dynasty
 import com.songci.app.data.Rhythmic
 import com.songci.app.data.SongciRepository
 import com.songci.app.data.createDatabaseDriver
+import com.songci.app.data.loadNotificationPrefs
+import com.songci.app.data.rescheduleDailyNotification
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.songci.app.theme.SongciTheme
@@ -110,6 +112,10 @@ fun SongciApp(
             return@SongciTheme
         }
         val vm: AppViewModel = viewModel { AppViewModel(repo) }
+        // 启动时重排每日通知:滚动窗口补排(ios/macos)+ 权限恢复后兜底(android/macos)
+        // 幂等:未开启/未授权时各平台实现自行短路。放 UI 组合层而非 VM init——
+        // desktopTest 不组合 UI,避免测试进程触发 JNA/ObjC(NSException 直接终止)
+        LaunchedEffect(Unit) { rescheduleDailyNotification(loadNotificationPrefs()) }
         // 内层 Theme 按用户字体风格(加载完成后;外层负责 LoadingScreen 默认样式)
         SongciTheme(fontStyle = vm.fontStyle) {
         val nav = rememberNavController()
