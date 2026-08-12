@@ -19,6 +19,7 @@
 | [Error Handling](./error-handling.md) | 防御式解析、校验拒写、幂等、驱动缓存更新 | ✅ 已填充 |
 | [Quality Guidelines](./quality-guidelines.md) | 基准测试、生成物可复现、零新依赖、数据准确性 | ✅ 已填充 |
 | [Logging Guidelines](./logging-guidelines.md) | 零日志框架:应用侧无日志,脚本侧 print 报告 | ✅ 已填充 |
+| [Notification Guidelines](./notification-guidelines.md) | 三端通知权限/滚动窗口排期/macOS JNA 绑定坑 | ✅ 已填充 |
 
 ---
 
