@@ -11,6 +11,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import java.util.Date
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 /**
  * macOS 每日一词通知:JNA 直绑 ObjC runtime(无 com.sun.jna.objc 包——JNA 5.x 已移除;
@@ -38,7 +40,21 @@ private fun send(receiver: Pointer?, selector: String, vararg args: Any?): Point
     return fn.invokePointer(all)
 }
 
+/** NSInteger 返回值走 invokeLong:invokePointer 会把值当指针,再 getLong(0) 解引用即段错误(实测 si_addr=0x1)。 */
+private fun sendLong(receiver: Pointer?, selector: String, vararg args: Any?): Long {
+    val fn = objcLib.getFunction("objc_msgSend")
+    val all = if (args.isEmpty()) arrayOf(receiver, sel(selector)) else arrayOf(receiver, sel(selector), *args)
+    return fn.invokeLong(all)
+}
+
 private fun allocInit(className: String): Pointer? = send(send(cls(className), "alloc"), "init")
+
+/** 最小 Block_descriptor_1:reserved + size;_Block_copy 读 descriptor->size 确定拷贝大小。 */
+class BlockDescriptor : Structure() {
+    @JvmField var reserved: Long = 0
+    @JvmField var blockSize: Long = 0
+    override fun getFieldOrder(): List<String> = listOf("reserved", "blockSize")
+}
 
 // ---- ObjC block 手工构造(最小布局:isa/flags/reserved/invoke/descriptor;调用方只走 invoke)----
 class ObjCBlock(fn: Callback) : Structure() {
@@ -48,7 +64,21 @@ class ObjCBlock(fn: Callback) : Structure() {
     @JvmField var invoke: Pointer? = CallbackReference.getFunctionPointer(fn)
     @JvmField var descriptor: Pointer? = null
 
+    /** 常驻 descriptor(private 字段不进 JNA 布局);随 block 一起被顶层 val 持有。 */
+    private val descriptorStruct = BlockDescriptor()
+
     override fun getFieldOrder(): List<String> = listOf("isa", "flags", "reserved", "invoke", "descriptor")
+
+    init {
+        // JNA 只在结构体作为参数传给 native 时 autoWrite;这里只取 .pointer 传给 objc_msgSend,
+        // 不显式 write 则 native 内存全零,系统收到 isa=NULL 的 block 直接崩溃。
+        write()
+        // descriptor 为 NULL 同样必崩:_Block_copy 读 descriptor->size(段错误,已实测复现)。
+        descriptorStruct.blockSize = size().toLong()
+        descriptorStruct.write()
+        descriptor = descriptorStruct.pointer
+        write()
+    }
 }
 
 /** 授权回调: void^(BOOL granted, NSError*);block invoke 首参为 block 自身。 */
@@ -60,29 +90,41 @@ class GrantBlock : Callback {
     }
 }
 
-/** 设置回调: void^(UNNotificationSettings*);授权状态读出(同步回调)。 */
+/** 设置回调: void^(UNNotificationSettings*);授权状态写入 + 放行等待方(回调在系统线程异步触发)。 */
 class SettingsBlock : Callback {
     @JvmField var status = -1L
+    @JvmField @Volatile var latch: CountDownLatch? = null   // @JvmField:否则生成 public getter 破坏 JNA 单方法回调校验
     fun invoke(block: Pointer?, settings: Pointer?) {
-        if (settings != null) status = send(settings, "authorizationStatus")?.getLong(0) ?: -1L
+        if (settings != null) status = sendLong(settings, "authorizationStatus") else -1L
+        latch?.countDown()
     }
 }
 
 private val settingsCb = SettingsBlock()
 private val settingsBlock = ObjCBlock(settingsCb)
 
+/** 授权回调常驻实例:block 指针被系统异步持有,局部变量会被 GC 成悬垂指针。 */
+private val grantCb = GrantBlock()
+private val grantBlock = ObjCBlock(grantCb)
+
 private fun center(): Pointer? = send(cls("UNUserNotificationCenter"), "currentNotificationCenter")
 
 actual fun requestNotificationPermission() {
     // 用户主动开启开关时调用(系统弹授权框)
-    val grantCb = GrantBlock()
-    send(center(), "requestAuthorizationWithOptions:completionHandler:", 7L, ObjCBlock(grantCb).pointer)
+    send(center(), "requestAuthorizationWithOptions:completionHandler:", 7L, grantBlock.pointer)
 }
 
-/** UNAuthorizationStatus.Authorized = 2。 */
+/** UNAuthorizationStatus.Authorized = 2;回调异步,等最多 5s(在 Default 调度线程阻塞,无妨)。 */
 private fun authorizationGranted(): Boolean {
-    send(center(), "getNotificationSettingsWithCompletionHandler:", settingsBlock.pointer)
-    return settingsCb.status == 2L
+    settingsCb.status = -1
+    settingsCb.latch = CountDownLatch(1)
+    try {
+        send(center(), "getNotificationSettingsWithCompletionHandler:", settingsBlock.pointer)
+        if (!settingsCb.latch!!.await(5, TimeUnit.SECONDS)) return false   // 回调未到:按未授权处理
+        return settingsCb.status == 2L
+    } finally {
+        settingsCb.latch = null
+    }
 }
 
 private fun epochDay(): Long = Date().time / 86_400_000L
@@ -106,7 +148,7 @@ class ResponseCallback : Callback {
     fun invoke(self: Pointer?, cmd: Pointer?, center: Pointer?, response: Pointer?, completion: Pointer?) {
         val content = send(response, "request")?.let { send(it, "content") } ?: return
         val userInfo = send(content, "userInfo") ?: return
-        val poemId = send(userInfo, "objectForKey:", nsString("poemId"))?.let { send(it, "longLongValue")?.getLong(0) } ?: 0L
+        val poemId = send(userInfo, "objectForKey:", nsString("poemId"))?.let { sendLong(it, "longLongValue") } ?: 0L
         if (poemId > 0) macDeepLinkChannel?.trySend(poemId)
         // ponytail: completionHandler 不回调(block 调用桥未做,先跑通主链路;系统日志警告可接受)
     }

@@ -753,3 +753,23 @@ macOS 版打包安装:createDistributable 裸产物覆盖导致小组件扩展�
 ### Status
 
 [OK] **Completed**
+
+## Session 33: 修复 macOS 通知 block 崩溃(两处,实测复现+实机验证)
+
+**Date**: 2026-08-12
+**Task**: 08-12-mac-notification-block-crash
+**Branch**: `master`
+
+### Summary
+
+发布版启动 1.6s SIGSEGV(_Block_copy,hs_err_pid22911)。修复三连:①ObjCBlock 未 write()(native 内存全零+descriptor=NULL)→ 新增 BlockDescriptor(reserved+size)、init 显式 write、blockSize=size()。②grant 回调局部变量被 GC → 顶层 val 常驻。③settings 回调异步竞态 → CountDownLatch 等 5s。修复后实测暴露潜伏第二崩:settings 回调首次真正触发,`send(settings,"authorizationStatus")?.getLong(0)` 段错误(si_addr=0x1,NSInteger 被当指针解引用)——新增 sendLong()(invokeLong),`longLongValue` 同款 bug 一并修(原功能一直没真正跑通过)。验证:createDistributable 打包后运行 60s 无崩溃,启动路径(rescheduleDailyNotification→authorizationGranted)全跑通。dev 模式 gradlew :run 无法验证(无 bundle,UNUserNotificationCenter 抛 NSException,非 bug)。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| (待提交) | fix(notification): macOS block 崩溃——descriptor/write/常驻回调 + sendLong 修 NSInteger 解引用 |
+
+### Status
+
+[OK] **Completed**
