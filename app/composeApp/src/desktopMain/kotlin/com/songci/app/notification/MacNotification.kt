@@ -110,29 +110,46 @@ private val grantBlock = ObjCBlock(grantCb)
 private fun center(): Pointer? = send(cls("UNUserNotificationCenter"), "currentNotificationCenter")
 
 actual fun requestNotificationPermission() {
-    // 用户主动开启开关时调用(系统弹授权框)
-    send(center(), "requestAuthorizationWithOptions:completionHandler:", 7L, grantBlock.pointer)
+    // UNAuthorizationStatus:0=未决定(可弹框)/1=拒绝(系统不再弹,引导系统设置)/2=已授权
+    when (authorizationStatus()) {
+        0L -> send(center(), "requestAuthorizationWithOptions:completionHandler:", 7L, grantBlock.pointer)
+        1L -> openNotificationSettings()
+    }
 }
 
-/** UNAuthorizationStatus.Authorized = 2;回调异步,等最多 5s(在 Default 调度线程阻塞,无妨)。 */
-private fun authorizationGranted(): Boolean {
+actual fun notificationPermissionGranted(): Boolean = authorizationGranted()
+
+/** Denied 后系统不再弹授权框:深链打开系统设置的通知页(标准 UX,同 iOS 引导)。 */
+private fun openNotificationSettings() {
+    try {
+        ProcessBuilder("open", "x-apple.systempreferences:com.apple.preference.notifications").start()
+    } catch (_: java.io.IOException) {
+    }
+}
+
+/** UNAuthorizationStatus(0=未决定/1=拒绝/2=已授权/3=临时/4=短暂);回调异步,等最多 5s,超时返回 -1。 */
+private fun authorizationStatus(): Long {
     settingsCb.status = -1
     settingsCb.latch = CountDownLatch(1)
     try {
         send(center(), "getNotificationSettingsWithCompletionHandler:", settingsBlock.pointer)
-        if (!settingsCb.latch!!.await(5, TimeUnit.SECONDS)) return false   // 回调未到:按未授权处理
-        return settingsCb.status == 2L
+        if (!settingsCb.latch!!.await(5, TimeUnit.SECONDS)) return -1L   // 回调未到:按未知处理
+        return settingsCb.status
     } finally {
         settingsCb.latch = null
     }
 }
 
+private fun authorizationGranted(): Boolean = authorizationStatus() == 2L
+
 private fun epochDay(): Long = Date().time / 86_400_000L
 
 private fun triggerDate(daysFromNow: Int, hour: Int, minute: Int): Pointer? {
     val cal = send(cls("NSCalendar"), "currentCalendar")
-    val future = send(cal, "dateByAddingUnit:value:toDate:options:", 1L, daysFromNow.toLong(), send(cls("NSDate"), "date"), 0L)
-    val comps = send(cal, "components:fromDate:", (0x0E or 0x10).toLong(), future)   // NSYear|NSMonth|NSDay
+    // NSCalendarUnitDay = 16(NS_OPTIONS 位 4);传 1 是非法 unit,dateByAddingUnit 返回 nil →
+    // components nil → UNCalendarNotificationTrigger 抛 NSException(已实测,授权后首次排期即崩)
+    val future = send(cal, "dateByAddingUnit:value:toDate:options:", 16L, daysFromNow.toLong(), send(cls("NSDate"), "date"), 0L)
+    val comps = send(cal, "components:fromDate:", (0x0E or 0x10).toLong(), future)   // NSYear|NSMonth|NSDay|NSHour
     send(comps, "setHour:", hour.toLong())
     send(comps, "setMinute:", minute.toLong())
     return comps
@@ -146,7 +163,10 @@ private fun nsNumber(v: Long): Pointer? = send(cls("NSNumber"), "numberWithLongL
 class ResponseCallback : Callback {
     // IMP 签名: (id self, SEL _cmd, id center, id response, id completionHandler)
     fun invoke(self: Pointer?, cmd: Pointer?, center: Pointer?, response: Pointer?, completion: Pointer?) {
-        val content = send(response, "request")?.let { send(it, "content") } ?: return
+        // macOS 的 UNNotificationResponse 无 request 属性(iOS 才有),链为 response → notification → request → content
+        // (直接发 request 消息会 NSInvalidArgumentException: unrecognized selector,已实测崩溃)
+        val notification = send(response, "notification") ?: return
+        val content = send(notification, "request")?.let { send(it, "content") } ?: return
         val userInfo = send(content, "userInfo") ?: return
         val poemId = send(userInfo, "objectForKey:", nsString("poemId"))?.let { sendLong(it, "longLongValue") } ?: 0L
         if (poemId > 0) macDeepLinkChannel?.trySend(poemId)
@@ -155,6 +175,11 @@ class ResponseCallback : Callback {
 }
 
 private var delegateRegistered = false
+
+/** 常驻回调与 delegate 实例:JNA 对 Callback 弱引用,局部实例 GC 后 IMP 悬垂;
+ * UNUserNotificationCenter.delegate 是 weak,不持有则实例被释放 → 点击无回调(已实测)。 */
+private val responseCb = ResponseCallback()
+private var delegateInstance: Pointer? = null
 
 private fun ensureDelegate() {
     if (delegateRegistered) return
@@ -167,12 +192,13 @@ private fun ensureDelegate() {
         arrayOf(
             delegate,
             sel("userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:"),
-            CallbackReference.getFunctionPointer(ResponseCallback()),
+            CallbackReference.getFunctionPointer(responseCb),
             "v@:@@@",
         ),
     )
     objcLib.getFunction("objc_registerClassPair").invoke(arrayOf(delegate))
-    send(center(), "setDelegate:", send(delegate, "new"))
+    delegateInstance = send(delegate, "new")
+    send(center(), "setDelegate:", delegateInstance)
     delegateRegistered = true
 }
 
@@ -184,11 +210,19 @@ actual fun rescheduleDailyNotification(prefs: NotificationPrefs) {
     ensureDelegate()
     scope.launch {
         if (!authorizationGranted()) return@launch   // 未授权:不排(授权请求只在开关开启时由 requestNotificationPermission 触发)
+        // 幂等滚动窗口:每次启动/设置变更都清掉重排未来 7 天 —— 改时间/选词即刻生效,旧触发作废
+        // (此前按 lastScheduledDay 推进,首次 0 → day=1 → 1970 年 → 全部立即触发,已实测无限通知)
+        send(center(), "removeAllPendingNotificationRequests")
         val current = loadNotificationPrefs()
-        var scheduled = current.lastScheduledDay
         val today = epochDay()
-        while (scheduled < today + WINDOW_DAYS) {
-            val day = scheduled + 1
+        // 滚动窗口:每次启动/设置变更从"今天(未过时刻)或明天"起排 7 天 —— 改时间/选词即刻生效;
+        // lastScheduledDay 仅记录进度(不参与推进,推进式曾致 1970 立即触发无限通知)
+        val now = java.util.Calendar.getInstance()
+        val nowMinute = now.get(java.util.Calendar.HOUR_OF_DAY) * 60 + now.get(java.util.Calendar.MINUTE)
+        val firstDay = if (nowMinute < current.hour * 60 + current.minute) today else today + 1
+        var day = firstDay
+        val lastDay = firstDay + WINDOW_DAYS - 1
+        while (day <= lastDay) {
             val poem = pickRandomPoem() ?: return@launch
             val title = if (poem.authorName.isEmpty()) poem.rhythmic else "${poem.rhythmic} · ${poem.authorName}"
             val firstLine = poem.content.lineSequence().firstOrNull() ?: ""
@@ -207,9 +241,9 @@ actual fun rescheduleDailyNotification(prefs: NotificationPrefs) {
                 "requestWithIdentifier:content:trigger:", nsString("daily-poem-$day"), content, trigger,
             )
             send(center(), "addNotificationRequest:withCompletionHandler:", request, Pointer.NULL)
-            scheduled = day
+            day++
         }
-        saveNotificationPrefs(current.copy(lastScheduledDay = scheduled))
+        saveNotificationPrefs(current.copy(lastScheduledDay = lastDay))
     }
 }
 

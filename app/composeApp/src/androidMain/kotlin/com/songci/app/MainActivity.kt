@@ -21,6 +21,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AppContextHolder.context = applicationContext
+        AppContextHolder.activity = this
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         // deep link: songci://poem/{id}(小组件/每日通知)

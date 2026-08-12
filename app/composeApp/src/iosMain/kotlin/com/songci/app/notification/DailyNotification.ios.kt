@@ -9,10 +9,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import platform.Foundation.NSDate
 import platform.Foundation.NSCalendar
 import platform.Foundation.NSCalendarUnitDay
+import platform.Foundation.NSCalendarUnitHour
+import platform.Foundation.NSCalendarUnitMinute
 import platform.Foundation.NSCalendarUnitMonth
 import platform.Foundation.NSCalendarUnitYear
 import platform.Foundation.NSDateComponents
@@ -48,6 +51,9 @@ actual fun requestNotificationPermission() {
     ) { _, _ -> }
 }
 
+actual fun notificationPermissionGranted(): Boolean =
+    runBlocking { authorizationStatus() == UNAuthorizationStatusAuthorized }   // ponytail: 阻塞查询,低频调用可接受
+
 /** 触发日期:daysFromNow 天后的 hh:mm(经 NSCalendar 加天,DST 安全;非重复触发必须带 y/m/d,否则全部落在同一"下次匹配"日)。 */
 private fun triggerDate(daysFromNow: Int, hour: Int, minute: Int): NSDateComponents {
     val cal = NSCalendar.currentCalendar
@@ -71,11 +77,17 @@ actual fun rescheduleDailyNotification(prefs: NotificationPrefs) {
     }
     scope.launch {
         if (authorizationStatus() != UNAuthorizationStatusAuthorized) return@launch   // 未授权:不排(不引导)
+        // 幂等滚动窗口:每次启动/设置变更都清掉重排未来 7 天(改时间即刻生效;last_day=0 首次不排到 1970)
+        center.removeAllPendingNotificationRequests()
         val current = loadNotificationPrefs()   // 用最新设置(保存与调度间可能有更新)
-        var scheduled = current.lastScheduledDay
         val today = epochDay()
-        while (scheduled < today + WINDOW_DAYS) {
-            val day = scheduled + 1
+        // 滚动窗口:每次启动/设置变更从"今天(未过时刻)或明天"起排 7 天 —— 改时间/选词即刻生效;
+        // lastScheduledDay 仅记录进度(推进式曾致 1970 立即触发无限通知,桌面已实测)
+        val nowComps = NSCalendar.currentCalendar.components(NSCalendarUnitHour or NSCalendarUnitMinute, fromDate = NSDate())
+        val firstDay = if (nowComps.hour * 60 + nowComps.minute < current.hour * 60 + current.minute) today else today + 1
+        var day = firstDay
+        val lastDay = firstDay + WINDOW_DAYS - 1
+        while (day <= lastDay) {
             val poem = pickRandomPoem() ?: return@launch
             val title = if (poem.authorName.isEmpty()) poem.rhythmic else "${poem.rhythmic} · ${poem.authorName}"
             val firstLine = poem.content.lineSequence().firstOrNull() ?: ""
@@ -89,8 +101,8 @@ actual fun rescheduleDailyNotification(prefs: NotificationPrefs) {
             center.addNotificationRequest(
                 UNNotificationRequest.requestWithIdentifier("daily-poem-$day", content, trigger),
             ) { }
-            scheduled = day
+            day++
         }
-        saveNotificationPrefs(current.copy(lastScheduledDay = scheduled))
+        saveNotificationPrefs(current.copy(lastScheduledDay = lastDay))
     }
 }

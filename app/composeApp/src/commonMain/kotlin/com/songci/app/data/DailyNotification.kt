@@ -13,9 +13,12 @@ expect fun rescheduleDailyNotification(prefs: NotificationPrefs)
 
 /**
  * 请求通知授权(用户主动开启开关时调用一次;iOS/macOS 弹系统授权框,
- * Android 13+ 需 Activity 上下文——本轮不弹,areNotificationsEnabled 兜底)。
+ * Android 13+ 经 MainActivity 存的活动引用弹运行时授权框)。
  */
 expect fun requestNotificationPermission()
+
+/** 当前是否已获通知授权(设置页进入时判断,未授权则引导询问)。 */
+expect fun notificationPermissionGranted(): Boolean
 
 /**
  * 通知选词:独立随机,复用 randomPoems 查询(异常字符过滤 ⿰/缺字/超长词牌/单行,

@@ -9,13 +9,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.songci.app.data.NotificationPrefs
+import com.songci.app.data.notificationPermissionGranted
+import com.songci.app.data.requestNotificationPermission
 import com.songci.app.theme.SongciColors
 import com.songci.app.ui.AppViewModel
 import com.songci.app.ui.FontScale
@@ -85,6 +91,26 @@ fun SettingsScreen(vm: AppViewModel) {
         )
         val prefs = vm.notificationPrefs
         var showTimePicker by remember { mutableStateOf(false) }
+        // 进入页面时判断通知权限;系统授权框返回(ON_RESUME)后刷新
+        var permissionGranted by remember { mutableStateOf(notificationPermissionGranted()) }
+        var pendingEnable by remember { mutableStateOf(false) }
+        val lifecycle = LocalLifecycleOwner.current.lifecycle
+        DisposableEffect(lifecycle) {
+            val observer = LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    permissionGranted = notificationPermissionGranted()
+                    if (pendingEnable && permissionGranted) {   // 授权成功 → 补开开关(开启即等待授权的意图),内部触发 reschedule
+                        pendingEnable = false
+                        vm.updateNotificationPrefs(vm.notificationPrefs.copy(enabled = true))
+                    } else {
+                        pendingEnable = false   // 拒绝授权:开关保持关闭,引导行提示
+                    }
+                    // 注意:不再无条件 reschedule —— 每次聚焦(ON_RESUME)重排会与通知点击循环,造成重复/立即触发
+                }
+            }
+            lifecycle.addObserver(observer)
+            onDispose { lifecycle.removeObserver(observer) }
+        }
         Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
             // 开关(与字号按钮同款形态:边框 + 选中 primary 填充)
             Text(
@@ -95,8 +121,14 @@ fun SettingsScreen(vm: AppViewModel) {
                     .border(1.dp, SongciColors.primary)
                     .background(if (prefs.enabled) SongciColors.primary else SongciColors.surfaceContainerLow)
                     .clickable {
-                        if (!prefs.enabled) com.songci.app.data.requestNotificationPermission()
-                        vm.updateNotificationPrefs(prefs.copy(enabled = !prefs.enabled))
+                        if (prefs.enabled) {
+                            vm.updateNotificationPrefs(prefs.copy(enabled = false))
+                        } else if (permissionGranted) {
+                            vm.updateNotificationPrefs(prefs.copy(enabled = true))
+                        } else {
+                            pendingEnable = true   // 未授权:先弹系统授权框,授权返回后自动开启
+                            requestNotificationPermission()
+                        }
                     }
                     .padding(horizontal = 16.dp, vertical = 8.dp),
             )
@@ -111,12 +143,27 @@ fun SettingsScreen(vm: AppViewModel) {
                     .padding(horizontal = 16.dp, vertical = 8.dp),
             )
         }
-        Text(
-            "未授予通知权限时不推送",
-            style = MaterialTheme.typography.labelSmall,
-            color = SongciColors.stone,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
-        )
+        if (!permissionGranted) {
+            // 未授权引导:可点击请求权限(进入页面即可见)
+            Text(
+                if (prefs.enabled) "通知权限未授予,无法推送 · 点击授予" else "未授予通知权限 · 点击请求,授权后即可开启",
+                style = MaterialTheme.typography.labelSmall,
+                color = if (prefs.enabled) SongciColors.error else SongciColors.stone,
+                modifier = Modifier
+                    .padding(horizontal = 20.dp, vertical = 4.dp)
+                    .clickable {
+                        if (!prefs.enabled) pendingEnable = true
+                        requestNotificationPermission()
+                    },
+            )
+        } else {
+            Text(
+                "通知权限已授予",
+                style = MaterialTheme.typography.labelSmall,
+                color = SongciColors.stone,
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
+            )
+        }
         if (showTimePicker) {
             TimePickerDialog(
                 initialHour = prefs.hour,

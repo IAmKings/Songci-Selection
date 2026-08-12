@@ -75,10 +75,19 @@ private fun ensureChannel(ctx: Context) {
     ctx.getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
 }
 
+actual fun notificationPermissionGranted(): Boolean =
+    NotificationManagerCompat.from(AppContextHolder.context).areNotificationsEnabled()
+
 actual fun requestNotificationPermission() {
-    // Android 13+ 运行时授权需 Activity 上下文——本轮不弹(PRD:不做引导弹窗);
-    // 未授权时 reschedule/Worker 静默跳过,用户在系统设置开启后重启即生效
+    // Android 13+ 需运行时权限:未授权弹系统授权框;已授权/低版本直接跳过
+    if (notificationPermissionGranted()) return
+    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) return
+    AppContextHolder.activity?.requestPermissions(
+        arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), REQUEST_NOTIFICATION_CODE,
+    )
 }
+
+private const val REQUEST_NOTIFICATION_CODE = 1001
 
 actual fun rescheduleDailyNotification(prefs: NotificationPrefs) {
     val ctx = AppContextHolder.context

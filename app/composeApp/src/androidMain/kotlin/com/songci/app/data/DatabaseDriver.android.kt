@@ -1,5 +1,6 @@
 package com.songci.app.data
 
+import android.app.Activity
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import app.cash.sqldelight.db.SqlDriver
@@ -8,9 +9,10 @@ import com.songci.app.data.db.SongciDb
 import java.io.File
 import songci.composeapp.generated.resources.Res
 
-/** 在 MainActivity.onCreate 中赋值。 */
+/** 在 MainActivity.onCreate 中赋值(activity 用于通知权限请求等运行时授权场景)。 */
 object AppContextHolder {
     lateinit var context: Context
+    var activity: Activity? = null
 }
 
 private fun File.readTextOrNull(): String? = if (exists()) readText() else null
