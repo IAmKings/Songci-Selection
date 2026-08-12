@@ -733,3 +733,23 @@ macOS 版打包安装:createDistributable 裸产物覆盖导致小组件扩展�
 ### Status
 
 [OK] **Completed**
+
+## Session 32: 每日一词定时通知(三端本地调度)
+
+**Date**: 2026-08-12
+**Task**: 08-12-daily-poem-notification
+**Branch**: `master`
+
+### Summary
+
+自研古典风步进式时间选择器(设置页「每日一词」区块)+ 三端本地通知:Android WorkManager(触发时选词+onNewIntent 热启动深链修复)、iOS UNCalendarNotificationTrigger 滚动排 7 天(K/N 直调 UserNotifications+Swift delegate)、macOS JNA 直绑 ObjC runtime(手工 block 结构+Callback 当 IMP,点击接 deepLinkChannel)。选词独立随机(randomPoems 同源过滤)。踩坑:JNA 5.x 无 com.sun.jna.objc 包;Kotlin private class 反射被拒;Callback 类多 public 方法被拒;ObjC selector 带参必须带冒号(setDelegate: 而非 setDelegate);K/N 方法名 triggerWithDateMatchingComponents(无 Date);NSUserDefaults 无 long 方法;测试进程 JNA 触发 NSException 终止(启动 sync 移到 UI 组合层)。未授权不调度不引导。desktopTest 全绿+lint 通过+三端编译通过,macOS 运行稳定。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `cf8b0b0` | feat(notification): 每日一词定时通知——自研古典风时间选择器+三端本地调度 |
+
+### Status
+
+[OK] **Completed**
