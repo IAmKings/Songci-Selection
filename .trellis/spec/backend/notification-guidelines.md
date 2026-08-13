@@ -33,4 +33,5 @@
 
 - JNA 依赖路径(block/回调/ObjC 调用)无法单测:测试进程 JNA 触发 NSException 终止(已知),以真机验证为准
 - `gradlew :composeApp:run` 无 app bundle,`UNUserNotificationCenter` 抛 NSException → 验证必须打包 `.app` 后运行
+- **macOS 部署一步化:`./scripts/macos-widget-deploy.sh`**(compose 打包 + xcodebuild 小组件 + 嵌入/重签 + 装 /Applications,证书缺省 ad-hoc)—— 不要手工拆步骤,小组件 extension 独立于 gradle 产物,漏装即无小组件
 - 纯算术逻辑(`millisUntilNext` 等)可单测
