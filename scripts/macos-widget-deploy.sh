@@ -1,23 +1,38 @@
 #!/bin/bash
-# 嵌入小组件扩展(.appex)→ 重签 host app → 部署 /Applications。
-# 前置:app/iosApp 下 xcodebuild 已产出 .appex,compose 已产出 .app(见 README 或 prd.md)。
+# 一步部署 macOS 完整版:compose 打包 → xcodebuild 小组件 → 嵌入/重签 → 部署 /Applications。
+# 用法:./scripts/macos-widget-deploy.sh(无需任何前置构建)
+# 签名:设置 CERT_IDENTITY 或 ~/.songci-signing.env 用证书签名;缺省 ad-hoc(本地开发可用,发布需证书)。
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 APP=app/composeApp/build/compose/binaries/main/app/SongciSelection.app
-APPEX=app/iosApp/build/dd/Build/Products/Debug/SongciWidgetExtension.appex
+APPEX=app/iosApp/build/dd/Build/Products/Release/SongciWidgetExtension.appex
 DEST=/Applications/SongciSelection.app
-# 签名身份从环境变量读取(避免账号信息入库);本地可放 ~/.songci-signing.env 自动加载
+
+echo "==> 1/4 compose 打包"
+(cd app && ./gradlew :composeApp:createDistributable --quiet)
+
+echo "==> 2/4 xcodebuild 小组件 extension"
+(cd app/iosApp && xcodebuild -project MacWidgetExtension.xcodeproj -scheme SongciWidgetExtension \
+    -configuration Release -derivedDataPath build/dd build -quiet)
+
+# 签名身份:证书优先,缺省 ad-hoc
 CERT="${CERT_IDENTITY:-}"
 if [ -z "$CERT" ] && [ -f "$HOME/.songci-signing.env" ]; then
     # shellcheck disable=SC1090
     . "$HOME/.songci-signing.env"
-    CERT="${CERT_IDENTITY:-}"   # source 后再取一次(env 文件设置的是 CERT_IDENTITY)
+    CERT="${CERT_IDENTITY:-}"
 fi
-[ -n "$CERT" ] || { echo "缺少签名证书:设置 CERT_IDENTITY 环境变量或 ~/.songci-signing.env" >&2; exit 1; }
+if [ -z "$CERT" ]; then
+    echo "==> 3/4 无证书,ad-hoc 签名(本地开发)"
+    SIGN_ID="-"
+else
+    echo "==> 3/4 证书签名: $CERT"
+    SIGN_ID="$CERT"
+fi
 
-[ -d "$APPEX" ] || { echo "缺少 $APPEX —— 先跑 xcodebuild" >&2; exit 1; }
-[ -d "$APP" ] || { echo "缺少 $APP —— 先跑 compose 打包" >&2; exit 1; }
+[ -d "$APPEX" ] || { echo "缺少 $APPEX" >&2; exit 1; }
+[ -d "$APP" ] || { echo "缺少 $APP" >&2; exit 1; }
 
 # host app 需要 application-groups entitlement(与扩展共享 App Group 容器)
 ENT_APP=$(mktemp /tmp/songci-app-ent.XXXXXX.plist)
@@ -45,10 +60,10 @@ pkill -f "/Applications/SongciSelection.app" 2>/dev/null || true
 mkdir -p "$APP/Contents/Extensions"
 rm -rf "$APP/Contents/Extensions/SongciWidgetExtension.appex"
 cp -R "$APPEX" "$APP/Contents/Extensions/"
-codesign --force --sign "$CERT" --entitlements "$ENT_APP" "$APP"
+codesign --force --sign "$SIGN_ID" --entitlements "$ENT_APP" "$APP"
 
 rm -rf "$DEST"
 cp -R "$APP" "$DEST"
 codesign --verify --deep --strict --verbose=2 "$DEST"
-echo "部署完成,启动中..."
+echo "==> 4/4 部署完成,启动中..."
 open "$DEST"
