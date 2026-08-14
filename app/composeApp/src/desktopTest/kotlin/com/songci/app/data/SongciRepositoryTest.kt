@@ -15,6 +15,8 @@ import kotlin.test.assertTrue
 /** 数据层基准测试:对照 db/songci.db 的 SQL 基准(sqlite3 CLI 实测)。 */
 internal fun testRepo(): SongciRepository {
     val tmp = File(Files.createTempDirectory("songci-test").toFile(), "songci.db")
+    tmp.parentFile?.deleteOnExit() // 先注册目录,逆序删除时文件先于目录
+    tmp.deleteOnExit()
     // 测试工作目录为 composeApp/;仓库 db 在 ../../db/
     File("../../db/songci.db").canonicalFile.copyTo(tmp, overwrite = true)
     val db = SongciDb(JdbcSqliteDriver("jdbc:sqlite:${tmp.absolutePath}"))
@@ -144,6 +146,7 @@ class SongciRepositoryTest {
 class SettingsPersistenceTest {
 
     private val testFile = File(Files.createTempDirectory("songci-settings").toFile(), "settings.properties")
+    init { testFile.parentFile?.deleteOnExit(); testFile.deleteOnExit() }
 
     @Test fun fontScaleRoundtrip() {
         System.setProperty(SETTINGS_FILE_PROPERTY, testFile.absolutePath)
@@ -181,6 +184,7 @@ class SettingsPersistenceTest {
 class FontScaleStateTest {
 
     private val settingsFile = File(Files.createTempDirectory("songci-vmtest").toFile(), "settings.properties")
+    init { settingsFile.parentFile?.deleteOnExit(); settingsFile.deleteOnExit() }
 
     @Test fun fontScaleTransitions() = runBlocking {
         System.setProperty(SETTINGS_FILE_PROPERTY, settingsFile.absolutePath)
