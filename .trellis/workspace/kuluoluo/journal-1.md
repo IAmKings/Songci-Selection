@@ -794,3 +794,29 @@ macOS 版打包安装:createDistributable 裸产物覆盖导致小组件扩展�
 ### Status
 
 [OK] **Completed**
+
+
+## Session 30: 拼音索引/搜索竞态修复/字体接入/详情页操作栏
+
+**Date**: 2026-08-17
+**Task**: 拼音索引/搜索竞态修复/字体接入/详情页操作栏
+**Branch**: `feat/pinyin-index`
+
+### Summary
+
+拼音索引数据层与字母导航;搜索高亮与异步竞态修复(取消+过期);源流明体接入 3 字体风格;详情页操作栏紧凑化与间距;竞态铁律固化 spec
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `0b8929e` | (see git log) |
+| `8488c9c` | (see git log) |
+| `14ae905` | (see git log) |
+| `20e791a` | (see git log) |
+| `ac1190d` | (see git log) |
+| `e74e645` | (see git log) |
+
+### Status
+
+[OK] **Completed**
