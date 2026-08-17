@@ -6,11 +6,13 @@ SQLDelight 驱动(Android/iOS)在 user_version 与 schema.version 一致时跳�
 
 同时生成 db_version.txt(产物 db 内容哈希前 8 位)——驱动缓存版本标记:
 缓存 db 旁版本文件与资源版本不一致时重新复制(比大小对比更稳)。
+另生成 db_info.txt(版本哈希 + 生成时间)——设置页连点 5 次版本号显示,供测试/反馈。
 
 产物净化:复制后清空用户表(favorites/recommendation_pool/recent_views)——随包库
 必须无用户数据(否则开发期数据会发给所有新装用户)。升级时用户数据由驱动层
 mergeUserData(ATTACH 旧库合并)保留,与产物无关。
 """
+import datetime
 import hashlib
 import shutil
 import sqlite3
@@ -20,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[2]                      # app/
 SRC = ROOT / ".." / "db" / "songci.db"
 DST = ROOT / "composeApp" / "src" / "commonMain" / "composeResources" / "files" / "songci.db"
 VER = ROOT / "composeApp" / "src" / "commonMain" / "composeResources" / "files" / "db_version.txt"
+INFO = ROOT / "composeApp" / "src" / "commonMain" / "composeResources" / "files" / "db_info.txt"
 
 # 与驱动层 USER_TABLES 保持一致(commonMain/UserDataMigration.kt)
 USER_TABLES = ("favorites", "recommendation_pool", "recent_views")
@@ -37,4 +40,6 @@ con.execute("PRAGMA wal_checkpoint(TRUNCATE)")
 con.close()
 version = hashlib.md5(DST.read_bytes()).hexdigest()[:8]
 VER.write_text(version, encoding="utf-8")
-print(f"copied {SRC.name} -> {DST} ({DST.stat().st_size/1024/1024:.1f} MB, user_version=1, version={version}, user tables emptied)")
+generated_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+INFO.write_text(f"{version}\n{generated_at}\n", encoding="utf-8")
+print(f"copied {SRC.name} -> {DST} ({DST.stat().st_size/1024/1024:.1f} MB, user_version=1, version={version}, generated_at={generated_at}, user tables emptied)")

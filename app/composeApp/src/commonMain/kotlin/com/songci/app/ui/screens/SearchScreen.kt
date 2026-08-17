@@ -15,8 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -26,9 +28,14 @@ import com.songci.app.ui.AppViewModel
 import com.songci.app.ui.components.EmptyState
 import com.songci.app.ui.components.PoemList
 
-/** 下划线输入框(底色 surfaceContainerLow,聚焦 primary 底线)。 */
+/** 下划线输入框(底色 surfaceContainerLow,聚焦 primary 底线;非空时可带清除按钮)。 */
 @Composable
-private fun SearchField(value: String, onChange: (String) -> Unit, placeholder: String) {
+private fun SearchField(
+    value: String,
+    onChange: (String) -> Unit,
+    placeholder: String,
+    onClear: (() -> Unit)? = null,   // 提供时,value 非空显示 ✕ 清除按钮
+) {
     TextField(
         value = value,
         onValueChange = onChange,
@@ -36,6 +43,18 @@ private fun SearchField(value: String, onChange: (String) -> Unit, placeholder: 
         placeholder = { Text(placeholder, style = MaterialTheme.typography.bodyMedium, color = SongciColors.stone) },
         textStyle = MaterialTheme.typography.bodyMedium.copy(color = SongciColors.nearBlack),
         singleLine = true,
+        trailingIcon = if (value.isNotEmpty() && onClear != null) {
+            {
+                Text(
+                    "✕",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = SongciColors.stone,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable(onClick = onClear),
+                )
+            }
+        } else null,
         colors = TextFieldDefaults.colors(
             focusedContainerColor = SongciColors.surfaceContainerLow,
             unfocusedContainerColor = SongciColors.surfaceContainerLow,
@@ -55,6 +74,12 @@ fun SearchScreen(
     val results by vm.searchResults.collectAsState()
     val dynasties by vm.knownDynasties.collectAsState()
     val recentViews by vm.recentViews.collectAsState()
+
+    // 可选加固:进入页面时若输入框有残留搜索词,重跑一次搜索,
+    // 确保返回后输入框与结果一致(防历史竞态残留)
+    LaunchedEffect(Unit) {
+        if (vm.searchQuery.isNotBlank()) vm.search(vm.searchQuery)
+    }
 
     Column(modifier = Modifier.fillMaxSize().background(SongciColors.background)) {
         Row(
@@ -91,10 +116,8 @@ fun SearchScreen(
             }
         }
 
-        SearchField(vm.searchRhythmic, vm::updateSearchRhythmic, "词牌筛选(模糊,可空)")
-
-        // 仅空查询态显示「最近查看」(无关键词/词牌筛选/朝代筛选);任一条件生效即视为查询态
-        val idle = vm.searchQuery.isBlank() && vm.searchRhythmic.isBlank() && vm.searchDynasty.isEmpty()
+        // 仅空查询态显示「最近查看」(无关键词/朝代筛选);任一条件生效即视为查询态
+        val idle = vm.searchQuery.isBlank() && vm.searchDynasty.isEmpty()
         if (results.isEmpty()) {
             if (idle && recentViews.isNotEmpty()) {
                 Column {
@@ -110,7 +133,13 @@ fun SearchScreen(
                 EmptyState("输入关键词开始搜索")
             }
         } else {
-            PoemList(results, onClick = onOpenPoem)
+            // 搜索结果:传匹配标记,命中词牌/作者/内容以背景色高亮
+            val matches = remember(results) { results.associateBy { it.poem.id } }
+            PoemList(
+                results.map { it.poem },
+                onClick = onOpenPoem,
+                highlightFor = { matches[it.id] },
+            )
         }
     }
 }

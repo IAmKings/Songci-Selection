@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.songci.app.data.Author
 import com.songci.app.data.Dynasty
 import com.songci.app.data.Poem
+import com.songci.app.data.RhythmicIndex
+import com.songci.app.data.SearchMatch
 import com.songci.app.data.RhythmicSpec
 import com.songci.app.data.Segmenter
 import com.songci.app.data.SongciRepository
@@ -19,6 +21,7 @@ import com.songci.app.data.rescheduleDailyNotification
 import com.songci.app.data.saveFontScaleName
 import com.songci.app.data.saveFontStyle
 import com.songci.app.data.saveNotificationPrefs
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -36,6 +39,7 @@ enum class FontScale(val label: String, val scale: Float) {
 enum class FontStyle(val label: String) {
     KAITI("楷体"),
     SONGTI("宋体"),
+    MINGTI("明体"),
 }
 
 /** 当日日期(本地时区)。datetime 0.7 转换 API 为 Instant.toLocalDateTime(TimeZone) 扩展。 */
@@ -79,8 +83,8 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
     private val _authors = MutableStateFlow<List<Author>>(emptyList())
     val authors: StateFlow<List<Author>> = _authors
 
-    private val _rhythmics = MutableStateFlow<List<String>>(emptyList())
-    val rhythmics: StateFlow<List<String>> = _rhythmics
+    private val _rhythmics = MutableStateFlow<List<RhythmicIndex>>(emptyList())
+    val rhythmics: StateFlow<List<RhythmicIndex>> = _rhythmics
 
     private val _knownDynasties = MutableStateFlow<List<String>>(emptyList())
     val knownDynasties: StateFlow<List<String>> = _knownDynasties
@@ -99,13 +103,14 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
     var notificationPrefs by mutableStateOf(loadNotificationPrefs())
         private set
 
+    // 调试暗门(会话内保持):设置页连点版本号 5 次显示数据库信息;VM 单例存活期内保持,重启重置
+    var showDbInfo by mutableStateOf(false)
+
     // 搜索状态
     var searchQuery by mutableStateOf("")
         private set
-    private val _searchResults = MutableStateFlow<List<Poem>>(emptyList())
-    val searchResults: StateFlow<List<Poem>> = _searchResults
-    var searchRhythmic by mutableStateOf("")
-        private set
+    private val _searchResults = MutableStateFlow<List<SearchMatch>>(emptyList())
+    val searchResults: StateFlow<List<SearchMatch>> = _searchResults
     var searchDynasty by mutableStateOf("")   // "" = 全部
         private set
 
@@ -174,30 +179,23 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
         runSearch()
     }
 
-    fun updateSearchRhythmic(rhythmic: String) {
-        searchRhythmic = rhythmic
-        runSearch()
-    }
-
     fun updateSearchDynasty(dynasty: String) {
         searchDynasty = dynasty
         runSearch()
     }
 
+    /** 搜索协程句柄:每次输入取消旧查询,防止慢查询后到覆盖新结果(竞态)。 */
+    private var searchJob: Job? = null
+
     private fun runSearch() {
-        viewModelScope.launch {
+        searchJob?.cancel()   // ① 取消旧查询(旧协程不再写入结果)
+        searchJob = viewModelScope.launch {
             val q = searchQuery.trim()
-            val results = when {
-                q.isEmpty() && searchRhythmic.isEmpty() -> emptyList()
-                q.isEmpty() -> repo.poemsByRhythmicContains(searchRhythmic)   // 模糊筛选(水→水调歌头)
-                else -> repo.search(q)
-            }
-            val filtered = when {
-                searchRhythmic.isNotEmpty() ->
-                    results.filter { repo.cleanRhythmic(it.rhythmic).contains(searchRhythmic) }  // 归并名模糊(含 ⿰ 变体)
-                searchDynasty.isEmpty() -> results
-                else -> results.filter { repo.dynasty.of(it.authorId) == searchDynasty }
-            }
+            val results = if (q.isEmpty()) emptyList<SearchMatch>() else repo.searchWithMatch(q)
+            // ② 过期校验:查询已变(用户继续输入/清除)时丢弃本次结果,只允许最后一次输入落盘
+            if (searchQuery.trim() != q) return@launch
+            val filtered = if (searchDynasty.isEmpty()) results
+            else results.filter { repo.dynasty.of(it.poem.authorId) == searchDynasty }
             _searchResults.value = filtered
         }
     }

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,15 +36,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.songci.app.data.Author
 import com.songci.app.data.Poem
+import com.songci.app.data.RhythmicIndex
 import com.songci.app.data.RhythmicSpec
+import com.songci.app.ui.components.AlphabetIndexBar
 import com.songci.app.ui.components.PoemCard
 import com.songci.app.theme.SongciColors
 import com.songci.app.ui.AppViewModel
+import kotlinx.coroutines.launch
 import com.songci.app.ui.components.EmptyState
 import com.songci.app.ui.components.PoemList
 import com.songci.app.ui.components.SimpleListScreen
 
-/** 文本行列表通用实现(目录索引/朝代/词牌共用)。 */
+/** 文本行列表通用实现(目录索引/朝代/词牌共用;词牌/作者传 heads 启用拼音分组+索引条)。 */
 @Composable
 private fun TextRowList(
     title: String,
@@ -50,40 +55,99 @@ private fun TextRowList(
     rows: List<Pair<String, String>>,   // (label, value)
     onClick: (String) -> Unit,
     trailing: ((String) -> String?)? = null,   // 行尾小字标签(如词牌字数),默认无
+    heads: Map<String, String> = emptyMap(),   // label → 拼音首字母分组;非空则启用分组+索引条
 ) {
     SimpleListScreen(title = title, back = back) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(20.dp),
-        ) {
-            items(rows) { (label, value) ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(SongciColors.surfaceContainerLow)
-                        .border(1.dp, SongciColors.line)
-                        .clickable { onClick(value) }
-                        .padding(18.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    // label 最长 15 字(词牌):weight(fill=false) 限定宽约束,超宽单行省略;
-                    // 否则按内容宽测量,行尾 tag(如"102字")被挤到 0 宽竖排
-                    Text(
-                        label,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = SongciColors.primary,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f, fill = false),
-                    )
-                    val tag = trailing?.invoke(label)
-                    if (tag != null) {
-                        Text(tag, style = MaterialTheme.typography.labelMedium,
-                             color = SongciColors.outline, maxLines = 1)
+        val listState = rememberLazyListState()
+        val scope = rememberCoroutineScope()
+        // 按拼音首字母分组(head 排序:0 < A < … < #);heads 为空 = 不分组(目录/朝代)
+        val grouped: List<Pair<String, List<Pair<String, String>>>> = remember(heads, rows) {
+            if (heads.isEmpty()) emptyList()
+            else rows.groupBy { heads[it.first] ?: "#" }.toSortedMap().map { it.key to it.value }
+        }
+        // 分组起始 item index(含 header item),供索引条跳转
+        val groupStart: Map<String, Int> = remember(grouped) {
+            val map = mutableMapOf<String, Int>()
+            var idx = 0
+            grouped.forEach { (head, items) ->
+                map[head] = idx
+                idx += 1 + items.size
+            }
+            map
+        }
+        Box {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(20.dp),
+            ) {
+                if (grouped.isEmpty()) {
+                    items(rows) { (label, value) -> TextIndexRow(label, value, onClick, trailing) }
+                } else {
+                    grouped.forEach { (head, items) ->
+                        item(key = "header-$head") { HeadHeader(head) }
+                        items(items, key = { it.first }) { (label, value) ->
+                            TextIndexRow(label, value, onClick, trailing)
+                        }
                     }
                 }
             }
+            if (grouped.isNotEmpty()) {
+                AlphabetIndexBar(
+                    present = groupStart.keys,
+                    onSelect = { head ->
+                        groupStart[head]?.let { scope.launch { listState.scrollToItem(it) } }
+                    },
+                    modifier = Modifier.align(Alignment.CenterEnd),
+                )
+            }
+        }
+    }
+}
+
+/** 拼音分组 header(字母小标题,与列表卡片同风格)。 */
+@Composable
+private fun HeadHeader(head: String) {
+    Text(
+        head,
+        style = MaterialTheme.typography.labelMedium,
+        color = SongciColors.primary,
+        modifier = Modifier.padding(top = 4.dp, bottom = 0.dp),
+    )
+}
+
+/** 单行:label(词牌名等,超长单行省略)+ 行尾小字标签。 */
+@Composable
+private fun TextIndexRow(
+    label: String,
+    value: String,
+    onClick: (String) -> Unit,
+    trailing: ((String) -> String?)?,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(SongciColors.surfaceContainerLow)
+            .border(1.dp, SongciColors.line)
+            .clickable { onClick(value) }
+            .padding(18.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        // label 最长 15 字(词牌):weight(fill=false) 限定宽约束,超宽单行省略;
+        // 否则按内容宽测量,行尾 tag(如"102字")被挤到 0 宽竖排
+        Text(
+            label,
+            style = MaterialTheme.typography.bodyLarge,
+            color = SongciColors.primary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f, fill = false),
+        )
+        val tag = trailing?.invoke(label)
+        if (tag != null) {
+            Text(tag, style = MaterialTheme.typography.labelMedium,
+                 color = SongciColors.outline, maxLines = 1)
         }
     }
 }
@@ -153,30 +217,58 @@ private fun AuthorList(
     evidenceOf: (Long) -> String?,
     onAuthor: (Long) -> Unit,
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(20.dp),
-    ) {
-        items(authors, key = { it.id }) { author ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(SongciColors.surfaceContainerLow)
-                    .border(1.dp, SongciColors.line)
-                    .clickable { onAuthor(author.id) }
-                    .padding(horizontal = 18.dp, vertical = 14.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(author.name, style = MaterialTheme.typography.bodyLarge, color = SongciColors.nearBlack)
-                Text(
-                    dynastyOf(author.id) + (evidenceOf(author.id)?.let { " $it" } ?: ""),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = SongciColors.stone,
-                    modifier = Modifier.padding(start = 12.dp),
-                )
+    val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+    // 按拼音首字母分组(head 排序:0 < A < … < #)
+    val grouped: List<Pair<String, List<Author>>> = remember(authors) {
+        authors.groupBy { it.head }.toSortedMap().map { it.key to it.value }
+    }
+    val groupStart: Map<String, Int> = remember(grouped) {
+        val map = mutableMapOf<String, Int>()
+        var idx = 0
+        grouped.forEach { (head, items) ->
+            map[head] = idx
+            idx += 1 + items.size
+        }
+        map
+    }
+    Box {
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(20.dp),
+        ) {
+            grouped.forEach { (head, items) ->
+                item(key = "header-$head") { HeadHeader(head) }
+                items(items, key = { it.id }) { author ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(SongciColors.surfaceContainerLow)
+                            .border(1.dp, SongciColors.line)
+                            .clickable { onAuthor(author.id) }
+                            .padding(horizontal = 18.dp, vertical = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(author.name, style = MaterialTheme.typography.bodyLarge, color = SongciColors.nearBlack)
+                        Text(
+                            dynastyOf(author.id) + (evidenceOf(author.id)?.let { " $it" } ?: ""),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = SongciColors.stone,
+                            modifier = Modifier.weight(1f, fill = false).padding(start = 12.dp),
+                        )
+                    }
+                }
             }
         }
+        AlphabetIndexBar(
+            present = groupStart.keys,
+            onSelect = { head ->
+                groupStart[head]?.let { scope.launch { listState.scrollToItem(it) } }
+            },
+            modifier = Modifier.align(Alignment.CenterEnd),
+        )
     }
 }
 
@@ -184,8 +276,13 @@ private fun AuthorList(
 @Composable
 fun RhythmicsScreen(vm: AppViewModel, onBack: () -> Unit, onOpen: (String) -> Unit) {
     val rhythmics by vm.rhythmics.collectAsState()
-    TextRowList(title = "词牌", back = onBack, rows = rhythmics.map { it to it },
-                onClick = onOpen, trailing = { r -> vm.rhythmicSpec(r)?.let { "${it.chars}字" } })
+    TextRowList(
+        title = "词牌", back = onBack,
+        rows = rhythmics.map { it.rhythmic to it.rhythmic },
+        onClick = onOpen,
+        trailing = { r -> vm.rhythmicSpec(r)?.let { "${it.chars}字" } },
+        heads = rhythmics.associate { it.rhythmic to it.head },   // 拼音首字母分组 + 索引条
+    )
 }
 
 /** 某作者的全部词作。 */
