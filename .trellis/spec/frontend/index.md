@@ -17,7 +17,7 @@ UI 为 Compose Multiplatform(Android/iOS/Desktop 共用),「Classical Manuscript
 | [Directory Structure](./directory-structure.md) | UI 分层:导航/屏幕/组件/主题 | ✅ 已填充 |
 | [Component Guidelines](./component-guidelines.md) | SimpleListScreen/TextRowList/PoemCard 复用、屏幕内私有组件 | ✅ 已填充 |
 | [Hook Guidelines](./hook-guidelines.md) | Compose 状态获取模式(React hooks 对应表) | ✅ 已填充 |
-| [State Management](./state-management.md) | 单 AppViewModel + StateFlow/mutableStateOf | ✅ 已填充 |
+| [State Management](./state-management.md) | 单 AppViewModel + StateFlow/mutableStateOf;**异步竞态铁律(取消+过期校验)** | ✅ 已填充 |
 | [Quality Guidelines](./quality-guidelines.md) | 768dp 自适应、主题一致性、LazyColumn 滚动、验收闭环 | ✅ 已填充 |
 | [Type Safety](./type-safety.md) | 不可变数据类、防御解析、空安全 | ✅ 已填充 |
 
