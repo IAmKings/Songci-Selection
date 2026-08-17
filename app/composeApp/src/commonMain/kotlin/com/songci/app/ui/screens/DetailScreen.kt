@@ -3,11 +3,11 @@ package com.songci.app.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -146,7 +146,11 @@ fun DetailBody(
             Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
             Box(modifier = Modifier.fillMaxWidth().padding(vertical = 28.dp).height(1.dp).background(SongciColors.line))
             PoemLines(poem.content, scale, gap = 34.dp, spec = vm.matchedSpec(poem.rhythmic, poem.content))
-            DetailActions(vm, favorite, onToggleFavorite, poem, onOpenAuthor, onOpenRhythmic)
+            // 窄屏:词内容与操作栏间隔(与宽屏 36dp 语义一致,窄屏密度略紧凑)
+            DetailActions(
+                vm, favorite, onToggleFavorite, poem, onOpenAuthor, onOpenRhythmic,
+                Modifier.padding(top = 24.dp),
+            )
         }
     }
 }
@@ -190,12 +194,14 @@ private fun DetailActions(
     poem: Poem,
     onOpenAuthor: (Long) -> Unit,
     onOpenRhythmic: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Column {
+    Column(modifier = modifier) {
         Row(
-            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            // 收藏居左;文字链接成组靠右(Spacer 撑开),作者/词牌彼此贴近
             Row(
                 modifier = Modifier
                     .border(1.dp, SongciColors.primary)
@@ -216,17 +222,18 @@ private fun DetailActions(
                     modifier = Modifier.padding(start = 8.dp),
                 )
             }
+            Spacer(modifier = Modifier.weight(1f))
             Text(
-                "作者 · ${poem.authorName} →",
+                "作者词作 →",
                 style = MaterialTheme.typography.labelLarge,
                 color = SongciColors.primary,
-                modifier = Modifier.padding(start = 24.dp).clickable { poem.authorId?.let(onOpenAuthor) },
+                modifier = Modifier.padding(start = 12.dp).clickable { poem.authorId?.let(onOpenAuthor) },
             )
             Text(
-                "词牌 · ${vm.cleanRhythmic(poem.rhythmic)} →",
+                "词牌词作 →",
                 style = MaterialTheme.typography.labelLarge,
                 color = SongciColors.primary,
-                modifier = Modifier.padding(start = 24.dp)
+                modifier = Modifier.padding(start = 8.dp)
                     .clickable { onOpenRhythmic(vm.cleanRhythmic(poem.rhythmic)) },
             )
         }

@@ -6,3 +6,9 @@ db/songci.db
 .gitnexus
 app/iosApp/**/xcuserdata/
 app/iosApp/build/
+
+# SQLite 运行时残留
+/db/songci.db-*
+
+# 字体调研素材(不入库,本地保留)
+/data/fonts/

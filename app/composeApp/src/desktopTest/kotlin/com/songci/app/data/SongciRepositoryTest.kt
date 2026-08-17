@@ -63,6 +63,42 @@ class SongciRepositoryTest {
         assertTrue(results.all { it.authorName == "蔡伸" })
     }
 
+    @Test fun searchPinyinAbbrMatches() = runBlocking {
+        // 拼音前缀匹配(非模糊):缩写 sdgt → 水调歌头;全拼 shui → 水调歌头;部分前缀 sdg 亦可
+        val r = testRepo()
+        assertTrue(r.search("sdgt").any { it.rhythmic == "水调歌头" }, "缩写 sdgt 应命中水调歌头")
+        assertTrue(r.search("sdg").any { it.rhythmic == "水调歌头" }, "部分缩写 sdg 应命中")
+        assertTrue(r.search("shuidiaogetou").any { it.rhythmic == "水调歌头" }, "全拼 shuidiaogetou 应命中")
+        assertTrue(r.search("shui").any { it.rhythmic == "水调歌头" }, "全拼前缀 shui 应命中")
+        // 前缀不模糊:中间含 ss 的词牌(孤馆深沈 ggss)不应被 ss 前缀命中
+        assertTrue(r.search("ss").none { it.rhythmic == "孤馆深沈" }, "前缀匹配:ss 不应命中中间含 ss 的孤馆深沈")
+        // 作者前缀:ss → 苏轼;全拼 sushi → 苏轼
+        assertTrue(r.search("ss").any { "明月几时有" in it.content }, "ss 应命中苏轼(明月几时有)")
+        assertTrue(r.search("sushi").any { "明月几时有" in it.content }, "全拼 sushi 应命中苏轼")
+        // 中文模糊搜索保留:词牌/内容/作者 LIKE 模糊不受影响
+        assertTrue(r.search("水调").any { it.rhythmic == "水调歌头" }, "中文模糊搜索不受影响")
+        assertTrue(r.search("明月几时有").isNotEmpty(), "词内容模糊搜索保留")
+        assertTrue(r.search("xyzabc").isEmpty(), "无意义前缀应为空")
+    }
+
+    @Test fun searchWithMatchHighlightsFields() = runBlocking {
+        // 中文 LIKE:命中字段带对应高亮子串
+        val r = testRepo()
+        val byRhythmic = r.searchWithMatch("水调歌头").first { it.rhythmicHighlight == "水调歌头" }
+        assertEquals("水调歌头", byRhythmic.rhythmicHighlight)
+        val byAuthor = r.searchWithMatch("苏轼").first { it.authorHighlight == "苏轼" }
+        assertEquals("苏轼", byAuthor.authorHighlight)
+        val byContent = r.searchWithMatch("明月几时有").first { it.contentHighlight == "明月几时有" }
+        assertEquals("明月几时有", byContent.contentHighlight)
+        // 拼音缩写:命中整词牌/整作者
+        assertTrue(r.searchWithMatch("sdgt").any { it.rhythmicHighlight == "水调歌头" })
+        assertTrue(r.searchWithMatch("ss").any { it.authorHighlight == "苏轼" })
+        // 无命中:高亮为空
+        assertTrue(r.searchWithMatch("xyzabc").isEmpty())
+        // search() 兼容入口仍可用
+        assertTrue(r.search("sdgt").any { it.rhythmic == "水调歌头" })
+    }
+
     @Test fun searchByAliasReturnsSameSpecPoems() = runBlocking {
         // 回归:单键同调组别名(青衫湿→人月圆 15 首)搜索必须命中,不因展开数=1 被短路
         val results = testRepo().search("青衫湿")
@@ -139,6 +175,32 @@ class SongciRepositoryTest {
         val poems = testRepo().poemsByRhythmic("水调歌头")
         assertEquals(100, poems.size)
         assertTrue(poems.all { it.rhythmic == "水调歌头" })
+    }
+
+    @Test fun pinyinGroupedAndSorted() = runBlocking {
+        // 词牌:拼音首字母分组(数据层 rhythmic_index 预计算),组内全拼序
+        val rhy = testRepo().rhythmics()
+        assertTrue(rhy.size > 1000, "词牌索引为空")
+        val byName = rhy.associateBy { it.rhythmic }
+        assertEquals("S", byName["水调歌头"]?.head)
+        assertEquals("C", byName["愁倚阑令·春光好"]?.head)
+        assertEquals("F", byName["凤皇台上忆吹箫·凤凰台上忆吹箫"]?.head)
+        assertEquals("Q", byName["七娘子"]?.head)              // ⿰⿰⿰·七娘子 归并主词牌
+        assertEquals("#", byName["“僮至”念奴娇"]?.head)       // 引号开头 → 异常组
+        // head 有序(0 < A < … < #)
+        val heads = rhy.map { it.head }
+        assertEquals(heads.sorted(), heads)
+        // 组内全拼序:一丛花(yi) 在 玉楼春(yu) 前
+        assertTrue(rhy.indexOfFirst { it.rhythmic == "一丛花" } < rhy.indexOfFirst { it.rhythmic == "玉楼春" })
+
+        // 作者:同规则
+        val authors = testRepo().authors()
+        val byAuthor = authors.associateBy { it.name }
+        assertEquals("S", byAuthor["苏轼"]?.head)
+        assertEquals("Y", byAuthor["晏几道"]?.head)
+        assertEquals("#", byAuthor["⿰阳"]?.head)               // ⿰ 开头 → 异常组
+        // 作者组内全拼序:晏几道(yan) 在 叶梦得(ye) 前
+        assertTrue(authors.indexOfFirst { it.name == "晏几道" } < authors.indexOfFirst { it.name == "叶梦得" })
     }
 }
 
