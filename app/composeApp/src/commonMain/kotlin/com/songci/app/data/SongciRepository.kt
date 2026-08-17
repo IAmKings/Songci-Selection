@@ -13,6 +13,7 @@ class SongciRepository(
 
     suspend fun randomPoems(limit: Int = 20): List<Poem> = withContext(Dispatchers.Default) {
         q.randomPoems(limit.toLong()).executeAsList().map { it.toPoem() }
+            .filter { !it.content.containsGarbled() }   // 乱码词排除(编码损坏,23 行/23 首)
     }
 
     /**
@@ -26,10 +27,10 @@ class SongciRepository(
                 .mapNotNull { id -> q.poemById(id).executeAsOneOrNull()?.toPoem() }
         }
         // 异常字符过滤:⿰ 为汉字结构描述符(源数据合体字错误拆分,如"月⿰金");缺字字符渲染豆腐块
-        // (与 scripts/font-charset.txt 联动);SQL 侧已滤 ⿰,此处双保险
+        // (与 scripts/font-charset.txt 联动);SQL 侧已滤 ⿰,此处双保险;乱码(编码损坏)一并排除
         val missingChars = listOf("⿰", "𠴇", "𫍙")   // U+2FF0 / U+20D07 / U+2B359
         fun filterMissing(list: List<com.songci.app.data.db.DailyCandidates>): List<com.songci.app.data.db.DailyCandidates> =
-            list.filter { row -> missingChars.none { row.content.contains(it) } }
+            list.filter { row -> missingChars.none { row.content.contains(it) } && !row.content.containsGarbled() }
 
         var candidates = filterMissing(q.dailyCandidates(200).executeAsList())
         if (candidates.size < 20) {

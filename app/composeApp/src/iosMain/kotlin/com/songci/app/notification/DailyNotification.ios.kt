@@ -90,7 +90,7 @@ actual fun rescheduleDailyNotification(prefs: NotificationPrefs) {
         while (day <= lastDay) {
             val poem = pickRandomPoem() ?: return@launch
             val title = if (poem.authorName.isEmpty()) poem.rhythmic else "${poem.rhythmic} · ${poem.authorName}"
-            val firstLine = poem.content.lineSequence().firstOrNull() ?: ""
+            val firstLine = poem.notificationFirstLine()
             val content = UNMutableNotificationContent()   // 属性只读,经 setter 写入
             content.setTitle(title)
             content.setBody("「$firstLine」")

@@ -42,6 +42,7 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.songci.app.R
 import com.songci.app.data.Poem
+import com.songci.app.data.containsGarbled
 import com.songci.app.data.createDatabaseDriver
 import com.songci.app.data.db.SongciDb
 import kotlinx.coroutines.CoroutineScope
@@ -80,7 +81,8 @@ enum class WidgetSpec(
 private suspend fun randomPoem(): Poem? = try {
     val driver = createDatabaseDriver()
     try {
-        SongciDb(driver).songciDbQueries.randomPoems(1L).executeAsList().firstOrNull()
+        SongciDb(driver).songciDbQueries.randomPoems(1L).executeAsList()
+            .firstOrNull { !it.content.containsGarbled() }   // 乱码词排除
             ?.let { Poem(it.id, it.rhythmic, it.content, null, "") }
     } finally {
         driver.close()   // 泄漏连接会耗尽 SQLite 连接池(上限4),后续刷新失效

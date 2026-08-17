@@ -17,6 +17,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.songci.app.data.Poem
@@ -25,7 +27,9 @@ import com.songci.app.theme.SongciColors
 /** 词作卡片(首页推荐流 / 搜索结果):词牌 + 作者 + 首句摘录 + 阅读全文。 */
 @Composable
 fun PoemCard(poem: Poem, onClick: () -> Unit) {
-    val excerpt = poem.content.lineSequence().firstOrNull()?.take(18) ?: ""
+    val rawExcerpt = poem.content.lineSequence().firstOrNull { it.isNotBlank() } ?: ""
+    // 摘录硬截 18 字:超长补省略号,避免"半句"无截断提示
+    val excerpt = if (rawExcerpt.length > 18) rawExcerpt.take(18).trimEnd() + "…" else rawExcerpt
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,8 +43,21 @@ fun PoemCard(poem: Poem, onClick: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(poem.rhythmic, style = MaterialTheme.typography.headlineMedium)
-            Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
+            // 词牌最长 15 字:weight(fill=false) 限定宽约束,超宽真正触发单行省略;
+            // 否则 Row 按内容宽测量,作者名被挤到 0 宽导致竖排(如"愁倚阑令·春光好 + 晏几道")
+            Text(
+                poem.rhythmic,
+                style = MaterialTheme.typography.headlineMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false),
+            )
+            Text(
+                poem.authorName,
+                style = MaterialTheme.typography.titleMedium,
+                color = SongciColors.stone,
+                maxLines = 1,
+            )
         }
         Text(
             "「$excerpt」",
@@ -52,7 +69,8 @@ fun PoemCard(poem: Poem, onClick: () -> Unit) {
             "阅读全文 →",
             style = MaterialTheme.typography.labelMedium,
             color = SongciColors.primary,
-            modifier = Modifier.padding(top = 12.dp),
+            textAlign = TextAlign.End,   // 右对齐:与右上角作者名呼应,视觉对称
+            modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
         )
     }
 }

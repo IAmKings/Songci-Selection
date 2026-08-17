@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.songci.app.data.Author
 import com.songci.app.data.Poem
@@ -66,11 +67,20 @@ private fun TextRowList(
                         .padding(18.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Text(label, style = MaterialTheme.typography.bodyLarge, color = SongciColors.primary)
+                    // label 最长 15 字(词牌):weight(fill=false) 限定宽约束,超宽单行省略;
+                    // 否则按内容宽测量,行尾 tag(如"102字")被挤到 0 宽竖排
+                    Text(
+                        label,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = SongciColors.primary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false),
+                    )
                     val tag = trailing?.invoke(label)
                     if (tag != null) {
                         Text(tag, style = MaterialTheme.typography.labelMedium,
-                             color = SongciColors.outline)
+                             color = SongciColors.outline, maxLines = 1)
                     }
                 }
             }

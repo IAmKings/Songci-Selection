@@ -14,8 +14,29 @@ enum SharedDb {
             .appendingPathComponent(dbName)
     }
 
-    /// 随机一首词(id+词牌+作者+首句):SQLite 直查,零依赖
+    /// 乱码检测:编码损坏词句(日文假名/半角片假名/全角拉丁数字/带圈/拉丁扩展/注音符号混入)。
+    /// 区间与 commonMain GarbledText.kt 保持一致(2026-08-16 全库扫描 23 行命中,0 误伤)。
+    private static func isGarbled(_ s: String) -> Bool {
+        let ranges: [ClosedRange<UInt32>] = [
+            0x3040...0x30FF, 0xFF66...0xFF9F, 0xFF21...0xFF5A, 0xFF10...0xFF19,
+            0x2460...0x24FF, 0x0080...0x024F, 0x3100...0x312F,
+        ]
+        for scalar in s.unicodeScalars {
+            let v = scalar.value
+            if ranges.contains(where: { $0.contains(v) }) { return true }
+        }
+        return false
+    }
+
+    /// 随机一首词:乱码词排除(重试至多 3 次;全库仅 23 行乱码,命中概率极低)。
     static func randomPoem() -> (id: Int64, rhythmic: String, author: String, firstLine: String)? {
+        for _ in 0..<3 {
+            if let p = tryOnce(), !isGarbled(p.rhythmic + p.firstLine) { return p }
+        }
+        return nil
+    }
+
+    private static func tryOnce() -> (id: Int64, rhythmic: String, author: String, firstLine: String)? {
         var db: OpaquePointer?
         guard sqlite3_open(url.path, &db) == SQLITE_OK else { return nil }
         defer { sqlite3_close(db) }

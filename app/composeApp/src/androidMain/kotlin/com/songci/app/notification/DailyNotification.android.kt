@@ -40,7 +40,7 @@ class DailyPoemWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         val title = "${poem.rhythmic}${if (poem.authorName.isEmpty()) "" else " · ${poem.authorName}"}"
-        val firstLine = poem.content.lineSequence().firstOrNull() ?: ""
+        val firstLine = poem.notificationFirstLine()
         val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_menu_edit)   // ponytail: 通用图标,品牌图标后续
             .setContentTitle(title)
