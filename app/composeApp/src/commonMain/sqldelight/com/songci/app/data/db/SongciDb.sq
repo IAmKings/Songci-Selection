@@ -4,7 +4,10 @@
 CREATE TABLE authors (
     id INTEGER PRIMARY KEY NOT NULL,
     name TEXT NOT NULL,
-    long_desc TEXT
+    long_desc TEXT,
+    pinyin_head TEXT,
+    pinyin_full TEXT,
+    pinyin_abbr TEXT
 );
 
 CREATE TABLE poems (
@@ -13,6 +16,13 @@ CREATE TABLE poems (
     rhythmic TEXT NOT NULL,
     content TEXT NOT NULL,
     recommended_date INTEGER
+);
+
+CREATE TABLE rhythmic_index (
+    rhythmic TEXT PRIMARY KEY NOT NULL,
+    pinyin_head TEXT NOT NULL,
+    pinyin_full TEXT NOT NULL,
+    pinyin_abbr TEXT NOT NULL
 );
 
 CREATE TABLE favorites (
@@ -50,17 +60,31 @@ FROM poems p JOIN authors a ON a.id = p.author_id
 WHERE p.id = ?;
 
 allAuthors:
-SELECT id, name, long_desc FROM authors ORDER BY name;
+SELECT id, name, long_desc, pinyin_head FROM authors
+ORDER BY pinyin_head, pinyin_full, name;
 
 authorById:
 SELECT id, name, long_desc FROM authors WHERE id = ?;
 
 poemsByAuthor:
-SELECT p.id, p.rhythmic, p.content FROM poems p
+SELECT p.id, p.rhythmic, p.content, a.id AS author_id, a.name AS author_name
+FROM poems p JOIN authors a ON a.id = p.author_id
 WHERE p.author_id = ? ORDER BY p.id;
 
 allRhythmics:
-SELECT DISTINCT rhythmic FROM poems ORDER BY rhythmic;
+SELECT r.rhythmic, r.pinyin_head FROM rhythmic_index r
+ORDER BY r.pinyin_head, r.pinyin_full, r.rhythmic;
+
+-- 拼音前缀匹配(非模糊):缩写/全拼均前缀,与主流快捷定位一致;ORDER BY 保证两端一致
+rhythmicsByPinyinAbbr:
+SELECT rhythmic FROM rhythmic_index
+WHERE pinyin_abbr LIKE ? || '%' OR pinyin_full LIKE ? || '%'
+ORDER BY pinyin_head, pinyin_full, rhythmic;
+
+authorsByPinyinAbbr:
+SELECT id, name FROM authors
+WHERE pinyin_abbr LIKE ? || '%' OR pinyin_full LIKE ? || '%'
+ORDER BY id;
 
 poemsByRhythmic:
 SELECT p.id, p.rhythmic, p.content, a.id AS author_id, a.name AS author_name
