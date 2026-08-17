@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,9 +30,19 @@ import com.songci.app.ui.FontStyle
 import com.songci.app.ui.components.SimpleListScreen
 import com.songci.app.ui.components.TimePickerDialog
 
-/** 设置:阅读设置(字号)+ 关于;账号/通知/退出登录为占位。 */
+/** 设置:阅读设置(字号/字体风格)+ 每日一词通知 + 关于。账号系统不规划,无退出登录。 */
 @Composable
 fun SettingsScreen(vm: AppViewModel) {
+    // 调试暗门状态:连点版本号 5 次显示数据库信息(会话内保持,见 vm.showDbInfo)
+    var versionTapCount by remember { mutableStateOf(0) }
+    var dbInfo by remember { mutableStateOf(emptyList<String>()) }
+    LaunchedEffect(vm.showDbInfo) {
+        if (vm.showDbInfo) {
+            dbInfo = runCatching { songci.composeapp.generated.resources.Res.readBytes("files/db_info.txt").decodeToString().trim().lines() }
+                .getOrDefault(emptyList())
+        }
+    }
+
     SimpleListScreen(title = "设置") {
         Text(
             "阅读设置",
@@ -182,16 +193,37 @@ fun SettingsScreen(vm: AppViewModel) {
             modifier = Modifier.padding(start = 20.dp, top = 28.dp, bottom = 8.dp),
         )
         Text(
-            "版本 0.1.0 · 词库 21,050 首 · 诗人 1,564 位",
-            style = MaterialTheme.typography.bodyMedium,
-            color = SongciColors.nearBlack,
-            modifier = Modifier.padding(horizontal = 20.dp),
-        )
-        Text(
-            "账号设置 / 通知设置 / 退出登录 —— 后续版本提供",
+            "版本 0.1.0",
             style = MaterialTheme.typography.labelSmall,
             color = SongciColors.stone,
-            modifier = Modifier.padding(start = 20.dp, top = 24.dp),
+            modifier = Modifier
+                .padding(horizontal = 20.dp, vertical = 2.dp)
+                .clickable {   // 调试暗门:连点 5 次显示数据库版本/生成日期(测试与 bug 反馈)
+                    if (++versionTapCount >= 5) {
+                        vm.showDbInfo = true
+                        versionTapCount = 0
+                    }
+                },
         )
+        Text(
+            "词库 21,050 首 · 诗人 1,564 位",
+            style = MaterialTheme.typography.labelSmall,
+            color = SongciColors.stone,
+            modifier = Modifier.padding(start = 20.dp, top = 2.dp),
+        )
+        if (vm.showDbInfo) {
+            Text(
+                "数据库版本:${dbInfo.getOrNull(0) ?: "-"}",
+                style = MaterialTheme.typography.labelSmall,
+                color = SongciColors.primary,
+                modifier = Modifier.padding(start = 20.dp, top = 10.dp),
+            )
+            Text(
+                "数据库生成:${dbInfo.getOrNull(1) ?: "-"}",
+                style = MaterialTheme.typography.labelSmall,
+                color = SongciColors.primary,
+                modifier = Modifier.padding(start = 20.dp, top = 2.dp),
+            )
+        }
     }
 }

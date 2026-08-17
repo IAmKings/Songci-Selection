@@ -66,16 +66,26 @@ val SongFamily: FontFamily
         Font(Res.font.lxgw_neozhisong_screen, FontWeight.Normal),
     )
 
+/** 明体:源流明体 GenRyuMin TC Regular(思源宋体衍生,OFL-1.1)。 */
+val GenryuFamily: FontFamily
+    @Composable get() = FontFamily(
+        Font(Res.font.genryu_mincho_regular, FontWeight.Normal),
+    )
+
 val InterFamily: FontFamily
     @Composable get() = FontFamily(
         Font(Res.font.inter_regular, FontWeight.Normal),
         Font(Res.font.inter_medium, FontWeight.Medium),
     )
 
-/** 词文字体按风格选择:楷体(WenKai)/ 宋体(新致宋)。 */
+/** 词文字体按风格选择:楷体(WenKai)/ 宋体(新致宋)/ 明体(源流明体)。 */
 @Composable
 private fun poemFamily(style: com.songci.app.ui.FontStyle): FontFamily =
-    if (style == com.songci.app.ui.FontStyle.SONGTI) SongFamily else NotoSerifFamily
+    when (style) {
+        com.songci.app.ui.FontStyle.SONGTI -> SongFamily
+        com.songci.app.ui.FontStyle.MINGTI -> GenryuFamily
+        else -> NotoSerifFamily
+    }
 
 /** DESIGN.md typography:标题 46/36、正文 20/18、行高 2.05–2.1、标注 Inter 加宽字距。 */
 @Composable
