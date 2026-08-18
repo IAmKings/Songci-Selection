@@ -41,6 +41,7 @@ import com.songci.app.data.createDatabaseDriver
 import com.songci.app.data.loadNotificationPrefs
 import com.songci.app.data.rescheduleDailyNotification
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import com.songci.app.theme.SongciTheme
 import com.songci.app.ui.screens.AuthorPoemsScreen
@@ -180,7 +181,20 @@ fun SongciApp(
         BoxWithConstraints(Modifier.fillMaxSize()) {
             val wide = maxWidth >= 768.dp
             val currentRoute = nav.currentBackStackEntryAsState().value?.destination?.route
-            val showChrome = !isContentRoute(currentRoute)   // 内容层(详情/词牌/作者)全屏盖导航
+            val currentIsContent = isContentRoute(currentRoute)
+            // 内容层(详情/词牌/作者)全屏盖导航。
+            // 修复:离开内容层(返回)时延迟显示 chrome 到底层退栈动画结束,避免退栈动画中底部导航弹出
+            // 压缩详情内容区高度 → 竖排区 maxHeight 骤降(395dp→315dp)上移遮挡。进入内容层立即隐藏保持全屏。
+            var effectiveShowChrome by remember { mutableStateOf(!currentIsContent) }
+            var previousIsContent by remember { mutableStateOf(currentIsContent) }
+            LaunchedEffect(currentIsContent) {
+                if (!currentIsContent && previousIsContent) {
+                    delay(400)   // 覆盖退栈动画时长,chrome 延迟出现
+                }
+                effectiveShowChrome = !currentIsContent
+                previousIsContent = currentIsContent
+            }
+            val showChrome = effectiveShowChrome
 
             Row(Modifier.fillMaxSize()) {
                 // 宽屏:频道层用 rail(图标+标签竖排);内容层隐藏
