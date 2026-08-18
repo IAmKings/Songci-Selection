@@ -94,6 +94,25 @@ fun SettingsScreen(vm: AppViewModel) {
             color = SongciColors.stone,
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
         )
+        // 默认竖排:全局偏好(与「每日一词」同构:标签行 + 独立开关行)
+        Text(
+            "默认竖排",
+            style = MaterialTheme.typography.labelMedium,
+            color = SongciColors.stone,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
+        )
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+            Text(
+                if (vm.verticalLayout) "开启" else "关闭",
+                style = MaterialTheme.typography.labelLarge,
+                color = if (vm.verticalLayout) SongciColors.onPrimary else SongciColors.primary,
+                modifier = Modifier
+                    .border(1.dp, SongciColors.primary)
+                    .background(if (vm.verticalLayout) SongciColors.primary else SongciColors.surfaceContainerLow)
+                    .clickable { vm.toggleVerticalLayout() }
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+        }
         Text(
             "每日一词",
             style = MaterialTheme.typography.labelMedium,

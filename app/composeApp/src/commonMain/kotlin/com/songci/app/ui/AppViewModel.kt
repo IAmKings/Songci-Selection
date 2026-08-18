@@ -17,10 +17,12 @@ import com.songci.app.data.NotificationPrefs
 import com.songci.app.data.loadFontScaleName
 import com.songci.app.data.loadFontStyle
 import com.songci.app.data.loadNotificationPrefs
+import com.songci.app.data.loadVerticalLayout
 import com.songci.app.data.rescheduleDailyNotification
 import com.songci.app.data.saveFontScaleName
 import com.songci.app.data.saveFontStyle
 import com.songci.app.data.saveNotificationPrefs
+import com.songci.app.data.saveVerticalLayout
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -99,6 +101,10 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
     )
         private set
 
+    // 竖排布局:详情页横/竖切换;与设置页「默认竖排」开关同源(写回 saveVerticalLayout,重启沿用)
+    var verticalLayout by mutableStateOf(loadVerticalLayout() == "1")
+        private set
+
     // 每日一词通知设置(本地通知,无服务器)
     var notificationPrefs by mutableStateOf(loadNotificationPrefs())
         private set
@@ -131,6 +137,12 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
     fun updateFontStyle(style: FontStyle) {
         fontStyle = style
         saveFontStyle(style.name)
+    }
+
+    /** 竖排布局切换(详情页图标/设置页开关同源):更新状态并写回 saveVerticalLayout,重启沿用。 */
+    fun toggleVerticalLayout() {
+        verticalLayout = !verticalLayout
+        saveVerticalLayout(if (verticalLayout) "1" else "0")
     }
 
     /** 保存通知设置并触发平台重排(开启→排期,关闭→取消)。 */

@@ -16,3 +16,8 @@ expect fun loadFontScaleName(): String?
 expect fun saveFontStyle(name: String)
 
 expect fun loadFontStyle(): String?
+
+/** 竖排布局持久化("1" 竖排 / "0" 横排),与 font_style 同机制(key = vertical_layout)。 */
+expect fun saveVerticalLayout(flag: String)
+
+expect fun loadVerticalLayout(): String?

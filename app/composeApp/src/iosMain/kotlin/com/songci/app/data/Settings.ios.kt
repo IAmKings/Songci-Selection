@@ -16,6 +16,13 @@ actual fun saveFontStyle(name: String) {
 actual fun loadFontStyle(): String? =
     NSUserDefaults.standardUserDefaults.stringForKey("font_style")
 
+actual fun saveVerticalLayout(flag: String) {
+    NSUserDefaults.standardUserDefaults.setObject(flag, forKey = "vertical_layout")
+}
+
+actual fun loadVerticalLayout(): String? =
+    NSUserDefaults.standardUserDefaults.stringForKey("vertical_layout")
+
 actual fun loadNotificationPrefs(): NotificationPrefs = NSUserDefaults.standardUserDefaults.run {
     // 注意:NSUserDefaults 无 long 方法;lastScheduledDay 用字符串存取;
     // integerForKey 未设置时返回 0,用 objectForKey 区分"未设置"与"0 点"

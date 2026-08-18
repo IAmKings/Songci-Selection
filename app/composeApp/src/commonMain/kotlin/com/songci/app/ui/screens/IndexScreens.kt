@@ -502,6 +502,8 @@ private fun SelectedDetail(
 ) {
     var poem by remember { mutableStateOf<Poem?>(null) }
     var favorite by remember { mutableStateOf(false) }
+    // 双栏右侧详情:跟随设置默认(无页内切换入口);局部状态随离开重置
+    var localVertical by remember { mutableStateOf(vm.verticalLayout) }
     LaunchedEffect(poemId) {
         poem = vm.poem(poemId)
         favorite = vm.isFavorite(poemId)
@@ -513,6 +515,7 @@ private fun SelectedDetail(
     }
     DetailBody(
         vm = vm, poem = current, scale = vm.fontScale.scale, wide = false,
+        vertical = localVertical,
         favorite = favorite,
         onToggleFavorite = { vm.setFavorite(current, !favorite); favorite = !favorite },
         onOpenAuthor = onOpenAuthor, onOpenRhythmic = onOpenRhythmic,

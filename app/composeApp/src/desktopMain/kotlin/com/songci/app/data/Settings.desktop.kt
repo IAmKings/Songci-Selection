@@ -42,6 +42,23 @@ actual fun loadFontStyle(): String? {
     return props.getProperty("font_style")
 }
 
+actual fun saveVerticalLayout(flag: String) {
+    val file = settingsFile()
+    val props = Properties()
+    if (file.exists()) file.inputStream().use(props::load)
+    props.setProperty("vertical_layout", flag)
+    file.parentFile.mkdirs()
+    file.outputStream().use { props.store(it, "songci settings") }
+}
+
+actual fun loadVerticalLayout(): String? {
+    val file = settingsFile()
+    if (!file.exists()) return null
+    val props = Properties()
+    file.inputStream().use(props::load)
+    return props.getProperty("vertical_layout")
+}
+
 private fun loadProps(): Properties {
     val props = Properties()
     val file = settingsFile()

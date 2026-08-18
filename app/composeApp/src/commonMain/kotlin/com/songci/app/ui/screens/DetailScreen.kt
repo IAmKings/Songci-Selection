@@ -3,8 +3,10 @@ package com.songci.app.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,9 +30,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import com.songci.app.data.Poem
 import com.songci.app.data.Segmenter
+import com.songci.app.data.VerticalColumn
+import com.songci.app.data.splitVerticalColumns
 import com.songci.app.theme.Kicker
 import com.songci.app.theme.SongciColors
 import com.songci.app.ui.AppViewModel
@@ -48,6 +59,8 @@ fun DetailScreen(
 ) {
     var poem by remember { mutableStateOf<Poem?>(null) }
     var favorite by remember { mutableStateOf(false) }
+    // 详情页临时横/竖排:初值=设置默认,页内切换只影响本次浏览,退出详情重置为设置默认(不写回持久化)
+    var localVertical by remember { mutableStateOf(vm.verticalLayout) }
     LaunchedEffect(poemId) {
         poem = vm.poem(poemId)
         favorite = vm.isFavorite(poemId)
@@ -71,9 +84,21 @@ fun DetailScreen(
                 modifier = Modifier.padding(end = 8.dp).clickable(onClick = onBack),
             )
             Text("词作详情", style = MaterialTheme.typography.labelMedium, color = SongciColors.stone)
+            Spacer(modifier = Modifier.weight(1f))
+            // 详情页横/竖排临时切换(localVertical,退出详情恢复设置默认,不持久化)
+            Text(
+                if (localVertical) "↕横排" else "竖排",
+                style = MaterialTheme.typography.labelSmall,
+                color = SongciColors.primary,
+                modifier = Modifier
+                    .border(1.dp, SongciColors.primary)
+                    .clickable { localVertical = !localVertical }
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+            )
         }
         DetailBody(
             vm = vm, poem = current, scale = scale, wide = wide,
+            vertical = localVertical,
             favorite = favorite,
             onToggleFavorite = { vm.setFavorite(current, !favorite); favorite = !favorite },
             onOpenAuthor = onOpenAuthor,
@@ -92,13 +117,42 @@ fun DetailBody(
     poem: Poem,
     scale: Float,
     wide: Boolean,
+    vertical: Boolean,
     favorite: Boolean,
     onToggleFavorite: () -> Unit,
     onOpenAuthor: (Long) -> Unit,
     onOpenRhythmic: (String) -> Unit,
 ) {
+    // 竖排模式:竖排区必须占用「有界可见高度」视口(否则嵌在 verticalScroll 里 maxHeight=无限,
+    // 导致 maxChars 巨大、分列失效、单列下滑)。故竖排不走外层 verticalScroll,改为固定布局:
+    // 标题行 + 竖排区(weight 拿剩余有限高度) + 操作区;竖排区内部只横向滚动。
+    if (vertical) {
+        Column(modifier = Modifier.fillMaxSize().padding(horizontal = if (wide) 64.dp else 30.dp, vertical = 24.dp)) {
+            Kicker(width = if (wide) 56.dp else 40.dp, height = if (wide) 5.dp else 4.dp)
+            Text(
+                poem.rhythmic,
+                style = if (wide) MaterialTheme.typography.headlineLarge else MaterialTheme.typography.headlineMedium,
+                color = SongciColors.primary,
+                maxLines = 2,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = if (wide) 30.dp else 22.dp),
+            )
+            Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
+            Box(modifier = Modifier.fillMaxWidth().padding(vertical = 28.dp).height(1.dp).background(SongciColors.line))
+            // 竖排区:weight(1f) 占据剩余有限高度,内部 BoxWithConstraints 拿到真实视口高 → 正确分列
+            VerticalPoemBody(
+                poem.content, scale, vm.matchedSpec(poem.rhythmic, poem.content),
+                Modifier.weight(1f).fillMaxWidth(),
+            )
+            DetailActions(
+                vm, favorite, onToggleFavorite, poem, onOpenAuthor, onOpenRhythmic,
+                Modifier.padding(top = 16.dp),
+            )
+        }
+        return
+    }
     if (wide) {
-        // 宽版:双栏词句。必须可滚动——长词/大字号会把底部操作区(收藏/作者/词牌链接)挤出视口
+        // 宽版:词句。必须可滚动——长词/大字号会把底部操作区(收藏/作者/词牌链接)挤出视口
         Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
             .padding(horizontal = 64.dp, vertical = 40.dp)) {
             Kicker(width = 56.dp, height = 5.dp)
@@ -112,7 +166,8 @@ fun DetailBody(
             )
             Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
             Box(modifier = Modifier.fillMaxWidth().padding(vertical = 36.dp).height(1.dp).background(SongciColors.line))
-            val segments = Segmenter.segment(poem.content, vm.matchedSpec(poem.rhythmic, poem.content))
+            val spec = vm.matchedSpec(poem.rhythmic, poem.content)
+            val segments = Segmenter.segment(poem.content, spec)
             if (segments.size == 2) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     StanzaColumn(segments[0], scale, Modifier.weight(1f).padding(end = 56.dp))
@@ -155,15 +210,57 @@ fun DetailBody(
     }
 }
 
+/**
+ * 将横排单句按中文标点优先断行,返回便于逐行渲染的分段(每段末为标点,避免拆词)。
+ * 若整句不超 maxWidthPx 则返回单元素;否则贪心拼接 token,超宽即断在标点后;
+ * 单个 token 仍超宽时(罕见过长)整段返回,交由 Text 兜底断行。
+ */
+private fun punctuatedLines(
+    line: String,
+    style: TextStyle,
+    textMeasurer: TextMeasurer,
+    maxWidthPx: Int,
+): List<String> {
+    val whole = textMeasurer.measure(AnnotatedString(line), style)
+    if (whole.size.width <= maxWidthPx) return listOf(line)
+    // 按标点切成 token(保留标点)。正则:标点后切开。
+    val tokens = line.split(Regex("(?<=[，。、；：·！？…])"))
+        .filter { it.isNotEmpty() }
+    if (tokens.size <= 1) return listOf(line)   // 无标点可断,兜底 Text 自行断行
+    val rows = mutableListOf<String>()
+    var cur = ""
+    for (t in tokens) {
+        val trial = cur + t
+        if (trial.isNotBlank() && textMeasurer.measure(AnnotatedString(trial), style).size.width > maxWidthPx && cur.isNotBlank()) {
+            rows += cur
+            cur = t
+        } else {
+            cur = trial
+        }
+    }
+    if (cur.isNotBlank()) rows += cur
+    return rows
+}
+
 @Composable
 private fun StanzaColumn(lines: List<String>, scale: Float, modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
+    val textMeasurer = rememberTextMeasurer()
+    var maxWidthPx by remember { mutableStateOf(0) }
+    Column(
+        modifier = modifier.onSizeChanged { maxWidthPx = it.width },
+    ) {
         lines.forEach { line ->
-            Text(
-                line,
-                style = MaterialTheme.typography.bodyLarge.copy(fontSize = MaterialTheme.typography.bodyLarge.fontSize * scale),
-                color = SongciColors.nearBlack,
+            val style = MaterialTheme.typography.bodyLarge.copy(
+                fontSize = MaterialTheme.typography.bodyLarge.fontSize * scale,
             )
+            val rows = if (maxWidthPx > 0) punctuatedLines(line, style, textMeasurer, maxWidthPx) else listOf(line)
+            rows.forEach { seg ->
+                Text(
+                    seg,
+                    style = style,
+                    color = SongciColors.nearBlack,
+                )
+            }
         }
     }
 }
@@ -172,14 +269,108 @@ private fun StanzaColumn(lines: List<String>, scale: Float, modifier: Modifier =
 private fun PoemLines(content: String, scale: Float, gap: androidx.compose.ui.unit.Dp,
                       spec: com.songci.app.data.RhythmicSpec?) {
     val segments = Segmenter.segment(content, spec)
-    Column {
+    val textMeasurer = rememberTextMeasurer()
+    var maxWidthPx by remember { mutableStateOf(0) }
+    Column(modifier = Modifier.onSizeChanged { maxWidthPx = it.width }) {
         segments.forEachIndexed { i, seg ->
             if (i > 0) Box(modifier = Modifier.height(gap))
             seg.forEach { line ->
+                val style = MaterialTheme.typography.bodyMedium.copy(
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize * scale,
+                )
+                val rows = if (maxWidthPx > 0) punctuatedLines(line, style, textMeasurer, maxWidthPx) else listOf(line)
+                rows.forEach { seg2 ->
+                    Text(
+                        seg2,
+                        style = style,
+                        color = SongciColors.nearBlack,
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 竖排诗词正文(方案 A:字符矩阵 + Column)。
+ * 每句拆成单字符 → 逐字纵向 Column(一列 = 一句);列高=视口高度,超长句按标点截断换列(避免纵向滚动)。
+ * 上/下阕交界处空开一列(跨阕大间距)。多句多列从右向左排(首句最右);初始滚到最右;底部提示横滑。
+ * 滚动:仅外层横向(多列),列高受视口约束,无需纵向滚动阅列。
+ */
+@Composable
+private fun VerticalPoemBody(
+    content: String,
+    scale: Float,
+    spec: com.songci.app.data.RhythmicSpec?,
+    modifier: Modifier = Modifier,
+) {
+    val segments = Segmenter.segment(content, spec)          // List<List<String>>:上/下阕
+    val scrollState = rememberScrollState()
+    val density = LocalDensity.current
+    val compactFontSize = MaterialTheme.typography.bodyMedium.fontSize * scale
+    val lineHeightPx = with(density) { (compactFontSize * 1.25f).toPx() }   // 与单字渲染行距一致,保列高不超屏
+    // 方案 C:BoxWithConstraints 在组合期即得竖排区 maxHeight,首帧就是正确容量(无 0→重排 的逐字出现)
+    BoxWithConstraints(
+        modifier = modifier,
+    ) {
+        val viewportPx = with(density) { maxHeight.toPx() }   // maxHeight 是 Dp → 转 px,与 lineHeightPx 同单位
+        // 预留底部「左右滑动翻阅」提示高度(~30dp),避免列占满挤掉提示
+        val hintPx = with(density) { 30.dp.toPx() }
+        // 用 remember(segments) 锁定「首次确定的列容量」:返回动画/重组中 maxHeight 波动时不再重算,
+        // 避免 columns 重建导致分列结构变化(排版跳变但文本一致——用户反馈的"视觉闪烁")。
+        val stableMaxChars = remember(segments) {
+            if (viewportPx - hintPx <= 0f || lineHeightPx <= 0f) 0
+            else ((viewportPx - hintPx) / lineHeightPx).toInt().coerceAtLeast(1)
+        }
+        val columns = remember(segments) {
+            if (stableMaxChars <= 0) emptyList() else splitVerticalColumns(segments, stableMaxChars)
+        }
+        // 右起阅读:初始滚到最右,让首句(第一列)从右端可见,而非停留在最左(最后一句)。
+        // 只在首次进入(或换词 segments 变化)时执行一次;返回动画中 columns 随 maxChars 重建时不重复滚动,
+        // 否则会在 pop 过渡时把已滚位置重置到最右 → 闪烁/重排版再退出。
+        var scrolledToEnd by remember(segments) { mutableStateOf(false) }
+        LaunchedEffect(segments) {
+            while (scrollState.maxValue == 0) withFrameNanos {}
+            if (!scrolledToEnd) { scrollState.scrollTo(scrollState.maxValue); scrolledToEnd = true }
+        }
+        Column {
+            Row(
+                modifier = Modifier
+                    .weight(1f)                       // 列区占 Column 剩余(超高部分被 horizontalScroll 裁剪,不溢出遮挡提示/操作区)
+                    .fillMaxWidth()
+                    .horizontalScroll(scrollState)
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),  // 列间 8dp + 不足宽时靠右对齐
+            ) {
+                // 列块右起排(reversed 让首列在右端);跨阕交界插更大空隙
+                var lastStanza = -1
+                columns.asReversed().forEach { col ->
+                    if (lastStanza >= 0 && col.ownerStanza != lastStanza) Spacer(modifier = Modifier.width(24.dp))
+                    lastStanza = col.ownerStanza
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        col.chars.forEach { ch ->
+                            Text(
+                                ch.toString(),
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontSize = compactFontSize,
+                                    lineHeight = compactFontSize * 1.25f,   // 竖排单字紧凑行距(与容量计算一致)
+                                ),
+                                color = SongciColors.nearBlack,
+                            )
+                        }
+                    }
+                }
+            }
+            // 提示固定在 Column 底部(Row 已用 weight 占剩余,提示紧随其后,不弹性伸缩)
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center,
+            ) {
                 Text(
-                    line,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = MaterialTheme.typography.bodyMedium.fontSize * scale),
-                    color = SongciColors.nearBlack,
+                    "◀ 左右滑动翻阅",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = SongciColors.stone,
+                    modifier = Modifier.padding(vertical = 6.dp),
                 )
             }
         }

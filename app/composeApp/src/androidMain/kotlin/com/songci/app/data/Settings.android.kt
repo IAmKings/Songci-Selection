@@ -20,6 +20,15 @@ actual fun loadFontStyle(): String? =
     AppContextHolder.context.getSharedPreferences("songci_settings", Context.MODE_PRIVATE)
         .getString("font_style", null)
 
+actual fun saveVerticalLayout(flag: String) {
+    AppContextHolder.context.getSharedPreferences("songci_settings", Context.MODE_PRIVATE)
+        .edit().putString("vertical_layout", flag).apply()
+}
+
+actual fun loadVerticalLayout(): String? =
+    AppContextHolder.context.getSharedPreferences("songci_settings", Context.MODE_PRIVATE)
+        .getString("vertical_layout", null)
+
 private fun prefs() =
     AppContextHolder.context.getSharedPreferences("songci_settings", Context.MODE_PRIVATE)
 
