@@ -53,6 +53,7 @@
 - **图标语义**:自绘 AppIcons.kt(core 集无书签/填充书本)——书本=索引(书页挑选),书签=收藏(保留),逻辑闭环
 - **长名称**:词牌名 maxLines=2 截断;变体名列表 FlowRow 换行(一剪梅多体场景);窗口最小 360px(工程值,设计稿 375 为手机样张)
 - **已知近似**:跨跳板链(详情→词牌→作者→选词)旧详情留栈底,单栈限制,返回多步清空(prd 记录)
+- **内容层退栈动画防 chrome 压缩(2026-08-18 严重事故固化)**:内容层(详情)全屏时 chrome(窄屏 NavigationBar / 宽屏 NavigationRail)隐藏、给内容区全高。**回到频道层时 chrome 必须在底层退栈动画结束后才显示**,否则退栈动画瞬间 route 已切到频道层 → chrome 立即弹出 → Scaffold 内容区被底部导航(~80dp)压缩 → 返回中的详情页高度骤降(竖排区实测 maxHeight 395dp→315dp) → 布局上移、遮挡长列。**根因**:`showChrome = !isContentRoute(currentRoute)` 基于 currentBackStackEntry 立即切换,未与退栈动画对齐。**修复规范**:chrome 显示改为状态机——进入内容层立即隐藏;离开内容层(返回)用 `LaunchedEffect` + `delay(≥动画时长,工程值 400ms)` 延迟显示;`previousIsContent` 记录旧态判"返回中"。**教训**:凡依赖导航 route 切换的 UI 显隐,若与被退栈页面共存于同一 Scaffold/布局,必须与退栈动画对齐,否则会阶段性压缩旧页面内容区。定位此类问题用「竖排区 BoxWithConstraints 约束高 + 系统 inset」埋点对照可铁证根因。
 
 ## 桌面端跨线程事件进 Compose(2026-08-10 实证)
 
