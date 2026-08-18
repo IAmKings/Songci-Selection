@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import com.songci.app.ui.BookmarkBorderIcon
@@ -128,20 +129,11 @@ fun DetailBody(
     // 标题行 + 竖排区(weight 拿剩余有限高度) + 操作区;竖排区内部只横向滚动。
     if (vertical) {
         Column(modifier = Modifier.fillMaxSize().padding(horizontal = if (wide) 64.dp else 30.dp, vertical = 24.dp)) {
-            Kicker(width = if (wide) 56.dp else 40.dp, height = if (wide) 5.dp else 4.dp)
-            Text(
-                poem.rhythmic,
-                style = if (wide) MaterialTheme.typography.headlineLarge else MaterialTheme.typography.headlineMedium,
-                color = SongciColors.primary,
-                maxLines = 2,
-                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-                modifier = Modifier.padding(top = if (wide) 30.dp else 22.dp),
-            )
-            Text(poem.authorName, style = MaterialTheme.typography.titleMedium, color = SongciColors.stone)
-            Box(modifier = Modifier.fillMaxWidth().padding(vertical = 28.dp).height(1.dp).background(SongciColors.line))
+            // 竖排:词牌名/作者作为竖排最右 2 列(移除顶部横排标题区,沉浸不重复)。
             // 竖排区:weight(1f) 占据剩余有限高度,内部 BoxWithConstraints 拿到真实视口高 → 正确分列
             VerticalPoemBody(
                 poem.content, scale, vm.matchedSpec(poem.rhythmic, poem.content),
+                poem.rhythmic, poem.authorName, wide,
                 Modifier.weight(1f).fillMaxWidth(),
             )
             DetailActions(
@@ -302,6 +294,9 @@ private fun VerticalPoemBody(
     content: String,
     scale: Float,
     spec: com.songci.app.data.RhythmicSpec?,
+    title: String,
+    author: String,
+    wide: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val segments = Segmenter.segment(content, spec)          // List<List<String>>:上/下阕
@@ -322,8 +317,17 @@ private fun VerticalPoemBody(
             if (viewportPx - hintPx <= 0f || lineHeightPx <= 0f) 0
             else ((viewportPx - hintPx) / lineHeightPx).toInt().coerceAtLeast(1)
         }
-        val columns = remember(segments) {
-            if (stableMaxChars <= 0) emptyList() else splitVerticalColumns(segments, stableMaxChars)
+        val columns = remember(segments, title, author) {
+            val body = if (stableMaxChars <= 0) emptyList()
+                       else splitVerticalColumns(segments, stableMaxChars)
+            // 最右 2 列 = 词牌名、作者(ownerStanza=-1 元数据列,渲染时不触发跨阕空隙);
+            // asReversed() 后它们落在 Row 最右端,即阅读起始第一、二列。
+            buildList {
+                if (title.isNotBlank()) add(VerticalColumn(-1, title.toList()))
+                // 作者列开头追加 2 个空格字符,竖排时表现为作者名上方多 2 个空位,版式更和谐
+                if (author.isNotBlank()) add(VerticalColumn(-1, ("  " + author).toList()))
+                addAll(body)
+            }
         }
         // 右起阅读:初始滚到最右,让首句(第一列)从右端可见,而非停留在最左(最后一句)。
         // 只在首次进入(或换词 segments 变化)时执行一次;返回动画中 columns 随 maxChars 重建时不重复滚动,
@@ -334,33 +338,87 @@ private fun VerticalPoemBody(
             if (!scrolledToEnd) { scrollState.scrollTo(scrollState.maxValue); scrolledToEnd = true }
         }
         Column {
-            Row(
+            // 竖排区:外层 Box 占 Column 剩余高(裁剪超高列,不挤掉提示);内部横线 + 列区
+            Box(
                 modifier = Modifier
-                    .weight(1f)                       // 列区占 Column 剩余(超高部分被 horizontalScroll 裁剪,不溢出遮挡提示/操作区)
-                    .fillMaxWidth()
-                    .horizontalScroll(scrollState)
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),  // 列间 8dp + 不足宽时靠右对齐
+                    .weight(1f)
+                    .fillMaxWidth(),
             ) {
-                // 列块右起排(reversed 让首列在右端);跨阕交界插更大空隙
-                var lastStanza = -1
-                columns.asReversed().forEach { col ->
-                    if (lastStanza >= 0 && col.ownerStanza != lastStanza) Spacer(modifier = Modifier.width(24.dp))
-                    lastStanza = col.ownerStanza
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        col.chars.forEach { ch ->
-                            Text(
-                                ch.toString(),
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    fontSize = compactFontSize,
-                                    lineHeight = compactFontSize * 1.25f,   // 竖排单字紧凑行距(与容量计算一致)
-                                ),
-                                color = SongciColors.nearBlack,
+                // 顶部横线:贴 Box 顶(fillMaxWidth 撑满、line 色);与词内容的间隔由 Row 的 padding(top) 承担,同横排(宽 36 / 窄 28)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(SongciColors.line),
+                )
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .wrapContentWidth()
+                        .horizontalScroll(scrollState)
+                        .padding(top = if (wide) 36.dp else 28.dp, bottom = 8.dp),   // 顶间隔同横排;底部 8dp 收尾
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),  // 列间 8dp + 不足宽时靠右对齐
+                ) {
+                    // 列块右起排(reversed 让首列在右端);跨阕交界插更大空隙
+                    var lastStanza = -1
+                    val titleIdx = 0
+                    val authorIdx = if (title.isNotBlank()) 1 else 0
+                    columns.asReversed().forEachIndexed { revIdx, col ->
+                        if (lastStanza >= 0 && col.ownerStanza != lastStanza) Spacer(modifier = Modifier.width(24.dp))
+                        lastStanza = col.ownerStanza
+                    val origIndex = columns.size - 1 - revIdx   // 原始 columns 中的位置(词牌=0,作者=1)
+                    val isTitle = title.isNotBlank() && origIndex == titleIdx
+                    val isAuthor = author.isNotBlank() && origIndex == authorIdx
+                    val titleColHeightPx = remember { mutableStateOf(0) }
+                    if (isTitle) {
+                        // 词牌列(最右):Column 右侧附一条竖线(primary 色),从顶部横线到词牌列底,包住词牌名
+                        Row(verticalAlignment = Alignment.Top) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally,
+                                   modifier = Modifier.onSizeChanged { titleColHeightPx.value = it.height }) {
+                                col.chars.forEach { ch ->
+                                    val style = if (wide) MaterialTheme.typography.headlineLarge
+                                                else MaterialTheme.typography.headlineMedium
+                                    Text(ch.toString(), style = style, color = SongciColors.primary)
+                                }
+                            }
+                            // 竖线:3dp 加粗;距词牌 16dp;高 = 词牌列高 + 顶部到横线的间隔(wide 36 / 窄 28 dp)
+                            Box(
+                                modifier = Modifier
+                                    .padding(start = 16.dp)
+                                    .width(3.dp)
+                                    .height(with(density) {
+                                        titleColHeightPx.value.toDp() +
+                                            (if (wide) 36.dp else 28.dp)   // 顶部横线到词牌列顶的间隔(同横排)
+                                    })
+                                    .background(SongciColors.primary),
                             )
+                        }
+                    } else {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            col.chars.forEach { ch ->
+                                if (isAuthor) {
+                                    // 作者列:沿用原顶部作者样式(titleMedium, stone)
+                                    Text(
+                                        ch.toString(),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = SongciColors.stone,
+                                    )
+                                } else {
+                                    Text(
+                                        ch.toString(),
+                                        style = MaterialTheme.typography.bodyMedium.copy(
+                                            fontSize = compactFontSize,
+                                            lineHeight = compactFontSize * 1.25f,   // 竖排单字紧凑行距(与容量计算一致)
+                                        ),
+                                        color = SongciColors.nearBlack,
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
+            }   // 闭外层 Box(weight 竖排区)
             // 提示固定在 Column 底部(Row 已用 weight 占剩余,提示紧随其后,不弹性伸缩)
             Box(
                 modifier = Modifier.fillMaxWidth(),
