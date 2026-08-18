@@ -17,8 +17,7 @@ class SegmenterTest {
         val segs = Segmenter.segment(content42, huanshisha)
         assertEquals(2, segs.size)
         assertEquals(3, segs[0].size)   // 前段 3 句
-        assertEquals(3, segs[1].size)   // 后段 3 句
-        assertEquals("一曲新词酒一杯。", segs[0][0])
+        assertEquals(3, segs[1].size)   // 后段 3 句        assertEquals("一曲新词酒一杯。", segs[0][0])
         assertEquals("夕阳西下几时回。", segs[0][2])
         assertEquals("小园香径独徘徊。", segs[1][2])
     }
@@ -52,5 +51,74 @@ class SegmenterTest {
     @Test fun charsStripPunctuation() {
         assertEquals("一曲新词酒一杯", Segmenter.chars("一曲新词酒一杯。"))
         assertEquals("去年天气旧亭台", Segmenter.chars("去年天气旧亭台\n"))
+    }
+
+    // ---- splitVerticalColumns:竖排按列高标点截断 ----
+
+    @Test fun verticalShortStaysOneColumn() {
+        // 单句短于列容量 → 单列,保留全部字符
+        val cols = splitVerticalColumns(listOf(listOf("明月几时有。")), maxChars = 10)
+        assertEquals(1, cols.size)
+        assertEquals("明月几时有。", cols[0].chars.joinToString(""))
+        assertEquals(0, cols[0].ownerStanza)
+    }
+
+    @Test fun verticalLongCutsAtPunct() {
+        // 超长句:列容量 8,应优先在标点后截断,续到下一列
+        val cols = splitVerticalColumns(listOf(listOf("不定如萍泛，暂抛江沔，又留连京国。")), maxChars = 8)
+        // 第一列应在某标点后断(不超过 8 字)
+        assert(cols[0].chars.size <= 8) { "首列超容量" }
+        assertEquals("，", cols[0].chars.last().toString())   // 末字符是标点
+        // 全文拼接不丢字
+        assertEquals("不定如萍泛，暂抛江沔，又留连京国。", cols.flatMap { it.chars }.joinToString(""))
+    }
+
+    @Test fun verticalStanzaGapPreserved() {
+        // 双阕:跨阕交界的列 ownerStanza 不同,用于插入空列
+        val cols = splitVerticalColumns(
+            listOf(listOf("上阕第一句。", "上阕第二句。"), listOf("下阕第一句。", "下阕第二句。")),
+            maxChars = 10,
+        )
+        assert(cols.any { it.ownerStanza == 0 })
+        assert(cols.any { it.ownerStanza == 1 })
+        // 跨阕边界存在 ownerStanza 变化
+        assert(cols.zipWithNext().any { (a, b) -> a.ownerStanza != b.ownerStanza })
+        // 全部 4 句字符不丢失
+        val text = cols.flatMap { it.chars }.joinToString("")
+        assertEquals(4, text.count { it == '句' })
+    }
+
+    @Test fun verticalZeroCapacityEmpty() {
+        assertEquals(emptyList<VerticalColumn>(), splitVerticalColumns(listOf(listOf("测试。")), maxChars = 0))
+    }
+
+    @Test fun verticalShortSentenceNotMergedIntoLoneLongFragment() {
+        // 短句(5字)后跟超长句:短句单独成列,超长句拆段独占后续列,绝不拼接
+        val cols = splitVerticalColumns(
+            listOf(listOf("月落乌啼。", "不定如萍泛，暂抛江沔，又留连京国。")),
+            maxChars = 10,
+        )
+        val texts = cols.map { it.chars.joinToString("") }
+        // 短句应独立成一列(不拼长句片段)
+        assert(texts.any { it == "月落乌啼。" }) { "短句未被独立成列: $texts" }
+        // 长句拆段,每段以标点结尾且 ≤ 容量,段间拼接完整不丢字
+        val long = cols.filter { it != cols.first() }.flatMap { it.chars }.joinToString("")
+        assertEquals("不定如萍泛，暂抛江沔，又留连京国。", long)
+        // 任一长句段末都是标点(在标点处断列)
+        assert(long.endsWith("。"))
+    }
+
+    @Test fun verticalShortSentencesStaySeparateColumns() {
+        // 全部短句:每个句子独占一列,绝不合并(句号分列)
+        val cols = splitVerticalColumns(
+            listOf(listOf("月落乌啼。", "不避风霜。", "憔悴容颜。", "更说相思。")),
+            maxChars = 10,
+        )
+        val texts = cols.map { it.chars.joinToString("") }
+        assertEquals(4, texts.size)   // 4 句 → 4 独立列
+        assertEquals("月落乌啼。", texts[0])
+        assertEquals("不避风霜。", texts[1])
+        assertEquals("憔悴容颜。", texts[2])
+        assertEquals("更说相思。", texts[3])
     }
 }

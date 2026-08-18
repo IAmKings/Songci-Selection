@@ -50,3 +50,46 @@ object Segmenter {
         return listOf(lines.take(mid), lines.drop(mid))
     }
 }
+
+/** 竖排单列块:标点优先截断后的一列;ownerStanza 用于跨阕空列,chars 为该列逐字。 */
+data class VerticalColumn(val ownerStanza: Int, val chars: List<Char>)
+
+/**
+ * 竖排按列高截断:以"句子"为硬性一列单元——每个句子独占一列,绝不合并。
+ * 短句(≤maxChars)直接成列;超长句(>maxChars)内部按标点贪心拆段为连续多列(段间向左续)。
+ * 跨阕交界保留 ownerStanza 变化以插入空列。
+ */
+fun splitVerticalColumns(segments: List<List<String>>, maxChars: Int): List<VerticalColumn> {
+    if (maxChars <= 0) return emptyList()
+    val punct = "，。、；：·！？…"
+    val columns = mutableListOf<VerticalColumn>()
+    segments.forEachIndexed { stanza, lines ->
+        lines.forEach { line ->
+            if (line.length > maxChars) {
+                // 超长句:内部按标点贪心拆段,每段独立列,段间连续
+                val chars = line.toList()
+                var i = 0
+                while (i < chars.size) {
+                    val window = chars.subList(i, minOf(i + maxChars, chars.size))
+                    val cut = findPunctCut(window, punct)
+                    val take = if (cut.first.isNotEmpty()) cut.first.size
+                               else (i + maxChars).coerceAtMost(chars.size) - i   // 无标点兜底整窗
+                    columns.add(VerticalColumn(stanza, chars.subList(i, i + take)))
+                    i += take
+                }
+            } else {
+                // 短句:独占一列,不与其他句合并(句号分列)
+                columns.add(VerticalColumn(stanza, line.toList()))
+            }
+        }
+    }
+    return columns
+}
+
+/** 在缓冲字符中寻找最接近末尾的标点作为截断点,避免在词中硬切。返回(截断前, 剩余)。 */
+private fun findPunctCut(buf: List<Char>, punct: String): Pair<List<Char>, List<Char>> {
+    for (i in buf.indices.reversed()) {
+        if (buf[i] in punct) return buf.subList(0, i + 1) to buf.subList(i + 1, buf.size)
+    }
+    return buf to emptyList()   // 无标点,整段截断
+}
