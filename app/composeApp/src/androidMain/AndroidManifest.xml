@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- 每日一词通知(Android 13+ 运行时权限;未授予则 Worker 静默跳过) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- 应用内检查更新:查询 GitHub Release API(零新依赖,HttpURLConnection) -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:name=".SongciApp"
         android:icon="@mipmap/ic_launcher"
