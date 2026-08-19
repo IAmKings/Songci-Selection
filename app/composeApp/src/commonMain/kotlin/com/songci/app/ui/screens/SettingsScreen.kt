@@ -3,9 +3,11 @@ package com.songci.app.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,7 +24,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.songci.app.data.NotificationPrefs
+import com.songci.app.data.UpdateCheckResult
+import com.songci.app.data.checkForAppUpdate
 import com.songci.app.data.notificationPermissionGranted
+import com.songci.app.data.openUrlInBrowser
 import com.songci.app.data.requestNotificationPermission
 import com.songci.app.theme.SongciColors
 import com.songci.app.ui.AppViewModel
@@ -29,6 +35,7 @@ import com.songci.app.ui.FontScale
 import com.songci.app.ui.FontStyle
 import com.songci.app.ui.components.SimpleListScreen
 import com.songci.app.ui.components.TimePickerDialog
+import kotlinx.coroutines.launch
 
 /** 设置:阅读设置(字号/字体风格)+ 每日一词通知 + 关于。账号系统不规划,无退出登录。 */
 @Composable
@@ -42,6 +49,11 @@ fun SettingsScreen(vm: AppViewModel) {
                 .getOrDefault(emptyList())
         }
     }
+
+    // 更新检查状态:null=未检查;Available/UpToDate/Failed=结果
+    var updateResult by remember { mutableStateOf<UpdateCheckResult?>(null) }
+    var checkingUpdate by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     SimpleListScreen(title = "设置") {
         Text(
@@ -224,6 +236,83 @@ fun SettingsScreen(vm: AppViewModel) {
                     }
                 },
         )
+        Text(
+            if (checkingUpdate) "检查更新中…" else "检查更新",
+            style = MaterialTheme.typography.labelLarge,
+            color = SongciColors.primary,
+            modifier = Modifier
+                .padding(horizontal = 20.dp, vertical = 6.dp)
+                .clickable(enabled = !checkingUpdate) {
+                    scope.launch {
+                        checkingUpdate = true
+                        updateResult = checkForAppUpdate(
+                            "IAmKings", "Songci-Selection",
+                            "0.1.0",   // 与 build.gradle.kts versionName 保持一致
+                        )
+                        checkingUpdate = false
+                    }
+                },
+        )
+        if (updateResult != null) {
+            val result = updateResult!!
+            when (result) {
+                is UpdateCheckResult.Available -> AlertDialog(
+                    onDismissRequest = { updateResult = null },
+                    title = { Text("发现新版本 ${result.latestTag}") },
+                    text = {
+                        Column {
+                            Text("当前版本 0.1.0", style = MaterialTheme.typography.labelSmall)
+                            Text(
+                                "更新说明:${result.releaseNotes.ifBlank { "前往 Release 页查看" }}",
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(top = 8.dp),
+                            )
+                        }
+                    },
+                    confirmButton = {
+                        Text(
+                            "去下载",
+                            color = SongciColors.primary,
+                            modifier = Modifier.padding(8.dp).clickable {
+                                openUrlInBrowser(result.releaseUrl)
+                                updateResult = null
+                            },
+                        )
+                    },
+                    dismissButton = {
+                        Text(
+                            "取消",
+                            color = SongciColors.stone,
+                            modifier = Modifier.padding(8.dp).clickable { updateResult = null },
+                        )
+                    },
+                )
+                UpdateCheckResult.UpToDate -> AlertDialog(
+                    onDismissRequest = { updateResult = null },
+                    title = { Text("已是最新版本") },
+                    text = { Text("当前版本 0.1.0 已是最新。") },
+                    confirmButton = {
+                        Text(
+                            "好的",
+                            color = SongciColors.primary,
+                            modifier = Modifier.padding(8.dp).clickable { updateResult = null },
+                        )
+                    },
+                )
+                UpdateCheckResult.Failed -> AlertDialog(
+                    onDismissRequest = { updateResult = null },
+                    title = { Text("检查失败") },
+                    text = { Text("无法连接 GitHub,请检查网络后重试。") },
+                    confirmButton = {
+                        Text(
+                            "好的",
+                            color = SongciColors.primary,
+                            modifier = Modifier.padding(8.dp).clickable { updateResult = null },
+                        )
+                    },
+                )
+            }
+        }
         Text(
             "词库 21,050 首 · 诗人 1,564 位",
             style = MaterialTheme.typography.labelSmall,

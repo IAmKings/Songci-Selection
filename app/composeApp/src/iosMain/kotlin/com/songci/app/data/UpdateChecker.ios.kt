@@ -1,0 +1,13 @@
+package com.songci.app.data
+
+/**
+ * iOS 占位更新检查(MVP 仅 Android)。保持三端编译通过;多端同步后续实现。
+ */
+actual suspend fun checkForAppUpdate(
+    repoOwner: String,
+    repoName: String,
+    currentVersion: String,
+): UpdateCheckResult = UpdateCheckResult.Failed
+
+/** iOS 占位:浏览器打开留待多端同步。 */
+actual fun openUrlInBrowser(url: String) = Unit
