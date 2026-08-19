@@ -224,7 +224,7 @@ fun SettingsScreen(vm: AppViewModel) {
             modifier = Modifier.padding(start = 20.dp, top = 28.dp, bottom = 8.dp),
         )
         Text(
-            "版本 0.1.0",
+            "版本 0.1.3",
             style = MaterialTheme.typography.labelSmall,
             color = SongciColors.stone,
             modifier = Modifier
@@ -247,7 +247,7 @@ fun SettingsScreen(vm: AppViewModel) {
                         checkingUpdate = true
                         updateResult = checkForAppUpdate(
                             "IAmKings", "Songci-Selection",
-                            "0.1.0",   // 与 build.gradle.kts versionName 保持一致
+                            "0.1.3",   // 与 build.gradle.kts versionName 保持一致
                         )
                         checkingUpdate = false
                     }
@@ -261,7 +261,7 @@ fun SettingsScreen(vm: AppViewModel) {
                     title = { Text("发现新版本 ${result.latestTag}") },
                     text = {
                         Column {
-                            Text("当前版本 0.1.0", style = MaterialTheme.typography.labelSmall)
+                            Text("当前版本 0.1.3", style = MaterialTheme.typography.labelSmall)
                             Text(
                                 "更新说明:${result.releaseNotes.ifBlank { "前往 Release 页查看" }}",
                                 style = MaterialTheme.typography.bodySmall,
@@ -290,7 +290,7 @@ fun SettingsScreen(vm: AppViewModel) {
                 UpdateCheckResult.UpToDate -> AlertDialog(
                     onDismissRequest = { updateResult = null },
                     title = { Text("已是最新版本") },
-                    text = { Text("当前版本 0.1.0 已是最新。") },
+                    text = { Text("当前版本 0.1.3 已是最新。") },
                     confirmButton = {
                         Text(
                             "好的",
