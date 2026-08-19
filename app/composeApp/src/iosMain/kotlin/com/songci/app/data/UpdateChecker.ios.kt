@@ -11,3 +11,6 @@ actual suspend fun checkForAppUpdate(
 
 /** iOS 占位:浏览器打开留待多端同步。 */
 actual fun openUrlInBrowser(url: String) = Unit
+
+/** iOS 占位:与 Android 版保持一致(版本号单一来源待多端同步)。 */
+actual fun currentAppVersion(): String = "0.1.3"

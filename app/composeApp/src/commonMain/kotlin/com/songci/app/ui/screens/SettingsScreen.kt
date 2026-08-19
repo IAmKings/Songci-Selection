@@ -26,6 +26,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.songci.app.data.NotificationPrefs
 import com.songci.app.data.UpdateCheckResult
 import com.songci.app.data.checkForAppUpdate
+import com.songci.app.data.currentAppVersion
 import com.songci.app.data.notificationPermissionGranted
 import com.songci.app.data.openUrlInBrowser
 import com.songci.app.data.requestNotificationPermission
@@ -54,6 +55,7 @@ fun SettingsScreen(vm: AppViewModel) {
     var updateResult by remember { mutableStateOf<UpdateCheckResult?>(null) }
     var checkingUpdate by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val appVersion = currentAppVersion()   // 单一来源:Android 读 BuildConfig,跟随 build.gradle.kts
 
     SimpleListScreen(title = "设置") {
         Text(
@@ -224,7 +226,7 @@ fun SettingsScreen(vm: AppViewModel) {
             modifier = Modifier.padding(start = 20.dp, top = 28.dp, bottom = 8.dp),
         )
         Text(
-            "版本 0.1.3",
+            "版本 $appVersion",
             style = MaterialTheme.typography.labelSmall,
             color = SongciColors.stone,
             modifier = Modifier
@@ -247,7 +249,7 @@ fun SettingsScreen(vm: AppViewModel) {
                         checkingUpdate = true
                         updateResult = checkForAppUpdate(
                             "IAmKings", "Songci-Selection",
-                            "0.1.3",   // 与 build.gradle.kts versionName 保持一致
+                            appVersion,   // 单一来源,与 build.gradle.kts versionName 保持一致
                         )
                         checkingUpdate = false
                     }
@@ -261,7 +263,7 @@ fun SettingsScreen(vm: AppViewModel) {
                     title = { Text("发现新版本 ${result.latestTag}") },
                     text = {
                         Column {
-                            Text("当前版本 0.1.3", style = MaterialTheme.typography.labelSmall)
+                            Text("当前版本 $appVersion", style = MaterialTheme.typography.labelSmall)
                             Text(
                                 "更新说明:${result.releaseNotes.ifBlank { "前往 Release 页查看" }}",
                                 style = MaterialTheme.typography.bodySmall,
@@ -290,7 +292,7 @@ fun SettingsScreen(vm: AppViewModel) {
                 UpdateCheckResult.UpToDate -> AlertDialog(
                     onDismissRequest = { updateResult = null },
                     title = { Text("已是最新版本") },
-                    text = { Text("当前版本 0.1.3 已是最新。") },
+                    text = { Text("当前版本 $appVersion 已是最新。") },
                     confirmButton = {
                         Text(
                             "好的",

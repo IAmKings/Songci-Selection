@@ -55,3 +55,11 @@ actual fun openUrlInBrowser(url: String) {
         // 无浏览器等极端情况:静默忽略,不崩溃
     }
 }
+
+/** 当前版本号:从 PackageManager 读 versionName(单一来源:manifest versionName,跟随 build.gradle.kts)。 */
+actual fun currentAppVersion(): String = try {
+    val pm = AppContextHolder.context.packageManager
+    pm.getPackageInfo(AppContextHolder.context.packageName, 0).versionName ?: ""
+} catch (e: Exception) {
+    ""
+}
