@@ -32,6 +32,19 @@ jobs:
       - name: Set up Gradle (cached)
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Generate Android debug keystore
+        # CI runner 无本地 debug keystore;用 keytool 生成标准 debug 证书(alias/androiddebugkey,密码 android)
+        run: |
+          mkdir -p "$HOME/.android"
+          if [ ! -f "$HOME/.android/debug.keystore" ]; then
+            keytool -genkeypair -v \
+              -keystore "$HOME/.android/debug.keystore" \
+              -alias androiddebugkey \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass android -keypass android \
+              -dname "CN=Android Debug,O=Android,C=US"
+          fi
+
       - name: Build release APK (debug-signed)
         working-directory: app
         # android.injected.signing.* :AGP 命令行注入签名,用 debug keystore 签 release 产物,零 gradle 改动
