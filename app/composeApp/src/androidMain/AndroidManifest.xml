@@ -33,6 +33,8 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/songci_widget_banner" />
         </receiver>
+        <!-- 4x2/4x4 小组件:UI 待调整,暂屏蔽不在选择器显示(代码类保留,后续恢复仅取消注释) -->
+        <!--
         <receiver
             android:name=".widget.SongciWidgetMediumReceiver"
             android:exported="true"
@@ -55,6 +57,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/songci_widget_large" />
         </receiver>
+        -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
