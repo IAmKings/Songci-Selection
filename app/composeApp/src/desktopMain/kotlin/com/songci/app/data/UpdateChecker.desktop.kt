@@ -14,3 +14,6 @@ actual fun openUrlInBrowser(url: String) = Unit
 
 /** Desktop 占位:与 Android 版保持一致(版本号单一来源待多端同步)。 */
 actual fun currentAppVersion(): String = "0.1.3"
+
+/** Desktop 无自动发布 workflow(签名打包),不显示更新入口。 */
+actual fun supportsAppUpdate(): Boolean = false

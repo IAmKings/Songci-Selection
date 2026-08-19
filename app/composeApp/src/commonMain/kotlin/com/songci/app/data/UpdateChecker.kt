@@ -52,3 +52,9 @@ expect fun openUrlInBrowser(url: String)
  */
 expect fun currentAppVersion(): String
 
+/**
+ * 是否支持应用内更新检查。
+ * 仅 Android 有 GitHub Actions 自动发布 workflow;iOS/macOS 走签名打包,无更新机制,不显示入口。
+ */
+expect fun supportsAppUpdate(): Boolean
+

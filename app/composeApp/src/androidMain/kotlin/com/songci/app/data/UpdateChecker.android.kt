@@ -63,3 +63,6 @@ actual fun currentAppVersion(): String = try {
 } catch (e: Exception) {
     ""
 }
+
+/** Android 有 GitHub Actions 自动发布,支持应用内更新检查。 */
+actual fun supportsAppUpdate(): Boolean = true

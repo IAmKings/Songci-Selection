@@ -30,6 +30,7 @@ import com.songci.app.data.currentAppVersion
 import com.songci.app.data.notificationPermissionGranted
 import com.songci.app.data.openUrlInBrowser
 import com.songci.app.data.requestNotificationPermission
+import com.songci.app.data.supportsAppUpdate
 import com.songci.app.theme.SongciColors
 import com.songci.app.ui.AppViewModel
 import com.songci.app.ui.FontScale
@@ -238,23 +239,25 @@ fun SettingsScreen(vm: AppViewModel) {
                     }
                 },
         )
-        Text(
-            if (checkingUpdate) "检查更新中…" else "检查更新",
-            style = MaterialTheme.typography.labelLarge,
-            color = SongciColors.primary,
-            modifier = Modifier
-                .padding(horizontal = 20.dp, vertical = 6.dp)
-                .clickable(enabled = !checkingUpdate) {
-                    scope.launch {
-                        checkingUpdate = true
-                        updateResult = checkForAppUpdate(
-                            "IAmKings", "Songci-Selection",
-                            appVersion,   // 单一来源,与 build.gradle.kts versionName 保持一致
-                        )
-                        checkingUpdate = false
-                    }
-                },
-        )
+        if (supportsAppUpdate()) {   // 仅 Android 有自动发布 workflow;iOS/macOS 走签名打包,不显示更新入口
+            Text(
+                if (checkingUpdate) "检查更新中…" else "检查更新",
+                style = MaterialTheme.typography.labelLarge,
+                color = SongciColors.primary,
+                modifier = Modifier
+                    .padding(horizontal = 20.dp, vertical = 6.dp)
+                    .clickable(enabled = !checkingUpdate) {
+                        scope.launch {
+                            checkingUpdate = true
+                            updateResult = checkForAppUpdate(
+                                "IAmKings", "Songci-Selection",
+                                appVersion,   // 单一来源,与 build.gradle.kts versionName 保持一致
+                            )
+                            checkingUpdate = false
+                        }
+                    },
+            )
+        }
         if (updateResult != null) {
             val result = updateResult!!
             when (result) {

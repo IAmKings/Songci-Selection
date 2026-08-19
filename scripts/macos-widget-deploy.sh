@@ -14,7 +14,7 @@ echo "==> 1/4 compose 打包"
 
 echo "==> 2/4 xcodebuild 小组件 extension"
 (cd app/iosApp && xcodebuild -project MacWidgetExtension.xcodeproj -scheme SongciWidgetExtension \
-    -configuration Release -derivedDataPath build/dd build -quiet)
+    -configuration Release -derivedDataPath build/dd build -allowProvisioningUpdates -quiet)
 
 # 签名身份:证书优先,缺省 ad-hoc
 CERT="${CERT_IDENTITY:-}"

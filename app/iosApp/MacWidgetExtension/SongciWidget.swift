@@ -141,6 +141,7 @@ struct SongciWidget: Widget {
         }
         .configurationDisplayName("宋词选粹")
         .description("随机展示一首宋词")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
+        // 仅保留 Small + Medium(Large/ExtraLarge UI 待调整,与 Android 保留 2 种对齐)
+        .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
