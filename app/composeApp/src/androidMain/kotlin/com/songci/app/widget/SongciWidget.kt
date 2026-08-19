@@ -166,11 +166,17 @@ private fun SmallContent(poem: Poem?) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalAlignment = Alignment.CenterVertically,   // 设计稿 justify-center items-center
     ) {
-        Image(ImageProvider(R.drawable.ic_book), contentDescription = null,
-              modifier = GlanceModifier.size(24.dp).padding(bottom = 8.dp))   // 设计稿 text-2xl + mb-2
-        Text(poem?.rhythmic ?: "宋词", style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold, color = PRIMARY_CONTAINER, fontFamily = FontFamily.Serif), maxLines = 1,
+        Image(ImageProvider(R.mipmap.ic_launcher), contentDescription = null,
+              modifier = GlanceModifier.size(24.dp).padding(bottom = 8.dp))   // Logo 替换书本图标
+        // 词牌:2x2 窄容器,超 6 字截断加省略(Glance 无自带省略号,手动拼接)
+        val rhythmic = poem?.rhythmic ?: "宋词"
+        Text(if (rhythmic.length > 6) rhythmic.take(6) + "…" else rhythmic,
+             style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold, color = PRIMARY_CONTAINER, fontFamily = FontFamily.Serif), maxLines = 1,
              modifier = GlanceModifier.padding(bottom = 4.dp))   // 设计稿 24px + mb-1
-        Text(poem?.content?.lines()?.firstOrNull { it.isNotBlank() } ?: "随机一词",
+        // 首句:超 20 字截断加省略,再 maxLines=2 兜底
+        val firstLine = poem?.content?.lines()?.firstOrNull { it.isNotBlank() } ?: "随机一词"
+        val trimmed = if (firstLine.length > 20) firstLine.take(20) + "…" else firstLine
+        Text(trimmed,
              style = TextStyle(fontSize = 14.sp, color = PRIMARY_CONTAINER_80, fontFamily = FontFamily.Serif), maxLines = 2,
              modifier = GlanceModifier.padding(top = 2.dp))
     }
