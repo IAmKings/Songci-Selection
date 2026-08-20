@@ -63,6 +63,7 @@ fun DetailScreen(
     // 详情页临时横/竖排:初值=设置默认,页内切换只影响本次浏览,退出详情重置为设置默认(不写回持久化)
     var localVertical by remember { mutableStateOf(vm.verticalLayout) }
     LaunchedEffect(poemId) {
+        vm.stopSpeak()   // 切换词作自动停止上一首朗诵,避免串音(AC3)
         poem = vm.poem(poemId)
         favorite = vm.isFavorite(poemId)
     }
