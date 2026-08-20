@@ -83,7 +83,7 @@ private suspend fun randomPoem(): Poem? = try {
     try {
         SongciDb(driver).songciDbQueries.randomPoems(1L).executeAsList()
             .firstOrNull { !it.content.containsGarbled() }   // 乱码词排除
-            ?.let { Poem(it.id, it.rhythmic, it.content, null, "") }
+            ?.let { Poem(it.id, it.rhythmic, it.content, it.author_id, it.author_name ?: "") }
     } finally {
         driver.close()   // 泄漏连接会耗尽 SQLite 连接池(上限4),后续刷新失效
     }
