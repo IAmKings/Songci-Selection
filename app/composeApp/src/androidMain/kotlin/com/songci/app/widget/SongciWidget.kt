@@ -167,7 +167,7 @@ private fun SmallContent(poem: Poem?) {
         verticalAlignment = Alignment.CenterVertically,   // 设计稿 justify-center items-center
     ) {
         Image(ImageProvider(R.mipmap.ic_launcher), contentDescription = null,
-              modifier = GlanceModifier.size(24.dp).padding(bottom = 8.dp))   // Logo 替换书本图标
+              modifier = GlanceModifier.size(40.dp).padding(bottom = 10.dp))   // Logo:40dp 主视觉(自适应图标前景占 ~66%,24dp 实际过小)
         // 词牌:2x2 窄容器,超 6 字截断加省略(Glance 无自带省略号,手动拼接)
         val rhythmic = poem?.rhythmic ?: "宋词"
         Text(if (rhythmic.length > 6) rhythmic.take(6) + "…" else rhythmic,
