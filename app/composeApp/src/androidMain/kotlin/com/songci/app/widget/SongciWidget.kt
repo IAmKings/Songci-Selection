@@ -182,7 +182,7 @@ private fun SmallContent(poem: Poem?) {
     }
 }
 
-/** 4x1:顶部色条 + 三段式(词牌/作者 | 词句 | 刷新)。 */
+/** 4x1:顶部色条 + 三段式(词牌/作者 | 词句)。刷新按钮当前版本不展示(整卡点击进详情)。 */
 @Composable
 private fun BannerContent(poem: Poem?) {
     Column(modifier = GlanceModifier.fillMaxSize().background(BG)) {
@@ -200,9 +200,6 @@ private fun BannerContent(poem: Poem?) {
             Text(poem?.content?.lines()?.firstOrNull { it.isNotBlank() } ?: "随机一词",
                  style = TextStyle(fontSize = 14.sp, color = PRIMARY_CONTAINER, fontFamily = FontFamily.Serif, fontStyle = FontStyle.Italic), maxLines = 1,
                  modifier = GlanceModifier.defaultWeight().padding(horizontal = 10.dp))
-            Image(ImageProvider(R.drawable.ic_refresh), contentDescription = "刷新",
-                  modifier = GlanceModifier.size(20.dp)
-                      .clickable(actionRunCallback<RefreshAction>()))
         }
     }
 }
