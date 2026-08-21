@@ -47,7 +47,7 @@ fun isNewerVersion(remoteTag: String, localVersion: String): Boolean {
 expect fun openUrlInBrowser(url: String)
 
 /**
- * 当前应用版本号(如 0.1.3)。
+ * 当前应用版本号(如 0.1.4)。
  * Android 从 PackageManager 读 versionName(单一来源 manifest,跟随 build.gradle.kts);desktop/iOS 占位常量。
  */
 expect fun currentAppVersion(): String
