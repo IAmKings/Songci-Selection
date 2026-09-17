@@ -31,8 +31,10 @@ jobs:
         # Google 从 SDK 仓库下架(2026-09,v0.1.4 之后 runner 镜像更新即失败)。改为直接安装
         # 本工程所需组件(compileSdk 36)并预接受许可,AGP 仍可按需补装其余组件。
         run: |
-          yes | sdkmanager --licenses > /dev/null || true
-          sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0" > /dev/null
+          SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          [ -x "$SDKM" ] || SDKM="$(ls "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | sort | tail -1)"
+          yes | "$SDKM" --licenses > /dev/null || true
+          "$SDKM" "platform-tools" "platforms;android-36" "build-tools;36.0.0" > /dev/null
 
       - name: Set up Gradle (cached)
         uses: gradle/actions/setup-gradle@v4
