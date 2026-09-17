@@ -21,3 +21,8 @@ expect fun loadFontStyle(): String?
 expect fun saveVerticalLayout(flag: String)
 
 expect fun loadVerticalLayout(): String?
+
+/** 竖排网格(详情页竖排正文的 kheti 列盒参考线)持久化("1" 开 / "0" 关,key = kheti_grid),与 vertical_layout 同机制。 */
+expect fun saveKhetiGrid(flag: String)
+
+expect fun loadKhetiGrid(): String?

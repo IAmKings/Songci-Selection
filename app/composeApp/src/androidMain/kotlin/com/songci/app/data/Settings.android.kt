@@ -29,6 +29,12 @@ actual fun loadVerticalLayout(): String? =
     AppContextHolder.context.getSharedPreferences("songci_settings", Context.MODE_PRIVATE)
         .getString("vertical_layout", null)
 
+actual fun saveKhetiGrid(flag: String) {
+    prefs().edit().putString("kheti_grid", flag).apply()
+}
+
+actual fun loadKhetiGrid(): String? = prefs().getString("kheti_grid", null)
+
 private fun prefs() =
     AppContextHolder.context.getSharedPreferences("songci_settings", Context.MODE_PRIVATE)
 

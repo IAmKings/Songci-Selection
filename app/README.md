@@ -12,6 +12,7 @@
 | Gradle | 9.7.0(wrapper 指向腾讯镜像,本机网络官方源不可达) |
 | SQLDelight | 2.3.2 |
 | Navigation (CMP) | 2.9.2 |
+| kheti-compose | 0.1.0(io.github.iamkings,赫蹏中文排版引擎;唯一依赖例外,见 `.trellis/spec/frontend/quality-guidelines.md`「依赖例外:kheti」;阿里云镜像未同步该新构件,repo1 按 group 定向于 `settings.gradle.kts`) |
 
 ## 目录结构
 

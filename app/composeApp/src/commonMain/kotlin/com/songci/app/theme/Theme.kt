@@ -78,9 +78,9 @@ val InterFamily: FontFamily
         Font(Res.font.inter_medium, FontWeight.Medium),
     )
 
-/** 词文字体按风格选择:楷体(WenKai)/ 宋体(新致宋)/ 明体(源流明体)。 */
+/** 词文字体按风格选择:楷体(WenKai)/ 宋体(新致宋)/ 明体(源流明体)。internal:Kheti 排版适配层同模块复用。 */
 @Composable
-private fun poemFamily(style: com.songci.app.ui.FontStyle): FontFamily =
+internal fun poemFamily(style: com.songci.app.ui.FontStyle): FontFamily =
     when (style) {
         com.songci.app.ui.FontStyle.SONGTI -> SongFamily
         com.songci.app.ui.FontStyle.MINGTI -> GenryuFamily

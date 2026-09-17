@@ -59,6 +59,23 @@ actual fun loadVerticalLayout(): String? {
     return props.getProperty("vertical_layout")
 }
 
+actual fun saveKhetiGrid(flag: String) {
+    val file = settingsFile()
+    val props = Properties()
+    if (file.exists()) file.inputStream().use(props::load)
+    props.setProperty("kheti_grid", flag)
+    file.parentFile.mkdirs()
+    file.outputStream().use { props.store(it, "songci settings") }
+}
+
+actual fun loadKhetiGrid(): String? {
+    val file = settingsFile()
+    if (!file.exists()) return null
+    val props = Properties()
+    file.inputStream().use(props::load)
+    return props.getProperty("kheti_grid")
+}
+
 private fun loadProps(): Properties {
     val props = Properties()
     val file = settingsFile()

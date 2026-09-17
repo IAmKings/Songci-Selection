@@ -1,6 +1,20 @@
 # Quality Guidelines
 
-> UI 层质量约定:自适应、主题一致性、无新依赖、验收闭环。
+> UI 层质量约定:自适应、主题一致性、无新依赖(唯一例外 kheti,见下)、验收闭环。
+
+---
+
+## 依赖例外:kheti(2026-09-17)
+
+- **唯一例外**:`io.github.iamkings:kheti-compose`(version catalog 单行,commonMain)——heti 中文排版规则的 KMP 移植,
+  本仓库同作者自研库,Maven Central 版本化发布(GPG 签名);许可见 `licenses/kheti-NOTICE.md`。
+- 理由:词作详情的中文排版(行末标点悬挂/中西文间距/标点挤压/竖排縦中横)是手写无法对齐 heti 级质量的领域,
+  自研 `punctuatedLines`/字符矩阵竖排已积累闪烁 hack(旧 DetailScreen 实现),换库是一次性偿还。
+- 使用边界:kheti 类型(`KhetiBlockSpec`/`KhetiTextStyle`/引擎等)**只允许出现在 `ui/components/KhetiPoemBody.kt`**
+  (适配层文件,kheti 类型不得泄漏到 screens 层);回退缝 = expect/actual `useKhetiRendering()`
+  (ios actual 置 false 即回退 `DetailLegacy.kt` 旧路径)。
+- 回滚:version catalog 删单行 + revert DetailScreen 提交即可;无源码散落。
+- 其余一切依赖仍按零新依赖原则执行。
 
 ---
 

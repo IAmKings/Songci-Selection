@@ -9,6 +9,8 @@ androidx-lifecycle = "2.10.0"
 androidx-work = "2.11.2"
 composeMultiplatform = "1.11.1"
 kotlin = "2.4.10"
+# kheti:heti 中文排版规则 KMP 移植(自研库,Maven Central;唯一零新依赖例外,见 .trellis/spec/frontend/quality-guidelines.md)
+kheti = "0.1.0"
 kotlinx-coroutines = "1.10.2"
 kotlinx-datetime = "0.7.1"
 navigationCompose = "2.9.2"
@@ -29,6 +31,8 @@ sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", versi
 sqldelight-jvm-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+# kheti-compose api 透传 kheti-core/kheti-layout/compose.ui/runtime,单行依赖即可
+kheti-compose = { module = "io.github.iamkings:kheti-compose", version.ref = "kheti" }
 
 # macOS 每日一词通知:纯 JVM 调 UNUserNotificationCenter 的唯一途径(ObjC 桥;jna 主包提供 Function/Callback/Structure)
 jna = { module = "net.java.dev.jna:jna", version = "5.14.0" }

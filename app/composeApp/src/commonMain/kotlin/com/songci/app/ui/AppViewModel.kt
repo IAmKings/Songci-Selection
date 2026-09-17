@@ -15,11 +15,13 @@ import com.songci.app.data.Segmenter
 import com.songci.app.data.SongciRepository
 import com.songci.app.data.NotificationPrefs
 import com.songci.app.data.loadFontScaleName
+import com.songci.app.data.loadKhetiGrid
 import com.songci.app.data.loadFontStyle
 import com.songci.app.data.loadNotificationPrefs
 import com.songci.app.data.loadVerticalLayout
 import com.songci.app.data.rescheduleDailyNotification
 import com.songci.app.data.saveFontScaleName
+import com.songci.app.data.saveKhetiGrid
 import com.songci.app.data.saveFontStyle
 import com.songci.app.data.saveNotificationPrefs
 import com.songci.app.data.saveVerticalLayout
@@ -105,6 +107,10 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
     var verticalLayout by mutableStateOf(loadVerticalLayout() == "1")
         private set
 
+    // 竖排网格(默认关):详情页竖排正文的 kheti 列盒参考线(似传统书信纸);横排不绘制
+    var khetiGrid by mutableStateOf(loadKhetiGrid() == "1")
+        private set
+
     // 每日一词通知设置(本地通知,无服务器)
     var notificationPrefs by mutableStateOf(loadNotificationPrefs())
         private set
@@ -143,6 +149,12 @@ class AppViewModel(private val repo: SongciRepository) : ViewModel() {
     fun toggleVerticalLayout() {
         verticalLayout = !verticalLayout
         saveVerticalLayout(if (verticalLayout) "1" else "0")
+    }
+
+    /** 竖排网格切换(设置页开关):更新状态并写回 saveKhetiGrid,重启沿用。 */
+    fun toggleKhetiGrid() {
+        khetiGrid = !khetiGrid
+        saveKhetiGrid(if (khetiGrid) "1" else "0")
     }
 
     /** 保存通知设置并触发平台重排(开启→排期,关闭→取消)。 */

@@ -23,6 +23,13 @@ actual fun saveVerticalLayout(flag: String) {
 actual fun loadVerticalLayout(): String? =
     NSUserDefaults.standardUserDefaults.stringForKey("vertical_layout")
 
+actual fun saveKhetiGrid(flag: String) {
+    NSUserDefaults.standardUserDefaults.setObject(flag, forKey = "kheti_grid")
+}
+
+actual fun loadKhetiGrid(): String? =
+    NSUserDefaults.standardUserDefaults.stringForKey("kheti_grid")
+
 actual fun loadNotificationPrefs(): NotificationPrefs = NSUserDefaults.standardUserDefaults.run {
     // 注意:NSUserDefaults 无 long 方法;lastScheduledDay 用字符串存取;
     // integerForKey 未设置时返回 0,用 objectForKey 区分"未设置"与"0 点"

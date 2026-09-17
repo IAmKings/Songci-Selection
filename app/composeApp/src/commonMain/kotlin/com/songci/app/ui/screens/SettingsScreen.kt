@@ -128,6 +128,31 @@ fun SettingsScreen(vm: AppViewModel) {
                     .padding(horizontal = 16.dp, vertical = 8.dp),
             )
         }
+        // 竖排网格(默认关):详情页竖排正文绘制列盒参考线,似传统竖排书信纸;横排不绘制(真机评审定)
+        Text(
+            "竖排网格",
+            style = MaterialTheme.typography.labelMedium,
+            color = SongciColors.stone,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
+        )
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+            Text(
+                if (vm.khetiGrid) "开启" else "关闭",
+                style = MaterialTheme.typography.labelLarge,
+                color = if (vm.khetiGrid) SongciColors.onPrimary else SongciColors.primary,
+                modifier = Modifier
+                    .border(1.dp, SongciColors.primary)
+                    .background(if (vm.khetiGrid) SongciColors.primary else SongciColors.surfaceContainerLow)
+                    .clickable { vm.toggleKhetiGrid() }
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+        }
+        Text(
+            "详情页竖排正文叠加列盒参考线,似传统竖排书信纸;横排不绘制;仅应用内生效",
+            style = MaterialTheme.typography.labelSmall,
+            color = SongciColors.stone,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
+        )
         Text(
             "每日一词",
             style = MaterialTheme.typography.labelMedium,

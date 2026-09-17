@@ -48,6 +48,7 @@ kotlin {
             implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.kheti.compose)   // 赫蹏中文排版(kheti,KMP 自研库;唯一依赖例外)
         }
         androidMain.dependencies {
             implementation(compose.preview)
@@ -82,8 +83,8 @@ android {
         applicationId = "com.songci.app"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 4
-        versionName = "0.1.4"
+        versionCode = 5
+        versionName = "0.2.0"
     }
     packaging {
         resources {

@@ -24,6 +24,8 @@
 
 - **不引新依赖**,能用 stdlib/原生/已有依赖解决就不加:JSON 用手写轻量解析(kotlinx.serialization 不引)、设置用原生键值存储(DataStore 不引)、搜索用 LIKE(FTS5 对中文分词失效)
 - 复用项目既有模式,不发明新架构
+- **唯一例外(2026-09-17)**:kheti-compose(io.github.iamkings)——中文排版引擎,自研 KMP 库,Maven Central 版本化;
+  使用边界与回滚方式见 frontend/quality-guidelines.md「依赖例外:kheti」。除 kheti 外一律执行本原则
 
 ---
 

@@ -63,7 +63,8 @@ private fun TextRowList(
         // 按拼音首字母分组(head 排序:0 < A < … < #);heads 为空 = 不分组(目录/朝代)
         val grouped: List<Pair<String, List<Pair<String, String>>>> = remember(heads, rows) {
             if (heads.isEmpty()) emptyList()
-            else rows.groupBy { heads[it.first] ?: "#" }.toSortedMap().map { it.key to it.value }
+            // entries.sortedBy = toSortedMap 的跨平台等价(JVM-only stdlib 扩展在 native/iOS 不存在,2026-09-17)
+            else rows.groupBy { heads[it.first] ?: "#" }.entries.sortedBy { it.key }.map { it.key to it.value }
         }
         // 分组起始 item index(含 header item),供索引条跳转
         val groupStart: Map<String, Int> = remember(grouped) {
@@ -219,9 +220,9 @@ private fun AuthorList(
 ) {
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
-    // 按拼音首字母分组(head 排序:0 < A < … < #)
+    // 按拼音首字母分组(head 排序:0 < A < … < #);entries.sortedBy = toSortedMap 的跨平台等价(2026-09-17)
     val grouped: List<Pair<String, List<Author>>> = remember(authors) {
-        authors.groupBy { it.head }.toSortedMap().map { it.key to it.value }
+        authors.groupBy { it.head }.entries.sortedBy { it.key }.map { it.key to it.value }
     }
     val groupStart: Map<String, Int> = remember(grouped) {
         val map = mutableMapOf<String, Int>()

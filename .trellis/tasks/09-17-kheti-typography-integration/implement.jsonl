@@ -1,0 +1,4 @@
+{"_example": "Fill with {\"file\": \"<path>\", \"reason\": \"<why>\"}. Put spec/research files only — no code paths. Run `python3 .trellis/scripts/get_context.py --mode packages` to list available specs. Delete this line once real entries are added."}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "适配器组件需遵守复用优先/私有组件/无新依赖约定(例外记录在此)"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "DetailScreen 两个固化案例(chrome 退栈压缩/竖排视口)是回归雷区;零新依赖例外回写目标"}
+{"file": ".trellis/tasks/09-17-kheti-typography-integration/design.md", "reason": "架构边界/可见性 spike/回退缝设计"}
