@@ -1,5 +1,7 @@
 # 宋词选粹 · Songci Selection
 
+> 📖 在线介绍页：**https://iamkings.github.io/Songci-Selection/**（GitHub Pages，源码在本仓库 `docs/`）
+
 高保真数字手稿风格的宋词鉴赏应用与数据仓库。21,340 首词作(Kotlin Multiplatform 三端应用 + Python 数据管线 + 钦定词谱格律体系 + 三端小组件与每日一词通知)。
 
 ## 仓库导航

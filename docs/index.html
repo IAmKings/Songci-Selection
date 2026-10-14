@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>宋词选粹 · Songci Selection — 高保真数字手稿风格的宋词鉴赏应用</title>
+  <meta name="description" content="宋词选粹 Songci Selection：高保真数字手稿风格的宋词鉴赏应用与数据仓库。21,340 首词作，钦定词谱格律体系，赫蹏横竖排版，Android / iOS / macOS 三端与桌面小组件。" />
+  <link rel="icon" type="image/png" href="assets/icon.png" />
+  <meta property="og:title" content="宋词选粹 · Songci Selection" />
+  <meta property="og:description" content="高保真数字手稿风格的宋词鉴赏应用与数据仓库 — 21,340 首词作，Android / iOS / macOS 三端。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://iamkings.github.io/Songci-Selection/" />
+  <meta property="og:image" content="https://iamkings.github.io/Songci-Selection/assets/icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- 顶栏 -->
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="#top">
+        <img src="assets/icon.png" alt="宋词选粹图标" />
+        <span class="brand-name">宋词选粹</span>
+      </a>
+      <nav class="site-nav">
+        <a href="#features">特性</a>
+        <a href="#data">数据</a>
+        <a href="#screenshots">截图</a>
+        <a href="#download">下载</a>
+        <a class="nav-cta" href="https://github.com/IAmKings/Songci-Selection" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="container">
+      <div class="hero-main">
+        <div class="kicker"></div>
+        <p class="hero-en-name">Songci Selection</p>
+        <h1 class="display-title">宋词选粹</h1>
+        <p class="hero-sub">
+          高保真<strong>数字手稿风格</strong>的宋词鉴赏应用与数据仓库——
+          钦定词谱格律体系、赫蹏横竖排版、三端小组件与每日一词通知，
+          在羊皮纸与书生蓝之间，重现纸上读词的版式之美。
+        </p>
+        <div class="hero-chips">
+          <span class="chip">v0.2.0</span>
+          <span class="chip">ANDROID · iOS · macOS</span>
+          <span class="chip">21,340 首词作</span>
+          <span class="chip">KOTLIN MULTIPLATFORM</span>
+        </div>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://github.com/IAmKings/Songci-Selection/releases/latest" target="_blank" rel="noopener">下载 Android APK</a>
+          <a class="btn btn-outline" href="https://github.com/IAmKings/Songci-Selection" target="_blank" rel="noopener">GitHub 仓库</a>
+        </div>
+      </div>
+
+      <!-- 竖排词作 · 呼应 App 竖排排版 -->
+      <aside class="hero-poem" aria-label="苏轼《水调歌头》竖排展示">
+        <span class="v-line">明月几时有</span>
+        <span class="v-line">把酒问青天</span>
+        <span class="v-line">但愿人长久</span>
+        <span class="v-line">千里共婵娟</span>
+        <span class="v-attrib">苏轼 · 水调歌头</span>
+        <span class="v-seal">宋词</span>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 词作卡片示例 -->
+  <section class="section" id="poems" style="padding-top: 0;">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker"></div>
+        <p class="label-meta text-stone">推荐词作</p>
+      </div>
+      <div class="poem-grid">
+        <article class="poem-card">
+          <header>
+            <h3 class="rhythmic-name">水调歌头</h3>
+            <span class="author">苏轼</span>
+          </header>
+          <p class="excerpt poem-body">「但愿人长久，千里共婵娟。」</p>
+          <footer><a class="read-more" href="https://github.com/IAmKings/Songci-Selection" target="_blank" rel="noopener">阅读全文 →</a></footer>
+        </article>
+        <article class="poem-card">
+          <header>
+            <h3 class="rhythmic-name">青玉案</h3>
+            <span class="author">辛弃疾</span>
+          </header>
+          <p class="excerpt poem-body">「众里寻他千百度，蓦然回首，那人却在，灯火阑珊处。」</p>
+          <footer><a class="read-more" href="https://github.com/IAmKings/Songci-Selection" target="_blank" rel="noopener">阅读全文 →</a></footer>
+        </article>
+        <article class="poem-card">
+          <header>
+            <h3 class="rhythmic-name">雨霖铃</h3>
+            <span class="author">柳永</span>
+          </header>
+          <p class="excerpt poem-body">「今宵酒醒何处？杨柳岸，晓风残月。」</p>
+          <footer><a class="read-more" href="https://github.com/IAmKings/Songci-Selection" target="_blank" rel="noopener">阅读全文 →</a></footer>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 应用特性 -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker"></div>
+        <h2 class="section-title">应用特性</h2>
+        <p class="section-sub">一套 Kotlin Multiplatform 代码，三端共享同一份手稿版式。</p>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <span class="feature-no">壹</span>
+          <h3>三端原生 · 自适应</h3>
+          <p>Android / iOS / macOS 三端原生体验；768dp 宽屏自动切换双栏主从布局，字号与字体风格全端持久化。</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-no">贰</span>
+          <h3>钦定词谱 · 格律卡片</h3>
+          <p>词作详情按上下阕分段呈现（格律段边界），2,306 个词谱变体随手切换，异名显示、韵脚下划线一目了然。</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-no">叁</span>
+          <h3>赫蹏排版引擎</h3>
+          <p>自研 kheti-compose：行末标点悬挂、中西文 ¼ 字宽间距、标点挤压；正文支持传统竖排，列序右→左、縦中横。</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-no">肆</span>
+          <h3>搜索 · 收藏 · 历史</h3>
+          <p>词牌 / 作者 / 诗句全文检索，词牌异名自动展开；收藏与最近浏览记录随时回访，首页每日推荐池常读常新。</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-no">伍</span>
+          <h3>桌面小组件</h3>
+          <p>Android 2x2 / 4x1（Glance + 楷体）与 macOS WidgetKit 小 / 中号组件，午夜自动刷新，点击深链直达全文。</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-no">陆</span>
+          <h3>每日一词通知</h3>
+          <p>三端定时推送「词牌·作者 + 首句」，点击深链直达词作详情；设置页内建翻页钟风格时间选择器。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 数据体系 -->
+  <section class="section" id="data">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker"></div>
+        <h2 class="section-title">数据体系</h2>
+        <p class="section-sub">Python 数据管线 + SQLite 词库，格律映射与词牌异名全量治理。</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="num">21,340</div>
+          <div class="desc">词作收录 · 含金元补全 290 首</div>
+        </div>
+        <div class="stat">
+          <div class="num">2,306</div>
+          <div class="desc">词谱变体 · 多体切换</div>
+        </div>
+        <div class="stat">
+          <div class="num">84.2<small>%</small></div>
+          <div class="desc">词牌格律映射覆盖</div>
+        </div>
+        <div class="stat">
+          <div class="num">95.4<small>%</small></div>
+          <div class="desc">词作格律覆盖</div>
+        </div>
+        <div class="stat">
+          <div class="num">565</div>
+          <div class="desc">词牌异名 · 关联搜索展开</div>
+        </div>
+        <div class="stat">
+          <div class="num">74.9<small>%</small></div>
+          <div class="desc">上下阕分段精确率</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 应用截图 -->
+  <section class="section" id="screenshots">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker"></div>
+        <h2 class="section-title">应用截图</h2>
+        <p class="section-sub">应用实机渲染素材，更多见仓库 <a href="https://github.com/IAmKings/Songci-Selection/tree/master/screen" target="_blank" rel="noopener">screen/</a> 目录。</p>
+      </div>
+
+      <p class="shot-label">手机 · 竖屏</p>
+      <div class="phone-strip">
+        <figure>
+          <img src="assets/phone-home.jpg" alt="手机首页截图" loading="lazy" />
+          <figcaption>首页</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/phone-detail.jpg" alt="手机词作详情截图" loading="lazy" />
+          <figcaption>词作详情</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/phone-metrical.jpg" alt="手机格律卡片截图" loading="lazy" />
+          <figcaption>详情 · 格律</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/phone-search.jpg" alt="手机搜索截图" loading="lazy" />
+          <figcaption>搜索</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/phone-favorites.jpg" alt="手机收藏截图" loading="lazy" />
+          <figcaption>收藏</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/phone-index.jpg" alt="手机目录索引截图" loading="lazy" />
+          <figcaption>目录索引</figcaption>
+        </figure>
+      </div>
+
+      <p class="shot-label">平板 · 横屏 宽屏双栏</p>
+      <div class="tablet-grid">
+        <figure>
+          <img src="assets/tablet-home.png" alt="平板首页双栏截图" loading="lazy" />
+          <figcaption>首页 · 宽屏双栏</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/tablet-detail.png" alt="平板词作详情截图" loading="lazy" />
+          <figcaption>词作详情</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/tablet-authors.png" alt="平板作者列表截图" loading="lazy" />
+          <figcaption>作者列表</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/tablet-favorites.png" alt="平板收藏截图" loading="lazy" />
+          <figcaption>收藏</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 下载 -->
+  <section class="section" id="download">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker"></div>
+        <h2 class="section-title">获取应用</h2>
+        <p class="section-sub">Android 提供预编译 APK；iOS / macOS 从源码构建。</p>
+      </div>
+      <div class="platform-grid">
+        <div class="platform-card">
+          <h3>Android</h3>
+          <p class="os-note">APK 预编译包，随 Release 发布。支持 Android 7.0（API 24）及以上，含 2x2 / 4x1 桌面小组件。</p>
+          <a class="btn btn-primary" href="https://github.com/IAmKings/Songci-Selection/releases/latest" target="_blank" rel="noopener">前往 Releases 下载</a>
+        </div>
+        <div class="platform-card">
+          <h3>iOS</h3>
+          <p class="os-note">Xcode 打开 <code>app/iosApp</code> 工程，支持 iOS 真机与模拟器（arm64），含每日一词通知。</p>
+          <a class="btn btn-outline" href="https://github.com/IAmKings/Songci-Selection/blob/master/app/README.md" target="_blank" rel="noopener">查看构建说明</a>
+        </div>
+        <div class="platform-card">
+          <h3>macOS</h3>
+          <p class="os-note">Gradle 打包 DMG（<code>packageDmg</code>），含 WidgetKit 小 / 中号小组件与常驻通知回调。</p>
+          <a class="btn btn-outline" href="https://github.com/IAmKings/Songci-Selection/blob/master/app/README.md" target="_blank" rel="noopener">查看构建说明</a>
+        </div>
+      </div>
+
+      <div class="quickstart">
+        <h3>快速开始 · 从源码构建</h3>
+        <pre><code><span class="cmt"># 应用构建（详见 app/README.md）</span>
+cd app &amp;&amp; ./gradlew :composeApp:desktopTest :composeApp:packageDmg
+
+<span class="cmt"># 数据重建（源数据变更后）</span>
+python3 db/build.py &amp;&amp; python3 app/data/tools/prepare_db.py
+
+<span class="cmt"># macOS 一键部署（compose 打包 + 小组件 extension + 签名 + 装 /Applications）</span>
+./scripts/macos-widget-deploy.sh</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-cols">
+        <div class="footer-brand">
+          <div class="name">宋词选粹</div>
+          <div class="en">Songci Selection</div>
+        </div>
+        <nav class="footer-links">
+          <a href="https://github.com/IAmKings/Songci-Selection" target="_blank" rel="noopener">GitHub 仓库</a>
+          <a href="https://github.com/IAmKings/Songci-Selection/releases" target="_blank" rel="noopener">Releases</a>
+          <a href="https://github.com/IAmKings/Songci-Selection/issues" target="_blank" rel="noopener">Issues</a>
+        </nav>
+      </div>
+      <p class="footer-license">
+        字体：霞鹜文楷 / 霞鹜新致宋 / 源流明体 / Inter（OFL）、IPA 字体（IPA Font License）；排版引擎 kheti-compose（MIT，规则源自 heti）。
+        许可全文见仓库 <a href="https://github.com/IAmKings/Songci-Selection/tree/master/licenses" target="_blank" rel="noopener">licenses/</a> 目录。
+        <br />© 2026 IAmKings · 宋词选粹
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
